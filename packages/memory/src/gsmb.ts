@@ -164,39 +164,6 @@ export interface PersistedMemoryEntry extends GSMBWriteEntry {
   accessedAt: number;
 }
 
-const SQLITE_MEMORY_SCHEMA_SQL = `
-CREATE TABLE IF NOT EXISTS MemoryRecord (
-  id TEXT PRIMARY KEY,
-  kind TEXT NOT NULL,
-  subject TEXT NOT NULL,
-  contentJson TEXT NOT NULL,
-  tagsJson TEXT NOT NULL,
-  confidence REAL NOT NULL,
-  importance REAL NOT NULL,
-  provenanceJson TEXT NOT NULL,
-  omegaJson TEXT NOT NULL,
-  createdAt BIGINT NOT NULL,
-  accessedAt BIGINT NOT NULL,
-  expiresAt BIGINT
-);
-
-CREATE TABLE IF NOT EXISTS TelemetryRecord (
-  id TEXT PRIMARY KEY,
-  kind TEXT NOT NULL,
-  source TEXT NOT NULL,
-  payloadJson TEXT NOT NULL,
-  fidelity TEXT NOT NULL,
-  contextMode TEXT NOT NULL,
-  timestamp BIGINT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS WorldStateStub (
-  id TEXT PRIMARY KEY,
-  snapshotJson TEXT NOT NULL,
-  createdAt BIGINT NOT NULL
-);
-`;
-
 /**
  * Persistent GSMB backed by Prisma + SQLite.
  * All writes are serialized through a single queue.
@@ -334,13 +301,42 @@ export class PrismaGSMB {
   }
 
   private async ensureSchema(): Promise<void> {
-    const statements = SQLITE_MEMORY_SCHEMA_SQL.split(";")
-      .map((statement) => statement.trim())
-      .filter(Boolean);
+    await this.prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS MemoryRecord (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        contentJson TEXT NOT NULL,
+        tagsJson TEXT NOT NULL,
+        confidence REAL NOT NULL,
+        importance REAL NOT NULL,
+        provenanceJson TEXT NOT NULL,
+        omegaJson TEXT NOT NULL,
+        createdAt BIGINT NOT NULL,
+        accessedAt BIGINT NOT NULL,
+        expiresAt BIGINT
+      )
+    `;
 
-    for (const statement of statements) {
-      await this.prisma.$executeRawUnsafe(`${statement};`);
-    }
+    await this.prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS TelemetryRecord (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL,
+        source TEXT NOT NULL,
+        payloadJson TEXT NOT NULL,
+        fidelity TEXT NOT NULL,
+        contextMode TEXT NOT NULL,
+        timestamp BIGINT NOT NULL
+      )
+    `;
+
+    await this.prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS WorldStateStub (
+        id TEXT PRIMARY KEY,
+        snapshotJson TEXT NOT NULL,
+        createdAt BIGINT NOT NULL
+      )
+    `;
   }
 }
 

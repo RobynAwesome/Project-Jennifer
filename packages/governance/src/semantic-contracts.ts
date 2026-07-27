@@ -135,7 +135,11 @@ export class SemanticContractRegistry {
     if (type === "null") return value === null;
     if (type === "array") return Array.isArray(value);
     if (type === "integer") return Number.isInteger(value);
-    if (type === "object") return typeof value === "object" && value !== null && !Array.isArray(value);
+    if (type === "object") {
+      const isPlainObject =
+        typeof value === "object" && value !== null && !Array.isArray(value);
+      return isPlainObject;
+    }
     return typeof value === type;
   }
 

@@ -90,7 +90,9 @@ export interface ValidationPipelineOptions {
 
 export class ValidationFailureError extends Error {
   constructor(public readonly report: ValidationReport) {
-    super("Validation FAILED and downstream action is blocked");
+    super(
+      `Validation FAILED at stage "${report.failed?.stage ?? "unknown"}" and downstream action is blocked`
+    );
     this.name = "ValidationFailureError";
   }
 }
