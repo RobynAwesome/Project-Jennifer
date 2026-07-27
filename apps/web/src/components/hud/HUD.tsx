@@ -10,7 +10,7 @@ export default function HUD() {
           <span className="text-sm font-bold text-white tracking-wide">
             Jennifer Runtime
           </span>
-          <span className="text-xs text-gray-500 hidden sm:block">v0.1.0</span>
+          <span className="text-xs text-gray-500 hidden sm:block">v0.4.0 · APWA POC</span>
         </div>
 
         {/* Status indicators */}
@@ -33,7 +33,7 @@ export default function HUD() {
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500">Persona</span>
           <span className="text-xs bg-jennifer-primary bg-opacity-20 text-jennifer-primary border border-jennifer-primary border-opacity-30 rounded-full px-3 py-1 font-medium">
-            Best Friend
+            Demo Ops
           </span>
         </div>
       </div>

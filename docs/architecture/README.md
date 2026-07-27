@@ -159,3 +159,11 @@ docker compose up
 ```
 
 See `/docs/architecture/docker.md` for details.
+
+---
+
+## Game Design Scaffolding
+
+Sprint 4 implementation-oriented game design scaffold:
+
+- [`docs/architecture/game-design-scaffolding.md`](./game-design-scaffolding.md)
