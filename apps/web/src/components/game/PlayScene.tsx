@@ -16,6 +16,7 @@ const ARENA_WIDTH = 540;
 const ARENA_HEIGHT = 320;
 const PLAYER_SIZE = 24;
 const TARGET_SIZE = 28;
+const PULSE_MULTIPLIER = 3;
 const TARGET_POSITIONS = [
   { x: 100, y: 80 },
   { x: 420, y: 80 },
@@ -31,6 +32,11 @@ const DIRECTIONAL_KEYS: MovementKey[] = [
   "ArrowLeft",
   "ArrowRight",
 ];
+const PLAYER_SPEED_BY_QUALITY: Record<QualityMode, number> = {
+  LITE: 3,
+  BALANCED: 4,
+  PERFORMANCE: 5,
+};
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
@@ -57,8 +63,8 @@ export default function PlayScene({
   });
 
   const target = TARGET_POSITIONS[targetIndex] ?? { x: 260, y: 160 };
-  const playerSpeed = qualityMode === "PERFORMANCE" ? 5 : qualityMode === "BALANCED" ? 4 : 3;
-  const pulseCount = Math.max(2, effectsLevel * 3);
+  const playerSpeed = PLAYER_SPEED_BY_QUALITY[qualityMode];
+  const pulseCount = Math.max(2, effectsLevel * PULSE_MULTIPLIER);
   const pulseElements = useMemo(
     () => Array.from({ length: pulseCount }, (_, index) => index),
     [pulseCount]

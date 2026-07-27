@@ -198,7 +198,7 @@ export default function GameRuntime() {
           <div>
             <h1 className="text-2xl font-bold text-white">Project Jennifer APWA POC</h1>
             <p className="text-xs text-gray-400">
-              Build 0.4.0 Sprint 3 · Record-ready guided mission flow
+              Build 0.4.0 Sprint 3+4 · Record-ready guided mission flow
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
