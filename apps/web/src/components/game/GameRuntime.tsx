@@ -19,6 +19,10 @@ interface QueuedAction {
   label: string;
   createdAt: string;
 }
+interface EventLogEntry {
+  id: string;
+  message: string;
+}
 
 const PROFILE_STORAGE_KEY = "jennifer.apwa.profile-mode.v1";
 const QUEUE_STORAGE_KEY = "jennifer.apwa.offline-queue.v1";
@@ -54,7 +58,7 @@ export default function GameRuntime() {
   const [browserOnline, setBrowserOnline] = useState(true);
   const [manualNetworkStatus, setManualNetworkStatus] = useState<NetworkStatus | null>(null);
   const [isDemoRunning, setIsDemoRunning] = useState(false);
-  const [eventLog, setEventLog] = useState<string[]>([]);
+  const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [offlineQueue, setOfflineQueue] = useState<QueuedAction[]>([]);
   const [replayState, setReplayState] = useState("Idle");
 
@@ -65,7 +69,11 @@ export default function GameRuntime() {
 
   const pushEvent = useCallback((message: string) => {
     const stamped = `${new Date().toLocaleTimeString()} · ${message}`;
-    setEventLog((current) => [stamped, ...current].slice(0, 10));
+    const entry: EventLogEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      message: stamped,
+    };
+    setEventLog((current) => [entry, ...current].slice(0, 10));
   }, []);
 
   useEffect(() => {
@@ -292,8 +300,8 @@ export default function GameRuntime() {
           <ul className="mt-2 space-y-1 text-xs text-gray-400">
             {eventLog.length === 0 && <li>No events yet.</li>}
             {eventLog.map((event) => (
-              <li key={event} className="truncate">
-                {event}
+              <li key={event.id} className="truncate">
+                {event.message}
               </li>
             ))}
           </ul>
