@@ -16,7 +16,7 @@
     "build": "tsc --project tsconfig.json",
     "dev": "tsc --project tsconfig.json --watch",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm --filter @jennifer/telemetry build && pnpm run build && node --test dist/**/*.test.js",
+    "test": "pnpm --filter @jennifer/telemetry build && pnpm run build && node --test $(find dist -type f -name '*.test.js')",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "postinstall": "pnpm run prisma:generate",
     "clean": "rm -rf dist"

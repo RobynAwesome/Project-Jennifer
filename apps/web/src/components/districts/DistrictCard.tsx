@@ -1,5 +1,3 @@
-import type { District } from "@jennifer/shared";
-
 interface DistrictCardProps {
   district: {
     name: string;
