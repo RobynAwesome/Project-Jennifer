@@ -1,0 +1,28 @@
+{
+  "name": "@jennifer/npc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NPC Runtime – autonomous agents with local awareness, personal memory, telemetry, relationships",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "dev": "tsc --project tsconfig.json --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@jennifer/shared": "workspace:*",
+    "@jennifer/memory": "workspace:*",
+    "@jennifer/telemetry": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}
