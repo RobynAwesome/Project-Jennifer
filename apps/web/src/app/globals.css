@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --jennifer-primary: #6366f1;
+  --jennifer-accent: #a855f7;
+  --jennifer-dark: #0f0f1a;
+  --jennifer-surface: #1a1a2e;
+  --jennifer-border: #2d2d4a;
+}
+
+body {
+  background-color: var(--jennifer-dark);
+  color: #ffffff;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Governance city grid overlay */
+.city-grid {
+  background-image: linear-gradient(
+      rgba(99, 102, 241, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}

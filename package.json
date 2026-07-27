@@ -1,0 +1,26 @@
+{
+  "name": "project-jennifer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Project Jennifer – Sovereign Governance Intelligence Runtime",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.5.0",
+    "prettier": "^3.3.0",
+    "eslint": "^9.0.0"
+  },
+  "packageManager": "pnpm@9.4.0"
+}
