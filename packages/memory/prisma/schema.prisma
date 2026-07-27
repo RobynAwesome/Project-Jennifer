@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model MemoryRecord {
+  id             String @id
+  kind           String
+  subject        String
+  contentJson    String
+  tagsJson       String
+  confidence     Float
+  importance     Float
+  provenanceJson String
+  omegaJson      String
+  createdAt      BigInt
+  accessedAt     BigInt
+  expiresAt      BigInt?
+}
+
+model TelemetryRecord {
+  id          String @id
+  kind        String
+  source      String
+  payloadJson String
+  fidelity    String
+  contextMode String
+  timestamp   BigInt
+}
+
+model WorldStateStub {
+  id           String @id
+  snapshotJson String
+  createdAt    BigInt
+}

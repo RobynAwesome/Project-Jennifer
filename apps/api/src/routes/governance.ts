@@ -17,7 +17,15 @@ router.post("/evaluate", (req, res) => {
     return;
   }
 
-  const decision = policyEngine.evaluate(generateId(), context);
+  const decision = policyEngine.evaluate(
+    {
+      id: generateId(),
+      action: String(context.action ?? "unspecified"),
+      resource: typeof context.resource === "string" ? context.resource : undefined,
+      payload: context,
+    },
+    context
+  );
   res.json({ decision });
 });
 

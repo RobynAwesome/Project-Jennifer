@@ -3,21 +3,12 @@ import type {
   MemoryQuery,
   MemoryKind,
   ID,
+  IEventBus,
+  JenniferEventMap,
 } from "@jennifer/shared";
 import { generateId, now, clamp, isExpired } from "@jennifer/shared";
+import { PrismaClient } from "@prisma/client";
 
-/**
- * Grounded State Memory Buffer (GSMB)
- *
- * Persistent, queryable memory store for the Jennifer runtime.
- * Supports five memory kinds: episodic, semantic, procedural, working,
- * and collective. All reads update the `accessedAt` timestamp to enable
- * LRU-style eviction and importance decay.
- *
- * This in-process implementation is the reference; a database-backed
- * adapter (Prisma + SQLite) should be injected in production by
- * implementing IMemoryStore.
- */
 export interface IMemoryStore {
   store(entry: Omit<MemoryEntry, "id" | "createdAt" | "accessedAt">): Promise<MemoryEntry>;
   retrieve(id: ID): Promise<MemoryEntry | undefined>;
@@ -80,7 +71,6 @@ export class InMemoryGSMB implements IMemoryStore {
       results.push({ ...entry, accessedAt: ts });
     }
 
-    // Sort by importance descending, then recency.
     results.sort((a, b) => {
       if (b.importance !== a.importance) return b.importance - a.importance;
       return b.createdAt - a.createdAt;
@@ -109,14 +99,9 @@ export class InMemoryGSMB implements IMemoryStore {
     return this.entries.delete(id);
   }
 
-  /**
-   * Consolidation pass: removes expired entries and decays the
-   * importance of entries that haven't been accessed recently.
-   * Returns the number of entries removed.
-   */
   async consolidate(): Promise<number> {
     const DECAY_FACTOR = 0.95;
-    const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+    const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000;
     const current = now();
     let removed = 0;
 
@@ -147,11 +132,214 @@ export class InMemoryGSMB implements IMemoryStore {
   }
 }
 
+export interface ObjectiveWeightVector {
+  personal: number;
+  workEdu: number;
+  relational: number;
+}
+
+export interface GSMBWriteEntry {
+  kind: MemoryKind;
+  subject: string;
+  content: unknown;
+  tags: string[];
+  confidence: number;
+  importance: number;
+  provenance: Record<string, unknown>;
+  omegaContext: ObjectiveWeightVector;
+  expiresAt?: number;
+}
+
+export interface GSMBReadFilter {
+  kind?: MemoryKind;
+  subjectContains?: string;
+  tags?: string[];
+  minConfidence?: number;
+  limit?: number;
+}
+
+export interface PersistedMemoryEntry extends GSMBWriteEntry {
+  id: string;
+  createdAt: number;
+  accessedAt: number;
+}
+
 /**
- * ContextManager maintains the current active context window –
- * a small slice of the most relevant memories used to ground
- * the LLM's reasoning.
+ * Persistent GSMB backed by Prisma + SQLite.
+ * All writes are serialized through a single queue.
  */
+export class PrismaGSMB {
+  private writeQueue: Promise<void> = Promise.resolve();
+  private readonly schemaReady: Promise<void>;
+
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly bus?: IEventBus<JenniferEventMap>
+  ) {
+    this.schemaReady = this.ensureSchema();
+  }
+
+  async enqueueWrite(entry: GSMBWriteEntry): Promise<PersistedMemoryEntry> {
+    const task = this.writeQueue.then(async () => this.persist(entry));
+    this.writeQueue = task.then(
+      () => undefined,
+      () => undefined
+    );
+    return task;
+  }
+
+  async flush(): Promise<void> {
+    await this.writeQueue;
+  }
+
+  async read(filter: GSMBReadFilter = {}): Promise<PersistedMemoryEntry[]> {
+    await this.schemaReady;
+
+    const rows = await this.prisma.memoryRecord.findMany({
+      where: {
+        kind: filter.kind,
+        subject: filter.subjectContains ? { contains: filter.subjectContains } : undefined,
+        confidence: filter.minConfidence ? { gte: filter.minConfidence } : undefined,
+      },
+      orderBy: [{ importance: "desc" }, { createdAt: "desc" }],
+      take: filter.limit,
+    });
+
+    const results = rows
+      .map((row) => this.deserializeRow({
+        ...row,
+        kind: row.kind as MemoryKind,
+      }))
+      .filter((entry) => {
+        if (!filter.tags?.length) return true;
+        return filter.tags.every((tag) => entry.tags.includes(tag));
+      });
+
+    if (this.bus) {
+      await this.bus.publish("jennifer.memory.read", {
+        count: results.length,
+        filter: {
+          ...filter,
+        },
+        timestamp: now(),
+      });
+    }
+
+    return results;
+  }
+
+  private async persist(entry: GSMBWriteEntry): Promise<PersistedMemoryEntry> {
+    await this.schemaReady;
+
+    const createdAt = now();
+    const normalized: PersistedMemoryEntry = {
+      ...entry,
+      id: generateId(),
+      confidence: clamp(entry.confidence, 0, 1),
+      importance: clamp(entry.importance, 0, 1),
+      createdAt,
+      accessedAt: createdAt,
+    };
+
+    await this.prisma.memoryRecord.create({
+      data: {
+        id: normalized.id,
+        kind: normalized.kind,
+        subject: normalized.subject,
+        contentJson: JSON.stringify(normalized.content),
+        tagsJson: JSON.stringify(normalized.tags),
+        confidence: normalized.confidence,
+        importance: normalized.importance,
+        provenanceJson: JSON.stringify(normalized.provenance),
+        omegaJson: JSON.stringify(normalized.omegaContext),
+        createdAt: BigInt(normalized.createdAt),
+        accessedAt: BigInt(normalized.accessedAt),
+        expiresAt: normalized.expiresAt != null ? BigInt(normalized.expiresAt) : null,
+      },
+    });
+
+    if (this.bus) {
+      await this.bus.publish("jennifer.memory.write", {
+        memoryId: normalized.id,
+        subject: normalized.subject,
+        provenance: normalized.provenance,
+        timestamp: normalized.createdAt,
+      });
+    }
+
+    return normalized;
+  }
+
+  private deserializeRow(row: {
+    id: string;
+    kind: MemoryKind;
+    subject: string;
+    contentJson: string;
+    tagsJson: string;
+    confidence: number;
+    importance: number;
+    provenanceJson: string;
+    omegaJson: string;
+    createdAt: bigint;
+    accessedAt: bigint;
+    expiresAt: bigint | null;
+  }): PersistedMemoryEntry {
+    return {
+      id: row.id,
+      kind: row.kind,
+      subject: row.subject,
+      content: JSON.parse(row.contentJson),
+      tags: JSON.parse(row.tagsJson) as string[],
+      confidence: row.confidence,
+      importance: row.importance,
+      provenance: JSON.parse(row.provenanceJson) as Record<string, unknown>,
+      omegaContext: JSON.parse(row.omegaJson) as ObjectiveWeightVector,
+      createdAt: Number(row.createdAt),
+      accessedAt: Number(row.accessedAt),
+      expiresAt: row.expiresAt != null ? Number(row.expiresAt) : undefined,
+    };
+  }
+
+  private async ensureSchema(): Promise<void> {
+    await this.prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS MemoryRecord (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        contentJson TEXT NOT NULL,
+        tagsJson TEXT NOT NULL,
+        confidence REAL NOT NULL,
+        importance REAL NOT NULL,
+        provenanceJson TEXT NOT NULL,
+        omegaJson TEXT NOT NULL,
+        createdAt BIGINT NOT NULL,
+        accessedAt BIGINT NOT NULL,
+        expiresAt BIGINT
+      )
+    `;
+
+    await this.prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS TelemetryRecord (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL,
+        source TEXT NOT NULL,
+        payloadJson TEXT NOT NULL,
+        fidelity TEXT NOT NULL,
+        contextMode TEXT NOT NULL,
+        timestamp BIGINT NOT NULL
+      )
+    `;
+
+    await this.prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS WorldStateStub (
+        id TEXT PRIMARY KEY,
+        snapshotJson TEXT NOT NULL,
+        createdAt BIGINT NOT NULL
+      )
+    `;
+  }
+}
+
 export class ContextManager {
   private contextWindow: MemoryEntry[] = [];
   private readonly maxWindowSize: number;
@@ -181,21 +369,16 @@ export class ContextManager {
   }
 }
 
-/**
- * MemoryIndexer maintains tag and kind indexes for fast retrieval.
- */
 export class MemoryIndexer {
   private readonly tagIndex = new Map<string, Set<ID>>();
   private readonly kindIndex = new Map<MemoryKind, Set<ID>>();
 
   index(entry: MemoryEntry): void {
-    // Tag index
     for (const tag of entry.tags) {
       if (!this.tagIndex.has(tag)) this.tagIndex.set(tag, new Set());
       this.tagIndex.get(tag)!.add(entry.id);
     }
 
-    // Kind index
     if (!this.kindIndex.has(entry.kind)) this.kindIndex.set(entry.kind, new Set());
     this.kindIndex.get(entry.kind)!.add(entry.id);
   }

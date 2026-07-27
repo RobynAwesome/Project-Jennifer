@@ -10,6 +10,13 @@ export function telemetryMiddleware(collector: TelemetryCollector) {
       method: req.method,
       path: req.path,
       ip: req.ip,
+    }, {
+      mode: "operational",
+      omega: {
+        personal: 0.33,
+        workEdu: 0.34,
+        relational: 0.33,
+      },
     });
     next();
   };

@@ -1,8 +1,21 @@
 export {
   ValidationPipeline,
+  ValidationFailureError,
   ConfidenceScorer,
   RealityVerifier,
-  requiredFieldRule,
-  minConfidenceRule,
 } from "./validation-engine.js";
-export type { ValidationRule } from "./validation-engine.js";
+
+export type {
+  PolicyDecision,
+  PolicyContext,
+  PolicyResult,
+  ValidationPipelineDependencies,
+  ValidationPipelineOptions,
+  ValidationFailedPayload,
+  ValidationReport,
+  ValidationReportStatus,
+  ValidationStageResult,
+  ConfidenceScoringInput,
+  RealityCheckInput,
+  RealityCheckResult,
+} from "./validation-engine.js";
