@@ -49,7 +49,7 @@ A concept that **cannot survive validation**. FOC occurs when:
    Every PR that modifies or adds architecture content must include:
    - `Declared Source` — where the content originated
    - `Declared By` — who approved the source
-   - `Declaration Date` — ISO date of declaration
+   - `Declaration Date` — ISO 8601 date of declaration (date-only `YYYY-MM-DD` is acceptable)
    - `Validation State` — one of: `Pending`, `Validated`, `UNVERIFIED`
 
 3. **Unverified sections must be marked explicitly.**

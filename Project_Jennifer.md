@@ -158,6 +158,8 @@ Telemetry exists because reality never pauses.
 
 ### Collective Perception Protocol (CCPP)
 
+> **Note:** CCPP (Collective **Perception** Protocol) is distinct from CCP (Conceptual **Convergence** Protocol). CCP is listed as missing architecture pending recovery. CCPP is a verified core engine declared in this canonical source.
+
 Reality is validated collectively across:
 
 - Human perception

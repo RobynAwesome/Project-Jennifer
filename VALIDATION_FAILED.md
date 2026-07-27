@@ -10,7 +10,7 @@ Architectural continuity could not be faithfully reconstructed from the active r
 
 Producing `Project_Jennifer.md` from partial context would fabricate architecture.
 
-According to the project's own governance:
+According to the project's own governance (see [`VALIDATION_POLICY.md`](./VALIDATION_POLICY.md)):
 
 > Never replace missing architecture with generated architecture.
 
