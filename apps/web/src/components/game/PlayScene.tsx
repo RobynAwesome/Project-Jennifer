@@ -56,7 +56,7 @@ export default function PlayScene({
     ArrowRight: false,
   });
 
-  const target = TARGET_POSITIONS[targetIndex] ?? TARGET_POSITIONS[0]!;
+  const target = TARGET_POSITIONS[targetIndex] ?? { x: 260, y: 160 };
   const playerSpeed = qualityMode === "PERFORMANCE" ? 5 : qualityMode === "BALANCED" ? 4 : 3;
   const pulseCount = Math.max(2, effectsLevel * 3);
   const pulseElements = useMemo(
