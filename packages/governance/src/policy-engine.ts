@@ -1,94 +1,104 @@
-import type {
-  Policy,
-  Permission,
-  PolicyEffect,
-  GovernanceDecision,
-  ID,
-} from "@jennifer/shared";
-import { generateId, now } from "@jennifer/shared";
+import type { Permission, PolicyEffect } from "@jennifer/shared";
+
+export type PolicyDecisionStatus = "allow" | "deny" | "defer";
+
+export interface PolicyDecision {
+  id: string;
+  action: string;
+  resource?: string;
+  payload?: Record<string, unknown>;
+}
+
+export interface PolicyContext {
+  actorId?: string;
+  environment?: "production" | "staging" | "development";
+  riskScore?: number;
+  tags?: string[];
+  [key: string]: unknown;
+}
+
+export interface PolicyRule {
+  id: string;
+  name: string;
+  priority: number;
+  evaluate(decision: PolicyDecision, context: PolicyContext): PolicyDecisionStatus | undefined;
+  reason:
+    | string
+    | ((decision: PolicyDecision, context: PolicyContext, result: PolicyDecisionStatus) => string);
+}
+
+export interface PolicyEngineConfig {
+  rules?: PolicyRule[];
+  defaultStatus?: PolicyDecisionStatus;
+}
+
+export interface PolicyResult {
+  status: PolicyDecisionStatus;
+  reasons: string[];
+  matchedRuleIds: string[];
+}
 
 /**
- * Evaluates a set of policies against a request context and returns
- * the governing effect (allow / deny / escalate).
- *
- * Policies are evaluated in priority order (highest first). The first
- * matching policy wins (explicit deny-first variant can be configured
- * via `denyFirst`).
+ * Evaluates typed runtime policy rules from injected config.
+ * No model calls; deterministic and testable.
  */
 export class PolicyEngine {
-  private policies: Map<ID, Policy> = new Map();
+  private rules = new Map<string, PolicyRule>();
+  private readonly defaultStatus: PolicyDecisionStatus;
 
-  constructor(private readonly denyFirst: boolean = false) {}
+  constructor(config: PolicyEngineConfig | boolean = {}) {
+    const normalizedConfig: PolicyEngineConfig =
+      typeof config === "boolean"
+        ? { defaultStatus: config ? "deny" : "defer" }
+        : config;
 
-  registerPolicy(policy: Policy): void {
-    this.policies.set(policy.id, policy);
+    this.defaultStatus = normalizedConfig.defaultStatus ?? "defer";
+
+    for (const rule of normalizedConfig.rules ?? []) {
+      this.rules.set(rule.id, rule);
+    }
   }
 
-  removePolicy(id: ID): boolean {
-    return this.policies.delete(id);
+  registerPolicy(rule: PolicyRule): void {
+    this.rules.set(rule.id, rule);
   }
 
-  getPolicies(): Policy[] {
-    return Array.from(this.policies.values()).sort(
-      (a, b) => b.priority - a.priority
-    );
+  removePolicy(id: string): boolean {
+    return this.rules.delete(id);
   }
 
-  /**
-   * Evaluates all registered policies against the provided context and
-   * returns the first matching governance decision.
-   */
-  evaluate(
-    requestId: ID,
-    context: Record<string, unknown>
-  ): GovernanceDecision {
-    const sorted = this.getPolicies();
+  getPolicies(): PolicyRule[] {
+    return Array.from(this.rules.values()).sort((a, b) => b.priority - a.priority);
+  }
 
-    // If denyFirst, check deny policies before allowing.
-    const ordered = this.denyFirst
-      ? [
-          ...sorted.filter((p) => p.effect === "deny"),
-          ...sorted.filter((p) => p.effect !== "deny"),
-        ]
-      : sorted;
+  evaluate(decision: PolicyDecision, context: PolicyContext): PolicyResult {
+    const reasons: string[] = [];
+    const matchedRuleIds: string[] = [];
 
-    for (const policy of ordered) {
-      if (this.matchesConditions(policy.conditions, context)) {
-        return {
-          id: generateId(),
-          requestId,
-          policyId: policy.id,
-          effect: policy.effect,
-          reasoning: `Policy "${policy.name}" matched with effect "${policy.effect}"`,
-          confidence: 1.0,
-          timestamp: now(),
-        };
-      }
+    for (const rule of this.getPolicies()) {
+      const status = rule.evaluate(decision, context);
+      if (!status) continue;
+
+      matchedRuleIds.push(rule.id);
+      const reason =
+        typeof rule.reason === "function"
+          ? rule.reason(decision, context, status)
+          : rule.reason;
+      reasons.push(reason);
+
+      return {
+        status,
+        reasons,
+        matchedRuleIds,
+      };
     }
 
-    // Default: deny if no policy matches (secure by default)
+    reasons.push(`No policy rule matched. Defaulting to ${this.defaultStatus}`);
     return {
-      id: generateId(),
-      requestId,
-      policyId: "default-deny",
-      effect: "deny",
-      reasoning: "No matching policy found – defaulting to deny",
-      confidence: 1.0,
-      timestamp: now(),
+      status: this.defaultStatus,
+      reasons,
+      matchedRuleIds,
     };
-  }
-
-  /**
-   * Checks whether all conditions are satisfied by the context.
-   * Supports simple key-value equality checks.
-   */
-  private matchesConditions(
-    conditions: Record<string, unknown>,
-    context: Record<string, unknown>
-  ): boolean {
-    return Object.entries(conditions).every(
-      ([key, value]) => context[key] === value
-    );
   }
 }
 
@@ -115,7 +125,6 @@ export class PermissionManager {
     const direct = this.permissions.get(this.key(subject, action, resource));
     if (direct) return direct.effect;
 
-    // Wildcard resource check
     const wildcard = this.permissions.get(this.key(subject, action, "*"));
     if (wildcard) return wildcard.effect;
 
@@ -123,8 +132,6 @@ export class PermissionManager {
   }
 
   listPermissions(subject: string): Permission[] {
-    return Array.from(this.permissions.values()).filter(
-      (p) => p.subject === subject
-    );
+    return Array.from(this.permissions.values()).filter((p) => p.subject === subject);
   }
 }

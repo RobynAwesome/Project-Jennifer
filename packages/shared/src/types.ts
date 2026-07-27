@@ -5,7 +5,7 @@ export type Timestamp = number; // Unix epoch ms
 
 // ─── Governance ──────────────────────────────────────────────────────────────
 
-export type PolicyEffect = "allow" | "deny" | "escalate";
+export type PolicyEffect = "allow" | "deny" | "defer" | "escalate";
 
 export interface Policy {
   id: ID;
@@ -25,23 +25,6 @@ export interface Permission {
   resource: string;
   effect: PolicyEffect;
   metadata: Record<string, unknown>;
-}
-
-export interface SemanticContract {
-  id: ID;
-  name: string;
-  version: string;
-  inputs: ContractField[];
-  outputs: ContractField[];
-  constraints: string[];
-  createdAt: Timestamp;
-}
-
-export interface ContractField {
-  name: string;
-  type: string;
-  required: boolean;
-  description: string;
 }
 
 export interface GovernanceDecision {
@@ -94,6 +77,12 @@ export interface MemoryEntry {
   tags: string[];
   confidence: number;
   importance: number;
+  provenance?: Record<string, unknown>;
+  omegaContext?: {
+    personal: number;
+    workEdu: number;
+    relational: number;
+  };
   createdAt: Timestamp;
   accessedAt: Timestamp;
   expiresAt?: Timestamp;
@@ -111,25 +100,31 @@ export interface MemoryQuery {
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
-export type ValidationStatus = "passed" | "failed" | "warning" | "pending";
+export type ValidationStatus = "PASSED" | "FAILED" | "DEFERRED";
 
 export interface ValidationResult {
   id: ID;
-  ruleId: string;
+  stage: "policy" | "confidence" | "reality";
   status: ValidationStatus;
-  confidence: number;
-  message: string;
+  reasons: string[];
   details: Record<string, unknown>;
   timestamp: Timestamp;
 }
 
 export interface ValidationReport {
   id: ID;
-  requestId: ID;
+  decisionId: ID;
   status: ValidationStatus;
-  results: ValidationResult[];
-  overallConfidence: number;
-  failedAt?: Timestamp;
+  confidenceScore: number;
+  stages: ValidationResult[];
+  failed?: {
+    stage: "policy" | "confidence" | "reality";
+    reasons: string[];
+    policyResult?: Record<string, unknown>;
+    confidenceScore?: number;
+    confidenceThreshold?: number;
+    realityMismatches?: string[];
+  };
   completedAt: Timestamp;
 }
 

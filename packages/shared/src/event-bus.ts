@@ -1,23 +1,52 @@
-import { TelemetryEvent } from "./types.js";
+export type EventMapBase = Record<string, unknown>;
 
 type EventHandler<T = unknown> = (event: T) => void | Promise<void>;
 
-/**
- * Simple in-process event bus for decoupled communication between
- * Jennifer's modules. Production deployments may replace this with
- * a distributed message broker (e.g. Redis Streams, NATS) by
- * swapping the IEventBus implementation injected at composition root.
- */
-export interface IEventBus {
-  publish<T>(topic: string, event: T): Promise<void>;
-  subscribe<T>(topic: string, handler: EventHandler<T>): () => void;
-  unsubscribeAll(topic: string): void;
+export interface JenniferEventMap extends EventMapBase {
+  "jennifer.telemetry": {
+    id: string;
+    kind: string;
+    source: string;
+    payload: Record<string, unknown>;
+    timestamp: number;
+  };
+  "jennifer.validation": {
+    decisionId: string;
+    status: "PASSED" | "FAILED" | "DEFERRED";
+    reasons: string[];
+    timestamp: number;
+  };
+  "jennifer.memory.write": {
+    memoryId: string;
+    subject: string;
+    provenance: Record<string, unknown>;
+    timestamp: number;
+  };
+  "jennifer.memory.read": {
+    count: number;
+    filter: Record<string, unknown>;
+    timestamp: number;
+  };
 }
 
-export class InMemoryEventBus implements IEventBus {
-  private readonly handlers = new Map<string, Set<EventHandler>>();
+/**
+ * Typed in-process event bus for decoupled inter-package communication.
+ */
+export interface IEventBus<TEventMap extends EventMapBase = JenniferEventMap> {
+  publish<TTopic extends keyof TEventMap>(topic: TTopic, event: TEventMap[TTopic]): Promise<void>;
+  subscribe<TTopic extends keyof TEventMap>(
+    topic: TTopic,
+    handler: EventHandler<TEventMap[TTopic]>
+  ): () => void;
+  unsubscribeAll<TTopic extends keyof TEventMap>(topic: TTopic): void;
+}
 
-  async publish<T>(topic: string, event: T): Promise<void> {
+export class InProcessEventBus<TEventMap extends EventMapBase = JenniferEventMap>
+  implements IEventBus<TEventMap>
+{
+  private readonly handlers = new Map<keyof TEventMap, Set<EventHandler>>();
+
+  async publish<TTopic extends keyof TEventMap>(topic: TTopic, event: TEventMap[TTopic]): Promise<void> {
     const topicHandlers = this.handlers.get(topic);
     if (!topicHandlers) return;
 
@@ -31,7 +60,10 @@ export class InMemoryEventBus implements IEventBus {
     await Promise.all(promises);
   }
 
-  subscribe<T>(topic: string, handler: EventHandler<T>): () => void {
+  subscribe<TTopic extends keyof TEventMap>(
+    topic: TTopic,
+    handler: EventHandler<TEventMap[TTopic]>
+  ): () => void {
     if (!this.handlers.has(topic)) {
       this.handlers.set(topic, new Set());
     }
@@ -40,31 +72,16 @@ export class InMemoryEventBus implements IEventBus {
 
     return () => {
       topicHandlers.delete(handler as EventHandler);
+      if (topicHandlers.size === 0) {
+        this.handlers.delete(topic);
+      }
     };
   }
 
-  unsubscribeAll(topic: string): void {
+  unsubscribeAll<TTopic extends keyof TEventMap>(topic: TTopic): void {
     this.handlers.delete(topic);
   }
 }
 
-// ─── Telemetry-aware event bus wrapper ───────────────────────────────────────
-
-export class TelemetryEventBus extends InMemoryEventBus {
-  private readonly telemetryLog: TelemetryEvent[] = [];
-
-  override async publish<T>(topic: string, event: T): Promise<void> {
-    this.telemetryLog.push({
-      id: crypto.randomUUID(),
-      kind: "system.event",
-      source: topic,
-      payload: event as Record<string, unknown>,
-      timestamp: Date.now(),
-    });
-    return super.publish(topic, event);
-  }
-
-  getRecentEvents(limit = 100): TelemetryEvent[] {
-    return this.telemetryLog.slice(-limit);
-  }
-}
+// Backward-compatible alias
+export { InProcessEventBus as InMemoryEventBus };

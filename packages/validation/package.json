@@ -8,6 +8,7 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
+      "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
@@ -15,6 +16,8 @@
     "build": "tsc --project tsconfig.json",
     "dev": "tsc --project tsconfig.json --watch",
     "typecheck": "tsc --noEmit",
+    "test": "pnpm run build && node --test dist/**/*.test.js",
+    "governance-validation": "pnpm run test",
     "clean": "rm -rf dist"
   },
   "dependencies": {

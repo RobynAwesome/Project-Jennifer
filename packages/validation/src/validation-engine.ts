@@ -1,199 +1,272 @@
-import type {
-  ValidationResult,
-  ValidationReport,
-  ValidationStatus,
-  ID,
-} from "@jennifer/shared";
 import { generateId, now, clamp } from "@jennifer/shared";
 
-/**
- * A single validation rule. Rules are pure functions that examine
- * a payload and return a result.
- */
-export interface ValidationRule<T = unknown> {
+export interface PolicyDecision {
   id: string;
-  name: string;
-  description: string;
-  validate(payload: T): Promise<ValidationResult> | ValidationResult;
+  action: string;
+  resource?: string;
+  payload?: Record<string, unknown>;
+}
+
+export interface PolicyContext {
+  actorId?: string;
+  environment?: "production" | "staging" | "development";
+  riskScore?: number;
+  tags?: string[];
+  baseConfidence?: number;
+  [key: string]: unknown;
+}
+
+export interface PolicyResult {
+  status: "allow" | "deny" | "defer";
+  reasons: string[];
+  matchedRuleIds: string[];
+}
+
+export type ValidationReportStatus = "PASSED" | "FAILED" | "DEFERRED";
+
+export interface ValidationFailedPayload {
+  stage: "policy" | "confidence" | "reality";
+  reasons: string[];
+  policyResult?: PolicyResult;
+  confidenceScore?: number;
+  confidenceThreshold?: number;
+  realityMismatches?: string[];
+}
+
+export interface ValidationStageResult {
+  id: string;
+  stage: "policy" | "confidence" | "reality";
+  status: ValidationReportStatus;
+  reasons: string[];
+  details: Record<string, unknown>;
+  timestamp: number;
+}
+
+export interface ValidationReport {
+  id: string;
+  decisionId: string;
+  status: ValidationReportStatus;
+  confidenceScore: number;
+  stages: ValidationStageResult[];
+  failed?: ValidationFailedPayload;
+  completedAt: number;
+}
+
+export interface ConfidenceScoringInput {
+  decision: PolicyDecision;
+  context: PolicyContext;
+  policyResult: PolicyResult;
+}
+
+export interface RealityCheckInput {
+  decision: PolicyDecision;
+  context: PolicyContext;
+  policyResult: PolicyResult;
+  confidenceScore: number;
+}
+
+export interface RealityCheckResult {
+  passed: boolean;
+  reasons: string[];
+  mismatches?: string[];
+}
+
+export interface ValidationPipelineDependencies {
+  policyEngine: {
+    evaluate(decision: PolicyDecision, context: PolicyContext): PolicyResult;
+  };
+  confidenceScorer: {
+    score(input: ConfidenceScoringInput): number;
+  };
+  realityChecker: {
+    crossCheck(input: RealityCheckInput): RealityCheckResult;
+  };
+}
+
+export interface ValidationPipelineOptions {
+  minimumConfidence?: number;
+  throwOnFailed?: boolean;
+}
+
+export class ValidationFailureError extends Error {
+  constructor(public readonly report: ValidationReport) {
+    super("Validation FAILED and downstream action is blocked");
+    this.name = "ValidationFailureError";
+  }
 }
 
 /**
- * Orchestrates a chain of validation rules against an input payload.
- * Rules are executed in registration order. If `failFast` is true the
- * pipeline stops at the first failure.
+ * Governance-first pipeline:
+ * 1) policy check
+ * 2) confidence scoring
+ * 3) reality/telemetry cross-check
  */
-export class ValidationPipeline<T = unknown> {
-  private rules: ValidationRule<T>[] = [];
+export class ValidationPipeline {
+  private readonly minimumConfidence: number;
+  private readonly throwOnFailed: boolean;
 
-  constructor(private readonly failFast: boolean = false) {}
-
-  addRule(rule: ValidationRule<T>): this {
-    this.rules.push(rule);
-    return this;
+  constructor(
+    private readonly dependencies: ValidationPipelineDependencies,
+    options: ValidationPipelineOptions = {}
+  ) {
+    this.minimumConfidence = options.minimumConfidence ?? 0.6;
+    this.throwOnFailed = options.throwOnFailed ?? true;
   }
 
-  removeRule(ruleId: string): this {
-    this.rules = this.rules.filter((r) => r.id !== ruleId);
-    return this;
-  }
+  async run(
+    decision: PolicyDecision,
+    context: PolicyContext,
+    downstreamAction?: () => Promise<void> | void
+  ): Promise<ValidationReport> {
+    const stages: ValidationStageResult[] = [];
 
-  async run(requestId: ID, payload: T): Promise<ValidationReport> {
-    const results: ValidationResult[] = [];
-    let overallStatus: ValidationStatus = "passed";
+    const policyResult = this.dependencies.policyEngine.evaluate(decision, context);
+    const policyStatus: ValidationReportStatus =
+      policyResult.status === "allow"
+        ? "PASSED"
+        : policyResult.status === "defer"
+          ? "DEFERRED"
+          : "FAILED";
 
-    for (const rule of this.rules) {
-      const result = await rule.validate(payload);
-      results.push(result);
+    stages.push({
+      id: generateId(),
+      stage: "policy",
+      status: policyStatus,
+      reasons: policyResult.reasons,
+      details: { matchedRuleIds: policyResult.matchedRuleIds },
+      timestamp: now(),
+    });
 
-      if (result.status === "failed") {
-        overallStatus = "failed";
-        if (this.failFast) break;
-      } else if (result.status === "warning" && overallStatus === "passed") {
-        overallStatus = "warning";
-      }
+    if (policyStatus !== "PASSED") {
+      return this.finalizeBlocked(decision.id, policyStatus, stages, {
+        stage: "policy",
+        reasons: policyResult.reasons,
+        policyResult,
+      });
     }
 
-    const overallConfidence = this.calculateOverallConfidence(results);
+    const confidenceScore = clamp(
+      this.dependencies.confidenceScorer.score({ decision, context, policyResult }),
+      0,
+      1
+    );
+
+    const confidencePassed = confidenceScore >= this.minimumConfidence;
+    stages.push({
+      id: generateId(),
+      stage: "confidence",
+      status: confidencePassed ? "PASSED" : "FAILED",
+      reasons: confidencePassed
+        ? [`Confidence score ${confidenceScore} meets threshold ${this.minimumConfidence}`]
+        : [`Confidence score ${confidenceScore} is below threshold ${this.minimumConfidence}`],
+      details: {
+        confidenceScore,
+        minimumConfidence: this.minimumConfidence,
+      },
+      timestamp: now(),
+    });
+
+    if (!confidencePassed) {
+      return this.finalizeBlocked(decision.id, "FAILED", stages, {
+        stage: "confidence",
+        reasons: ["Confidence threshold not met"],
+        policyResult,
+        confidenceScore,
+        confidenceThreshold: this.minimumConfidence,
+      });
+    }
+
+    const realityCheck = this.dependencies.realityChecker.crossCheck({
+      decision,
+      context,
+      policyResult,
+      confidenceScore,
+    });
+
+    stages.push({
+      id: generateId(),
+      stage: "reality",
+      status: realityCheck.passed ? "PASSED" : "FAILED",
+      reasons: realityCheck.reasons,
+      details: {
+        mismatches: realityCheck.mismatches ?? [],
+      },
+      timestamp: now(),
+    });
+
+    if (!realityCheck.passed) {
+      return this.finalizeBlocked(decision.id, "FAILED", stages, {
+        stage: "reality",
+        reasons: realityCheck.reasons,
+        policyResult,
+        confidenceScore,
+        realityMismatches: realityCheck.mismatches ?? [],
+      });
+    }
+
+    if (downstreamAction) {
+      await downstreamAction();
+    }
 
     return {
       id: generateId(),
-      requestId,
-      status: overallStatus,
-      results,
-      overallConfidence,
-      failedAt: overallStatus === "failed" ? now() : undefined,
+      decisionId: decision.id,
+      status: "PASSED",
+      confidenceScore,
+      stages,
       completedAt: now(),
     };
   }
 
-  private calculateOverallConfidence(results: ValidationResult[]): number {
-    if (results.length === 0) return 1.0;
+  private finalizeBlocked(
+    decisionId: string,
+    status: Extract<ValidationReportStatus, "FAILED" | "DEFERRED">,
+    stages: ValidationStageResult[],
+    failed: ValidationFailedPayload
+  ): ValidationReport {
+    const report: ValidationReport = {
+      id: generateId(),
+      decisionId,
+      status,
+      confidenceScore: 0,
+      stages,
+      failed,
+      completedAt: now(),
+    };
 
-    const avg =
-      results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
-    return clamp(avg, 0, 1);
-  }
-
-  getRules(): ValidationRule<T>[] {
-    return [...this.rules];
-  }
-}
-
-/**
- * Scores the confidence of an AI-generated output based on multiple
- * signals: validation results, governance decisions, memory consistency.
- */
-export class ConfidenceScorer {
-  /**
-   * Aggregates weighted confidence signals into a single score.
-   *
-   * @param signals - Array of [score, weight] tuples (score 0-1, weight relative)
-   */
-  aggregate(signals: Array<[score: number, weight: number]>): number {
-    if (signals.length === 0) return 0;
-
-    const totalWeight = signals.reduce((sum, [, w]) => sum + w, 0);
-    if (totalWeight === 0) return 0;
-
-    const weighted = signals.reduce(
-      (sum, [score, weight]) => sum + clamp(score, 0, 1) * weight,
-      0
-    );
-
-    return clamp(weighted / totalWeight, 0, 1);
-  }
-
-  /**
-   * Computes a penalized confidence given base score and failure count.
-   */
-  penalize(baseScore: number, failureCount: number, penaltyPerFailure = 0.15): number {
-    return clamp(baseScore - failureCount * penaltyPerFailure, 0, 1);
-  }
-}
-
-/**
- * Verifies that an output is grounded in reality by comparing it
- * against known memory entries and telemetry signals. Returns a
- * reality score between 0 and 1.
- */
-export class RealityVerifier {
-  /**
-   * Checks that all claimed facts exist in the provided evidence set.
-   */
-  verifyClaims(
-    claims: string[],
-    evidence: string[]
-  ): { score: number; unverifiedClaims: string[] } {
-    if (claims.length === 0) return { score: 1.0, unverifiedClaims: [] };
-
-    const evidenceSet = new Set(evidence.map((e) => e.toLowerCase().trim()));
-    const unverified = claims.filter(
-      (c) => !evidenceSet.has(c.toLowerCase().trim())
-    );
-
-    const score = (claims.length - unverified.length) / claims.length;
-    return { score: clamp(score, 0, 1), unverifiedClaims: unverified };
-  }
-
-  /**
-   * Checks temporal consistency – whether timestamps are in valid order.
-   */
-  verifyTemporalConsistency(timestamps: number[]): boolean {
-    for (let i = 1; i < timestamps.length; i++) {
-      if ((timestamps[i] ?? 0) < (timestamps[i - 1] ?? 0)) return false;
+    if (status === "FAILED" && this.throwOnFailed) {
+      throw new ValidationFailureError(report);
     }
-    return true;
+
+    return report;
   }
 }
 
-// ─── Built-in validation rules ────────────────────────────────────────────────
-
-/**
- * Ensures a required field exists in the payload.
- */
-export function requiredFieldRule(fieldName: string): ValidationRule<Record<string, unknown>> {
-  return {
-    id: `required:${fieldName}`,
-    name: `Required: ${fieldName}`,
-    description: `Ensures the field "${fieldName}" is present and non-null`,
-    validate(payload) {
-      const present = fieldName in payload && payload[fieldName] != null;
-      return {
-        id: generateId(),
-        ruleId: `required:${fieldName}`,
-        status: present ? "passed" : "failed",
-        confidence: present ? 1.0 : 0.0,
-        message: present
-          ? `Field "${fieldName}" is present`
-          : `Required field "${fieldName}" is missing or null`,
-        details: { fieldName, value: payload[fieldName] },
-        timestamp: now(),
-      };
-    },
-  };
+export class ConfidenceScorer {
+  score(input: ConfidenceScoringInput): number {
+    const base = Number(input.context.baseConfidence ?? 0.5);
+    const riskPenalty = clamp(Number(input.context.riskScore ?? 0) * 0.5, 0, 0.5);
+    return clamp(base - riskPenalty, 0, 1);
+  }
 }
 
-/**
- * Ensures a confidence score meets the minimum threshold.
- */
-export function minConfidenceRule(threshold: number): ValidationRule<{ confidence: number }> {
-  return {
-    id: `min-confidence:${threshold}`,
-    name: `Minimum confidence: ${threshold}`,
-    description: `Ensures confidence ≥ ${threshold}`,
-    validate(payload) {
-      const passes = payload.confidence >= threshold;
+export class RealityVerifier {
+  crossCheck(input: RealityCheckInput): RealityCheckResult {
+    const observedTags = new Set((input.context.tags as string[] | undefined) ?? []);
+    const requiredTags = (input.decision.payload?.requiredRealityTags as string[] | undefined) ?? [];
+    const mismatches = requiredTags.filter((tag) => !observedTags.has(tag));
+
+    if (mismatches.length > 0) {
       return {
-        id: generateId(),
-        ruleId: `min-confidence:${threshold}`,
-        status: passes ? "passed" : "failed",
-        confidence: clamp(payload.confidence / threshold, 0, 1),
-        message: passes
-          ? `Confidence ${payload.confidence} meets threshold ${threshold}`
-          : `Confidence ${payload.confidence} is below threshold ${threshold}`,
-        details: { threshold, actual: payload.confidence },
-        timestamp: now(),
+        passed: false,
+        reasons: ["Reality check failed: required telemetry tags were not observed"],
+        mismatches,
       };
-    },
-  };
+    }
+
+    return {
+      passed: true,
+      reasons: ["Reality check passed"],
+    };
+  }
 }

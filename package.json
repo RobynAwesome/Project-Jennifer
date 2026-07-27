@@ -13,6 +13,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
+    "governance-validation": "turbo run governance-validation",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
