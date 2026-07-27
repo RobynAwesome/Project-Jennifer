@@ -129,6 +129,8 @@ export default function PlayScene({
   }, [playerSpeed, pressedKeys]);
 
   useEffect(() => {
+    // Intentional simplified proximity collision for sprint scope:
+    // keeps interaction deterministic for demo recording across devices.
     const collisionX = Math.abs(player.x - target.x) < (PLAYER_SIZE + TARGET_SIZE) / 2;
     const collisionY = Math.abs(player.y - target.y) < (PLAYER_SIZE + TARGET_SIZE) / 2;
     if (!collisionX || !collisionY) {

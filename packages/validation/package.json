@@ -16,7 +16,7 @@
     "build": "tsc --project tsconfig.json",
     "dev": "tsc --project tsconfig.json --watch",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm run build && node --test dist/*.test.js",
+    "test": "pnpm run build && node --test $(find dist -type f -name '*.test.js')",
     "governance-validation": "pnpm run test",
     "clean": "rm -rf dist"
   },
