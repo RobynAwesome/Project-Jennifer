@@ -12,8 +12,11 @@
     "clean": "rm -rf .next out"
   },
   "dependencies": {
+    "@jennifer/governance": "workspace:^",
     "@jennifer/shared": "workspace:*",
+    "@jennifer/validation": "workspace:^",
     "next": "^14.2.5",
+    "phaser": "3.88.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
