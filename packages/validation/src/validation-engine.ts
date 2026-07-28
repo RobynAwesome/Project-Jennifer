@@ -50,6 +50,11 @@ export interface ValidationReport {
   stages: ValidationStageResult[];
   failed?: ValidationFailedPayload;
   completedAt: number;
+  /** Authority receipt metadata — populated when an AuthorityRuntime is integrated. */
+  authorizedRole?: string;
+  authorityLevel?: string;
+  permissionGranted?: boolean;
+  permissionSource?: string;
 }
 
 export interface ConfidenceScoringInput {
