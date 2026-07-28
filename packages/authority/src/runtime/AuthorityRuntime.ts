@@ -107,13 +107,21 @@ export class AuthorityRuntime {
   ): AuthorityDecision {
     const contract = this.getContract(participantId);
     if (!contract) {
-      return this.gate.evaluate({
-        participantId,
-        // Provide a sentinel value — AuthorityGate will reject it since it is
-        // not a registered role.
-        roleId: "GovernanceArchitect",
-        permission,
-      });
+      return {
+        authorized: false,
+        request: {
+          participantId,
+          roleId: "GovernanceArchitect", // role is irrelevant — contract absence is the rejection reason
+          permission,
+        },
+        permissionCheck: {
+          granted: false,
+          permission,
+          roleId: "GovernanceArchitect",
+          reason: `Participant "${participantId}" has no active semantic contract. Authority denied.`,
+        },
+        decidedAt: Date.now(),
+      };
     }
 
     const request: AuthorityRequest = {
