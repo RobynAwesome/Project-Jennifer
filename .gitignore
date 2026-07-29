@@ -51,3 +51,7 @@ prisma/migrations/dev.db
 
 # OS files
 Thumbs.db
+
+# Python
+__pycache__/
+*.pyc

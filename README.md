@@ -39,6 +39,8 @@ Project-Jennifer/
 │   ├── npc/               # Autonomous NPC runtime
 │   └── runtime/           # Jennifer runtime, personas, world state
 │
+├── project_jennifer/ # Python redesign scaffold for Free Mode + supporting frameworks
+│
 └── docs/
     ├── architecture/  # System architecture & module map
     ├── research/      # Research areas and open questions
@@ -170,6 +172,14 @@ pnpm typecheck
 | [`docs/architecture/README.md`](docs/architecture/README.md) | System design, module map, data flows |
 | [`docs/research/README.md`](docs/research/README.md) | Research areas, open questions, PoC/FoC methodology |
 | [`docs/protocols/README.md`](docs/protocols/README.md) | Runtime interaction protocols |
+| [`docs/architecture-v2.md`](docs/architecture-v2.md) | RFC for the Free Mode multi-framework redesign foundation |
+| [`docs/adoption-and-migration.md`](docs/adoption-and-migration.md) | What to adopt from external frameworks and what stays Jennifer-specific |
+| [`docs/roadmap-milestones.md`](docs/roadmap-milestones.md) | Starter checklist for the next implementation milestones |
+
+
+## Redesign Foundation
+
+An additive Python scaffold now lives in [`project_jennifer/`](project_jennifer) to define clean boundaries for the planned **Free Mode** engine plus supporting **validation**, **evaluation**, **simulation**, and **telemetry** frameworks. Start with the RFC and migration guide before adding implementation depth.
 
 ---
 
