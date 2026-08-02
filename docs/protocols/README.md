@@ -1,5 +1,13 @@
 # Protocols – Project Jennifer
 
+## Protocol Index
+
+| Protocol | Description |
+|----------|-------------|
+| [`poc-foc-feedback-loops.md`](poc-foc-feedback-loops.md) | `#PP1` POC-vs-FOC feedback loops, AI Identic Flow, Bracket Protocol, MLVP, Governance System Membranes, fabrication nesting tiers, and consequence governance |
+
+---
+
 ## Governance Protocol
 
 All requests to the Jennifer runtime MUST pass through the Governance Engine before the LLM reasoning call is initiated.
