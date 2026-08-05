@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { StartMenuScene } from "./scenes/StartMenuScene";
 import { PersonaSelectScene } from "./scenes/PersonaSelectScene";
+import { CompanionSelectScene } from "./scenes/CompanionSelectScene";
 import { GovernanceHallScene } from "./scenes/GovernanceHallScene";
 import { MemoryDistrictScene } from "./scenes/MemoryDistrictScene";
 import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
@@ -11,8 +12,6 @@ import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
  *
  * Only called client-side (inside a useEffect) so Phaser never runs during
  * Next.js server-side rendering.
- *
- * @param parentId  ID of the DOM element that Phaser should mount its canvas into.
  */
 export function createJenniferGame(parentId: string): Phaser.Game {
   return new Phaser.Game({
@@ -38,6 +37,7 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       BootScene,
       StartMenuScene,
       PersonaSelectScene,
+      CompanionSelectScene,
       GovernanceHallScene,
       MemoryDistrictScene,
       ValidationDemoScene,

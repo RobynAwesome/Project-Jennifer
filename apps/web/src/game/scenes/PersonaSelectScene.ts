@@ -1,14 +1,12 @@
 import Phaser from "phaser";
-import { SCENE_KEYS, SceneManager } from "../SceneManager";
-import { REGISTRY_KEYS, PERSONA_CONFIGS, type GamePersona } from "../registry";
-import { PALETTE } from "../AssetManifest";
 import { generateId } from "@jennifer/shared";
+import { PALETTE } from "../AssetManifest";
+import { PERSONA_CONFIGS, REGISTRY_KEYS, type GamePersona } from "../registry";
+import { SCENE_KEYS, SceneManager } from "../SceneManager";
 
 /**
- * PersonaSelectScene – choose which persona to play as.
- *
- * The selected persona is written into the global game registry so all
- * subsequent scenes can read it without passing it through scene data.
+ * Selects the player's operating persona. Companion selection happens in the
+ * following scene so persona and companion remain separate governance layers.
  */
 export class PersonaSelectScene extends Phaser.Scene {
   private sceneManager!: SceneManager;
@@ -19,40 +17,28 @@ export class PersonaSelectScene extends Phaser.Scene {
 
   create(): void {
     this.sceneManager = new SceneManager(this);
-
     const { width, height } = this.scale;
-    const cx = width / 2;
 
     this.drawBackground(width, height);
-    this.buildUI(cx, width, height);
+    this.buildHeader(width);
+    this.buildCards(width, height);
+    this.buildBackLink(width, height);
     this.cameras.main.fadeIn(400, 0, 0, 0);
   }
 
-  // ─── Private helpers ──────────────────────────────────────────────────────
+  private drawBackground(width: number, height: number): void {
+    this.add.rectangle(width / 2, height / 2, width, height, PALETTE.DARK);
 
-  private drawBackground(w: number, h: number): void {
-    this.add.rectangle(w / 2, h / 2, w, h, PALETTE.DARK);
-
-    const g = this.add.graphics();
-    g.lineStyle(1, PALETTE.PRIMARY, 0.05);
-    for (let x = 0; x <= w; x += 40) {
-      g.beginPath();
-      g.moveTo(x, 0);
-      g.lineTo(x, h);
-      g.strokePath();
-    }
-    for (let y = 0; y <= h; y += 40) {
-      g.beginPath();
-      g.moveTo(0, y);
-      g.lineTo(w, y);
-      g.strokePath();
-    }
+    const grid = this.add.graphics();
+    grid.lineStyle(1, PALETTE.PRIMARY, 0.05);
+    for (let x = 0; x <= width; x += 40) grid.lineBetween(x, 0, x, height);
+    for (let y = 0; y <= height; y += 40) grid.lineBetween(0, y, width, y);
   }
 
-  private buildUI(cx: number, w: number, h: number): void {
-    // Header
+  private buildHeader(width: number): void {
+    const cx = width / 2;
     this.add
-      .text(cx, 60, "Choose Your Persona", {
+      .text(cx, 58, "CHOOSE YOUR PERSONA", {
         fontSize: "22px",
         color: "#ffffff",
         fontFamily: '"Courier New", monospace',
@@ -61,72 +47,57 @@ export class PersonaSelectScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(cx, 92, "Your persona determines your approach to governance.", {
-        fontSize: "10px",
-        color: "#6b7280",
-        fontFamily: '"Courier New", monospace',
-      })
+      .text(
+        cx,
+        90,
+        "Persona controls your approach. Companion logic is selected next.",
+        {
+          fontSize: "10px",
+          color: "#6b7280",
+          fontFamily: '"Courier New", monospace',
+        }
+      )
       .setOrigin(0.5);
-
-    // Persona cards
-    const cardW = 195;
-    const cardH = 220;
-    const gap = 20;
-    const totalW = PERSONA_CONFIGS.length * cardW + (PERSONA_CONFIGS.length - 1) * gap;
-    const startX = cx - totalW / 2 + cardW / 2;
-    const cardY = h / 2 + 10;
-
-    PERSONA_CONFIGS.forEach((persona, idx) => {
-      const x = startX + idx * (cardW + gap);
-      this.buildPersonaCard(x, cardY, cardW, cardH, persona);
-    });
-
-    // Back hint
-    this.add
-      .text(cx, h - 24, "↩ Back to Menu", {
-        fontSize: "10px",
-        color: "#374151",
-        fontFamily: '"Courier New", monospace',
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .on("pointerover", function (this: Phaser.GameObjects.Text) {
-        this.setStyle({ color: "#6b7280" });
-      })
-      .on("pointerout", function (this: Phaser.GameObjects.Text) {
-        this.setStyle({ color: "#374151" });
-      })
-      .on("pointerdown", () => {
-        this.cameras.main.fadeOut(250, 0, 0, 0);
-        this.cameras.main.once("camerafadeoutcomplete", () => {
-          this.sceneManager.goTo(SCENE_KEYS.START_MENU);
-        });
-      });
   }
 
-  private buildPersonaCard(
+  private buildCards(width: number, height: number): void {
+    const cardWidth = 195;
+    const cardHeight = 220;
+    const gap = 20;
+    const totalWidth =
+      PERSONA_CONFIGS.length * cardWidth +
+      (PERSONA_CONFIGS.length - 1) * gap;
+    const startX = width / 2 - totalWidth / 2 + cardWidth / 2;
+    const y = height / 2 + 10;
+
+    PERSONA_CONFIGS.forEach((persona, index) => {
+      this.buildCard(
+        startX + index * (cardWidth + gap),
+        y,
+        cardWidth,
+        cardHeight,
+        persona
+      );
+    });
+  }
+
+  private buildCard(
     x: number,
     y: number,
-    w: number,
-    h: number,
+    width: number,
+    height: number,
     persona: (typeof PERSONA_CONFIGS)[number]
   ): void {
-    // Card background
-    const cardBg = this.add
-      .rectangle(x, y, w, h, PALETTE.SURFACE)
-      .setStrokeStyle(1, PALETTE.BORDER);
+    const card = this.add
+      .rectangle(x, y, width, height, PALETTE.SURFACE)
+      .setStrokeStyle(1, PALETTE.BORDER)
+      .setInteractive({ useHandCursor: true });
 
-    // Hover highlight border (starts transparent)
-    const hoverBorder = this.add
-      .rectangle(x, y, w + 4, h + 4, 0x000000, 0)
+    const border = this.add
+      .rectangle(x, y, width + 4, height + 4, 0x000000, 0)
       .setStrokeStyle(2, persona.color, 0);
 
-    // Emoji
-    this.add
-      .text(x, y - 72, persona.emoji, { fontSize: "36px" })
-      .setOrigin(0.5);
-
-    // Name
+    this.add.text(x, y - 72, persona.emoji, { fontSize: "36px" }).setOrigin(0.5);
     this.add
       .text(x, y - 28, persona.displayName, {
         fontSize: "14px",
@@ -135,19 +106,15 @@ export class PersonaSelectScene extends Phaser.Scene {
         fontStyle: "bold",
       })
       .setOrigin(0.5);
-
-    // Description
     this.add
       .text(x, y + 6, persona.description, {
         fontSize: "10px",
         color: "#9ca3af",
         fontFamily: '"Courier New", monospace',
-        wordWrap: { width: w - 20 },
+        wordWrap: { width: width - 20 },
         align: "center",
       })
       .setOrigin(0.5);
-
-    // Confidence bonus
     this.add
       .text(
         x,
@@ -161,8 +128,7 @@ export class PersonaSelectScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
-    // Select button
-    const selectBtn = this.add
+    const select = this.add
       .text(x, y + 82, "SELECT", {
         fontSize: "12px",
         color: "#ffffff",
@@ -174,37 +140,44 @@ export class PersonaSelectScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 
-    // Hover effects
-    const colorHex = `#${persona.color.toString(16).padStart(6, "0")}`;
+    const accent = `#${persona.color.toString(16).padStart(6, "0")}`;
+    const focus = (active: boolean) => {
+      border.setStrokeStyle(2, persona.color, active ? 1 : 0);
+      select.setStyle({ color: active ? accent : "#ffffff" });
+    };
 
-    cardBg.setInteractive();
-    cardBg.on("pointerover", () => {
-      hoverBorder.setStrokeStyle(2, persona.color, 1);
-      selectBtn.setStyle({ color: colorHex });
-    });
-    cardBg.on("pointerout", () => {
-      hoverBorder.setStrokeStyle(2, persona.color, 0);
-      selectBtn.setStyle({ color: "#ffffff" });
-    });
+    card.on("pointerover", () => focus(true));
+    card.on("pointerout", () => focus(false));
+    select.on("pointerover", () => focus(true));
+    select.on("pointerout", () => focus(false));
 
-    selectBtn.on("pointerover", () => {
-      hoverBorder.setStrokeStyle(2, persona.color, 1);
-      selectBtn.setStyle({ color: colorHex });
-    });
-    selectBtn.on("pointerout", () => {
-      hoverBorder.setStrokeStyle(2, persona.color, 0);
-      selectBtn.setStyle({ color: "#ffffff" });
-    });
+    const choose = () => this.selectPersona(persona.id);
+    card.on("pointerdown", choose);
+    select.on("pointerdown", choose);
+  }
 
-    const onSelect = () => this.selectPersona(persona.id);
-    cardBg.on("pointerdown", onSelect);
-    selectBtn.on("pointerdown", onSelect);
+  private buildBackLink(width: number, height: number): void {
+    this.add
+      .text(width / 2, height - 24, "↩ Back to Menu", {
+        fontSize: "10px",
+        color: "#374151",
+        fontFamily: '"Courier New", monospace',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerover", function (this: Phaser.GameObjects.Text) {
+        this.setStyle({ color: "#6b7280" });
+      })
+      .on("pointerout", function (this: Phaser.GameObjects.Text) {
+        this.setStyle({ color: "#374151" });
+      })
+      .on("pointerdown", () => this.sceneManager.goTo(SCENE_KEYS.START_MENU));
   }
 
   private selectPersona(id: GamePersona): void {
-    const config = PERSONA_CONFIGS.find((p) => p.id === id)!;
+    const config = PERSONA_CONFIGS.find((persona) => persona.id === id);
+    if (!config) return;
 
-    // Write into global registry
     this.registry.set(REGISTRY_KEYS.PERSONA, id);
     this.registry.set(REGISTRY_KEYS.PLAYER_NAME, config.displayName);
     this.registry.set(REGISTRY_KEYS.SESSION_ID, generateId());
@@ -213,7 +186,7 @@ export class PersonaSelectScene extends Phaser.Scene {
 
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      this.sceneManager.goTo(SCENE_KEYS.GOVERNANCE_HALL);
+      this.sceneManager.goTo(SCENE_KEYS.COMPANION_SELECT);
     });
   }
 }
