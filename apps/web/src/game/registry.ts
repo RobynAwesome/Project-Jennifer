@@ -12,6 +12,18 @@ export const REGISTRY_KEYS = {
   PLAYER_NAME: "jennifer.game.playerName",
   /** Unique session id for this play-through */
   SESSION_ID: "jennifer.game.sessionId",
+  /** Governed companion selected during CompanionSelectScene */
+  COMPANION_ID: "jennifer.game.companionId",
+  /** Companion display name */
+  COMPANION_NAME: "jennifer.game.companionName",
+  /** Companion base logic: memory, intuition or context */
+  COMPANION_LOGIC: "jennifer.game.companionLogic",
+  /** Active relationship lane for the selected companion */
+  COMPANION_LANE: "jennifer.game.companionLane",
+  /** Whether the companion is rendered as core logic or embodied form */
+  COMPANION_RENDER_MODE: "jennifer.game.companionRenderMode",
+  /** Last governed companion selection receipt serialised as JSON */
+  LAST_COMPANION_RECEIPT: "jennifer.game.lastCompanionReceipt",
   /** Last ValidationReport serialised as JSON – written by ValidationDemoScene */
   LAST_VALIDATION_REPORT: "jennifer.game.lastValidationReport",
   /** Whether the player has completed the validation mission */
@@ -51,7 +63,7 @@ export const PERSONA_CONFIGS: PersonaConfig[] = [
     description: "Analytical & precise. Every claim must survive validation.",
     color: 0x6366f1,
     emoji: "🔭",
-    confidenceBonus: 0.10,
+    confidenceBonus: 0.1,
   },
   {
     id: "guide",
