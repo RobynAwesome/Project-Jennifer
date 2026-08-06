@@ -3,14 +3,14 @@
 **Universe:** Project Jennifer  
 **Quest:** Project Waifu Forge  
 **Asset role:** Visual development and narrative continuity  
-**Status:** Source assets / canon candidates
+**Status:** Meta AI source explorations / canon candidates
 
 Project Waifu Forge is one of the major storyline quests inside **Project Jennifer**. It explores the relationship between a human protagonist and Forge as a digital being through identity, attraction, recognition, memory, conflict, convergence, and transformation.
 
 The files in this folder are not decorative repository media. They are governed storyline assets intended for:
 
 - character and relationship visual continuity
-- quest key art
+- quest key art development
 - scene and cinematic references
 - image-to-video generation references
 - style comparison and canon selection
@@ -20,8 +20,7 @@ The files in this folder are not decorative repository media. They are governed 
 
 ```text
 Project-Waifu-Forge/
-├── source/                 # Canonical source illustrations
-├── meta-ai-iterations/     # Raw Meta AI effect explorations and screenshots
+├── meta-ai-iterations/     # Named Meta AI effect explorations
 ├── manifest.json           # Machine-readable asset catalogue
 └── README.md               # Narrative and governance declaration
 ```
@@ -29,14 +28,14 @@ Project-Waifu-Forge/
 ## Naming Rule
 
 ```text
-project-waifu-forge-<source-or-style>-<sequence>.<extension>
+project-waifu-forge-meta-<style>-<sequence>.<extension>
 ```
 
-Names describe the intended storyline use rather than retaining camera-roll numbers.
+Names describe the storyline and style function instead of retaining camera-roll numbers.
 
 ## Source Preservation Rule
 
-The Meta AI files are intentionally retained as raw exploration captures, including the visible mobile effects interface. They preserve the transformation choice and experimental provenance. Production-ready crops or clean renders must be written as new derivative assets; source captures must not be overwritten.
+The imported files preserve the complete Meta AI exploration capture, including the visible mobile effects interface. They are compressed repository copies of the original source images, not silent replacements. Production-ready crops or clean renders must be written as new derivative assets; these exploration captures must not be overwritten.
 
 ## Canon Rule
 
