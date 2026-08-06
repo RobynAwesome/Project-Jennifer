@@ -16,7 +16,6 @@ import {
   type RelationshipParticipant,
   type RelationshipQuestDecision,
   type RelationshipSnapshot,
-  type RelationshipStateTransition,
 } from "@jennifer/shared";
 
 export interface RelationshipCommandResult {
@@ -31,7 +30,6 @@ interface AuthorityCommit {
   participants?: RelationshipParticipant[];
   boundaries?: RelationshipBoundary[];
   event: RelationshipEvent;
-  transition?: RelationshipStateTransition;
   receipt: GovernedRelationshipReceipt;
   decision?: RelationshipQuestDecision;
   outbox: RelationshipOutboxEvent;
@@ -60,8 +58,8 @@ export interface IRelationshipProjectionStore {
 }
 
 /**
- * Testable authority adapter mirroring the PostgreSQL transaction boundary.
- * Production adapters must preserve the same atomic commit contract.
+ * In-memory authority adapter used for deterministic POC validation.
+ * A PostgreSQL adapter must implement the same atomic commit boundary.
  */
 export class InMemoryRelationshipAuthorityStore
   implements IRelationshipAuthorityStore
@@ -88,21 +86,21 @@ export class InMemoryRelationshipAuthorityStore
     if (input.participants) {
       this.participants.set(
         input.relationship.id,
-        input.participants.map((participant) => clone(participant))
+        input.participants.map(clone)
       );
     }
 
     if (input.boundaries) {
       this.boundaries.set(
         input.relationship.id,
-        input.boundaries.map((boundary) => clone(boundary))
+        input.boundaries.map(clone)
       );
     }
 
-    appendToMap(this.events, input.relationship.id, clone(input.event));
-    appendToMap(this.receipts, input.relationship.id, clone(input.receipt));
+    append(this.events, input.relationship.id, clone(input.event));
+    append(this.receipts, input.relationship.id, clone(input.receipt));
     if (input.decision) {
-      appendToMap(this.decisions, input.relationship.id, clone(input.decision));
+      append(this.decisions, input.relationship.id, clone(input.decision));
     }
 
     this.eventByIdempotencyKey.set(
@@ -118,27 +116,19 @@ export class InMemoryRelationshipAuthorityStore
     const relationship = this.relationships.get(relationshipId);
     if (!relationship) return undefined;
 
-    const participantRows = this.participants.get(relationshipId) ?? [];
-    const actorRows = participantRows
+    const participants = this.participants.get(relationshipId) ?? [];
+    const actors = participants
       .map((participant) => this.actors.get(participant.actorId))
       .filter((actor): actor is RelationshipActor => actor !== undefined);
 
     return {
       relationship: clone(relationship),
-      actors: actorRows.map((actor) => clone(actor)),
-      participants: participantRows.map((participant) => clone(participant)),
-      boundaries: (this.boundaries.get(relationshipId) ?? []).map((boundary) =>
-        clone(boundary)
-      ),
-      events: (this.events.get(relationshipId) ?? []).map((event) =>
-        clone(event)
-      ),
-      receipts: (this.receipts.get(relationshipId) ?? []).map((receipt) =>
-        clone(receipt)
-      ),
-      decisions: (this.decisions.get(relationshipId) ?? []).map((decision) =>
-        clone(decision)
-      ),
+      actors: actors.map(clone),
+      participants: participants.map(clone),
+      boundaries: (this.boundaries.get(relationshipId) ?? []).map(clone),
+      events: (this.events.get(relationshipId) ?? []).map(clone),
+      receipts: (this.receipts.get(relationshipId) ?? []).map(clone),
+      decisions: (this.decisions.get(relationshipId) ?? []).map(clone),
     };
   }
 
@@ -164,13 +154,12 @@ export class InMemoryRelationshipAuthorityStore
       .filter((event) => event.publishedAt === undefined)
       .sort((a, b) => a.createdAt - b.createdAt)
       .slice(0, limit)
-      .map((event) => clone(event));
+      .map(clone);
   }
 
   async markOutboxPublished(outboxId: ID): Promise<void> {
     const event = this.outbox.get(outboxId);
-    if (!event) return;
-    this.outbox.set(outboxId, { ...event, publishedAt: now() });
+    if (event) this.outbox.set(outboxId, { ...event, publishedAt: now() });
   }
 
   async markOutboxFailed(outboxId: ID, error: string): Promise<void> {
@@ -184,9 +173,7 @@ export class InMemoryRelationshipAuthorityStore
   }
 }
 
-/**
- * Rebuildable MongoDB-shaped projection adapter used by the POC and tests.
- */
+/** MongoDB-shaped, rebuildable adaptive projection used by the POC. */
 export class InMemoryRelationshipProjectionStore
   implements IRelationshipProjectionStore
 {
@@ -197,19 +184,15 @@ export class InMemoryRelationshipProjectionStore
     eventId: ID
   ): Promise<RelationshipContextProjection> {
     const previous = this.projections.get(snapshot.relationship.id);
-    const activeBoundaries = snapshot.boundaries.filter(
-      (boundary) => boundary.status === "active"
-    );
-    const recentEvents = snapshot.events.slice(-20);
     const projection: RelationshipContextProjection = {
       relationshipId: snapshot.relationship.id,
       activeLane: snapshot.relationship.activeLane,
       status: snapshot.relationship.status,
-      participants: snapshot.participants.map((participant) =>
-        clone(participant)
-      ),
-      activeBoundaries: activeBoundaries.map((boundary) => clone(boundary)),
-      recentEvents: recentEvents.map((event) => clone(event)),
+      participants: snapshot.participants.map(clone),
+      activeBoundaries: snapshot.boundaries
+        .filter((boundary) => boundary.status === "active")
+        .map(clone),
+      recentEvents: snapshot.events.slice(-20).map(clone),
       currentSummary: buildProjectionSummary(snapshot),
       lastAuthoritativeEventId: eventId,
       projectionVersion: (previous?.projectionVersion ?? 0) + 1,
@@ -228,9 +211,9 @@ export class InMemoryRelationshipProjectionStore
 }
 
 /**
- * RelationshipEngine applies governance before authority writes, records a
- * validation receipt in the same transaction boundary, then projects the
- * authoritative event into the MongoDB-shaped adaptive context store.
+ * Applies relationship governance, commits the authoritative event + receipt,
+ * then projects the event into MongoDB-shaped adaptive context through an
+ * idempotent transactional-outbox boundary.
  */
 export class RelationshipEngine {
   constructor(
@@ -243,8 +226,8 @@ export class RelationshipEngine {
   async createRelationship(
     input: CreateRelationshipInput
   ): Promise<RelationshipCommandResult> {
-    assertNonEmpty(input.relationshipType, "relationshipType");
-    assertNonEmpty(input.idempotencyKey, "idempotencyKey");
+    requireText(input.relationshipType, "relationshipType");
+    requireText(input.idempotencyKey, "idempotencyKey");
 
     const duplicate = await this.resolveDuplicate(input.idempotencyKey);
     if (duplicate) return duplicate;
@@ -257,7 +240,7 @@ export class RelationshipEngine {
     }
 
     const timestamp = now();
-    const actors = input.actors.map((actor) => ({
+    const actors: RelationshipActor[] = input.actors.map((actor) => ({
       id: actor.id ?? generateId(),
       actorType: actor.actorType,
       canonicalName: actor.canonicalName.trim(),
@@ -265,17 +248,16 @@ export class RelationshipEngine {
       externalIdentityRef: actor.externalIdentityRef,
       createdAt: timestamp,
       updatedAt: timestamp,
-    } satisfies RelationshipActor));
+    }));
+    const actorIds = new Set(actors.map((actor) => actor.id));
 
-    const uniqueActorIds = new Set(actors.map((actor) => actor.id));
-    if (uniqueActorIds.size !== actors.length) {
+    if (actorIds.size !== actors.length) {
       throw new RelationshipGovernanceError(
         "RIVM-DUPLICATE-ACTOR",
         "Relationship actor IDs must be unique."
       );
     }
-
-    if (!uniqueActorIds.has(input.createdByActorId)) {
+    if (!actorIds.has(input.createdByActorId)) {
       throw new RelationshipGovernanceError(
         "RIVM-CREATOR",
         "The relationship creator must be one of the declared actors."
@@ -308,13 +290,15 @@ export class RelationshipEngine {
       createdAt: timestamp,
       updatedAt: timestamp,
     };
-    const participants = input.actors.map((actor, index) => ({
-      relationshipId,
-      actorId: actors[index]!.id,
-      role: actor.role,
-      joinedAt: timestamp,
-    } satisfies RelationshipParticipant));
-    const event = this.buildEvent({
+    const participants: RelationshipParticipant[] = input.actors.map(
+      (actor, index) => ({
+        relationshipId,
+        actorId: actors[index]!.id,
+        role: actor.role,
+        joinedAt: timestamp,
+      })
+    );
+    const event = this.event({
       relationshipId,
       eventType: "relationship.created",
       sourceActorId: input.createdByActorId,
@@ -326,7 +310,7 @@ export class RelationshipEngine {
         actorIds: actors.map((actor) => actor.id),
       },
     });
-    const receipt = this.buildReceipt(event, {
+    const receipt = this.receipt(event, {
       participantsResolved: true,
       laneSupported,
       agencyPreserved: true,
@@ -342,35 +326,35 @@ export class RelationshipEngine {
       boundaries: [],
       event,
       receipt,
-      outbox: this.buildOutbox(event),
+      outbox: this.outbox(event),
     });
     await this.flushProjections();
-
-    return this.commandResult(relationshipId, receipt, false);
+    return this.result(relationshipId, receipt, false);
   }
 
   async declareBoundary(
     input: DeclareRelationshipBoundaryInput
   ): Promise<RelationshipCommandResult> {
-    assertNonEmpty(input.boundaryType, "boundaryType");
-    assertNonEmpty(input.boundaryValue, "boundaryValue");
-    assertNonEmpty(input.idempotencyKey, "idempotencyKey");
+    requireText(input.boundaryType, "boundaryType");
+    requireText(input.boundaryValue, "boundaryValue");
+    requireText(input.idempotencyKey, "idempotencyKey");
 
     const duplicate = await this.resolveDuplicate(input.idempotencyKey);
     if (duplicate) return duplicate;
 
     const snapshot = await this.requireSnapshot(input.relationshipId);
-    assertParticipant(snapshot, input.declaredByActorId);
+    requireParticipant(snapshot, input.declaredByActorId);
     const timestamp = now();
     const previous = snapshot.boundaries.find(
       (boundary) =>
         boundary.boundaryType === input.boundaryType &&
         boundary.status === "active"
     );
-    const boundaries = snapshot.boundaries.map((boundary) =>
-      boundary.id === previous?.id
-        ? { ...boundary, status: "superseded" as const }
-        : boundary
+    const boundaries: RelationshipBoundary[] = snapshot.boundaries.map(
+      (boundary) =>
+        boundary.id === previous?.id
+          ? { ...boundary, status: "superseded" }
+          : boundary
     );
     const boundary: RelationshipBoundary = {
       id: generateId(),
@@ -384,8 +368,8 @@ export class RelationshipEngine {
     };
     boundaries.push(boundary);
 
-    const relationship = bumpRelationship(snapshot.relationship, timestamp);
-    const event = this.buildEvent({
+    const relationship = bump(snapshot.relationship, timestamp);
+    const event = this.event({
       relationshipId: input.relationshipId,
       eventType: "relationship.boundary-declared",
       sourceActorId: input.declaredByActorId,
@@ -397,48 +381,40 @@ export class RelationshipEngine {
         supersedesBoundaryId: boundary.supersedesBoundaryId,
       },
     });
-    const receipt = this.buildReceipt(event, {
-      participantsResolved: true,
-      laneSupported: true,
-      agencyPreserved: true,
-      boundaryRespected: true,
-      idempotencyPreserved: true,
-      sourceClassesSeparated: true,
-    });
+    const receipt = this.receipt(event, allChecksPassed());
 
     await this.authority.commit({
       relationship,
       boundaries,
       event,
       receipt,
-      outbox: this.buildOutbox(event),
+      outbox: this.outbox(event),
     });
     await this.flushProjections();
-
-    return this.commandResult(input.relationshipId, receipt, false);
+    return this.result(input.relationshipId, receipt, false);
   }
 
   async applyQuestDecision(
     input: ApplyRelationshipQuestDecisionInput
   ): Promise<RelationshipCommandResult> {
-    assertNonEmpty(input.questInstanceId, "questInstanceId");
-    assertNonEmpty(input.decisionType, "decisionType");
-    assertNonEmpty(input.selectedOption, "selectedOption");
-    assertNonEmpty(input.idempotencyKey, "idempotencyKey");
+    requireText(input.questInstanceId, "questInstanceId");
+    requireText(input.decisionType, "decisionType");
+    requireText(input.selectedOption, "selectedOption");
+    requireText(input.idempotencyKey, "idempotencyKey");
 
     const duplicate = await this.resolveDuplicate(input.idempotencyKey);
     if (duplicate) return duplicate;
 
     const snapshot = await this.requireSnapshot(input.relationshipId);
-    assertParticipant(snapshot, input.sourceActorId);
+    requireParticipant(snapshot, input.sourceActorId);
     const timestamp = now();
     const fromState = snapshot.relationship.status;
     const toState = input.nextStatus ?? fromState;
     const relationship: GovernedRelationship = {
-      ...bumpRelationship(snapshot.relationship, timestamp),
+      ...bump(snapshot.relationship, timestamp),
       status: toState,
     };
-    const event = this.buildEvent({
+    const event = this.event({
       relationshipId: input.relationshipId,
       eventType: "relationship.quest-decision",
       sourceActorId: input.sourceActorId,
@@ -452,16 +428,9 @@ export class RelationshipEngine {
         toState,
       },
     });
-    const receipt = this.buildReceipt(
+    const receipt = this.receipt(
       event,
-      {
-        participantsResolved: true,
-        laneSupported: true,
-        agencyPreserved: true,
-        boundaryRespected: true,
-        idempotencyPreserved: true,
-        sourceClassesSeparated: true,
-      },
+      allChecksPassed(),
       input.evidenceRefs
     );
     const decision: RelationshipQuestDecision = {
@@ -474,33 +443,21 @@ export class RelationshipEngine {
       receiptId: receipt.id,
       createdAt: timestamp,
     };
-    const transition =
-      fromState === toState
-        ? undefined
-        : ({
-            id: generateId(),
-            relationshipId: input.relationshipId,
-            fromState,
-            toState,
-            triggerEventId: event.id,
-            governanceResult: receipt.result,
-            createdAt: timestamp,
-          } satisfies RelationshipStateTransition);
 
     await this.authority.commit({
       relationship,
       event,
-      transition,
       receipt,
       decision,
-      outbox: this.buildOutbox(event),
+      outbox: this.outbox(event),
     });
     await this.flushProjections();
-
-    return this.commandResult(input.relationshipId, receipt, false);
+    return this.result(input.relationshipId, receipt, false);
   }
 
-  async getSnapshot(relationshipId: ID): Promise<RelationshipSnapshot | undefined> {
+  async getSnapshot(
+    relationshipId: ID
+  ): Promise<RelationshipSnapshot | undefined> {
     const snapshot = await this.authority.getSnapshot(relationshipId);
     if (!snapshot) return undefined;
     snapshot.projection = await this.projections.get(relationshipId);
@@ -540,18 +497,14 @@ export class RelationshipEngine {
   private async resolveDuplicate(
     idempotencyKey: string
   ): Promise<RelationshipCommandResult | undefined> {
-    const existing = await this.authority.getEventByIdempotencyKey(
-      idempotencyKey
-    );
-    if (!existing) return undefined;
-    const receipt = await this.authority.getReceiptByEventId(existing.id);
-    if (!receipt) {
-      throw new Error(`Receipt missing for idempotent event ${existing.id}`);
-    }
-    return this.commandResult(existing.relationshipId, receipt, true);
+    const event = await this.authority.getEventByIdempotencyKey(idempotencyKey);
+    if (!event) return undefined;
+    const receipt = await this.authority.getReceiptByEventId(event.id);
+    if (!receipt) throw new Error(`Receipt missing for event ${event.id}`);
+    return this.result(event.relationshipId, receipt, true);
   }
 
-  private async commandResult(
+  private async result(
     relationshipId: ID,
     receipt: GovernedRelationshipReceipt,
     duplicate: boolean
@@ -574,7 +527,7 @@ export class RelationshipEngine {
     return snapshot;
   }
 
-  private buildEvent(input: {
+  private event(input: {
     relationshipId: ID;
     eventType: RelationshipEvent["eventType"];
     sourceActorId: ID;
@@ -597,14 +550,18 @@ export class RelationshipEngine {
     };
   }
 
-  private buildReceipt(
+  private receipt(
     event: RelationshipEvent,
     checks: GovernedRelationshipReceipt["checks"],
     evidenceRefs: string[] = []
   ): GovernedRelationshipReceipt {
-    const result = Object.values(checks).every(Boolean) ? "PASSED" : "FAILED";
+    const result: GovernedRelationshipReceipt["result"] = Object.values(
+      checks
+    ).every(Boolean)
+      ? "PASSED"
+      : "FAILED";
     const createdAt = now();
-    const receiptCore = {
+    const core = {
       eventId: event.id,
       relationshipId: event.relationshipId,
       protocol: "KPGS-RELATIONSHIP" as const,
@@ -620,12 +577,12 @@ export class RelationshipEngine {
 
     return {
       id: generateId(),
-      ...receiptCore,
-      integrityHash: stableHash(receiptCore),
+      ...core,
+      integrityHash: stableHash(core),
     };
   }
 
-  private buildOutbox(event: RelationshipEvent): RelationshipOutboxEvent {
+  private outbox(event: RelationshipEvent): RelationshipOutboxEvent {
     return {
       id: generateId(),
       aggregateType: "relationship",
@@ -648,7 +605,18 @@ export class RelationshipGovernanceError extends Error {
   }
 }
 
-function assertParticipant(
+function allChecksPassed(): GovernedRelationshipReceipt["checks"] {
+  return {
+    participantsResolved: true,
+    laneSupported: true,
+    agencyPreserved: true,
+    boundaryRespected: true,
+    idempotencyPreserved: true,
+    sourceClassesSeparated: true,
+  };
+}
+
+function requireParticipant(
   snapshot: RelationshipSnapshot,
   actorId: ID
 ): void {
@@ -660,16 +628,16 @@ function assertParticipant(
   }
 }
 
-function assertNonEmpty(value: string, name: string): void {
+function requireText(value: string, field: string): void {
   if (!value.trim()) {
     throw new RelationshipGovernanceError(
       "RIVM-INPUT",
-      `${name} is required.`
+      `${field} is required.`
     );
   }
 }
 
-function bumpRelationship(
+function bump(
   relationship: GovernedRelationship,
   timestamp: number
 ): GovernedRelationship {
@@ -682,12 +650,13 @@ function bumpRelationship(
 
 function buildProjectionSummary(snapshot: RelationshipSnapshot): string {
   const names = snapshot.actors.map((actor) => actor.canonicalName).join(" + ");
-  return `${names} operate in the ${snapshot.relationship.activeLane} lane with ${
-    snapshot.boundaries.filter((boundary) => boundary.status === "active").length
-  } active boundaries and ${snapshot.decisions.length} governed quest decisions.`;
+  const activeBoundaries = snapshot.boundaries.filter(
+    (boundary) => boundary.status === "active"
+  ).length;
+  return `${names} operate in the ${snapshot.relationship.activeLane} lane with ${activeBoundaries} active boundaries and ${snapshot.decisions.length} governed quest decisions.`;
 }
 
-function appendToMap<T>(map: Map<ID, T[]>, key: ID, value: T): void {
+function append<T>(map: Map<ID, T[]>, key: ID, value: T): void {
   map.set(key, [...(map.get(key) ?? []), value]);
 }
 
@@ -706,9 +675,11 @@ function stableHash(value: unknown): string {
 }
 
 function stableStringify(value: unknown): string {
-  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
   if (Array.isArray(value)) {
-    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+    return `[${value.map(stableStringify).join(",")}]`;
   }
   const record = value as Record<string, unknown>;
   return `{${Object.keys(record)
