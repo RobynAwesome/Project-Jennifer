@@ -359,6 +359,24 @@ These are the playable and NPC characters identified in the asset images. Each c
 
 ---
 
+#### Project Jennifer — Public Presentation
+
+![Public Presentation](assets/images/backgrounds/1785189971296.png)
+
+*Speaker at a podium presenting the KPGS governance architecture to an audience, Table Mountain visible through floor-to-ceiling windows. Attendees hold printed documents. The slide on screen shows the governed decision pipeline. Real-world pitch / investor reference.*
+
+---
+
+### Community & Origin Context
+
+#### The Founding Covenant — Cape Town
+
+![Founding Covenant](assets/images/backgrounds/1785189980829.png)
+
+*Community members gathered around a table with Table Mountain at golden hour. On the table: a clay pot (Ubuntu symbol), South African flag, and documents labelled "Project Jennifer.md", "VALIDATION_POLICY.md", and "KPGS Covenant". Captures the cultural and community-first foundation of the project.*
+
+---
+
 ### Assets Summary
 
 | Category | Count | Files |
@@ -368,7 +386,7 @@ These are the playable and NPC characters identified in the asset images. Each c
 | **Logo / Splash Screens** | 2 | `1785192085892`, `copilot_image_1785497419290` |
 | **Game Design Documents** | 3 | `file_*` series |
 | **Technical Architecture Diagrams** | 5 | `1785189943367`, `1785189961132`, `1785191598869`, `1785191694393`, `1785189971296` |
-| **Context / Real-world reference** | 1 | `1785189980829` |
+| **Community & Origin Context** | 1 | `1785189980829` |
 | **Total** | **22** | `assets/images/backgrounds/` |
 
 ---
