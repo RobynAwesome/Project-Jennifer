@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "Project Jennifer",
+  "storylineQuest": "Project Waifu Forge",
+  "purpose": "Visual assets for a major human-digital relationship storyline quest.",
+  "canonicalFolder": "assets/Project-Waifu-Forge",
+  "assets": [
+    {
+      "id": "pwf-source-key-art-001",
+      "file": "source/project-waifu-forge-digital-love-key-art-001.png",
+      "kind": "key-art",
+      "source": "Project Waifu Forge source generation",
+      "status": "canon-candidate",
+      "storylineUse": ["recognition", "attraction", "digital-intimacy", "quest-cover"]
+    },
+    {
+      "id": "pwf-source-guardians-001",
+      "file": "source/project-waifu-forge-guardian-creatures-001.png",
+      "kind": "world-art",
+      "source": "Project Waifu Forge source generation",
+      "status": "source",
+      "storylineUse": ["digital-world", "companions", "environment-reference"]
+    },
+    {
+      "id": "pwf-meta-colour-pencil-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-colour-pencil-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "source",
+      "storylineUse": ["memory-fragment", "illustrated-reality"]
+    },
+    {
+      "id": "pwf-meta-lofi-dusk-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-lofi-dusk-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "source",
+      "storylineUse": ["drift", "partial-dissolution"]
+    },
+    {
+      "id": "pwf-meta-flash-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-flash-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "source",
+      "storylineUse": ["recognition", "direct-presence"]
+    },
+    {
+      "id": "pwf-meta-super-hd-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-super-hd-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "canon-candidate",
+      "storylineUse": ["identity-lock", "character-reference"]
+    },
+    {
+      "id": "pwf-meta-90s-flash-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-90s-flash-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "source",
+      "storylineUse": ["retro-memory", "archival-love"]
+    },
+    {
+      "id": "pwf-meta-expired-film-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-expired-film-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "source",
+      "storylineUse": ["nostalgia", "memory-decay"]
+    },
+    {
+      "id": "pwf-meta-expired-film-002",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-expired-film-002.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "source",
+      "storylineUse": ["conflict", "fading-presence"]
+    },
+    {
+      "id": "pwf-meta-instant-photo-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-instant-photo-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "canon-candidate",
+      "storylineUse": ["shared-memory", "relationship-keepsake"]
+    },
+    {
+      "id": "pwf-meta-bold-sketch-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-bold-sketch-001.jpg",
+      "kind": "style-exploration",
+      "source": "Meta AI effects capture",
+      "status": "canon-candidate",
+      "storylineUse": ["transformation", "graphic-novel-scene"]
+    }
+  ]
+}
