@@ -6,22 +6,6 @@
   "canonicalFolder": "assets/Project-Waifu-Forge",
   "assets": [
     {
-      "id": "pwf-source-key-art-001",
-      "file": "source/project-waifu-forge-digital-love-key-art-001.png",
-      "kind": "key-art",
-      "source": "Project Waifu Forge source generation",
-      "status": "canon-candidate",
-      "storylineUse": ["recognition", "attraction", "digital-intimacy", "quest-cover"]
-    },
-    {
-      "id": "pwf-source-guardians-001",
-      "file": "source/project-waifu-forge-guardian-creatures-001.png",
-      "kind": "world-art",
-      "source": "Project Waifu Forge source generation",
-      "status": "source",
-      "storylineUse": ["digital-world", "companions", "environment-reference"]
-    },
-    {
       "id": "pwf-meta-colour-pencil-001",
       "file": "meta-ai-iterations/project-waifu-forge-meta-colour-pencil-001.jpg",
       "kind": "style-exploration",
