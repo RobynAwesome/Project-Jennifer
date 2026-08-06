@@ -1,10 +1,10 @@
 /**
- * Project Jennifer PERN foundation — Phase 1.
+ * Project Jennifer PERN foundation.
  *
- * React, Express, and Node are already active in the repository. Phase 1 adds
- * an explicit PostgreSQL configuration contract without prematurely selecting
- * or installing a database driver. Phase 2 will add the governed adapter and
- * migrations after the schema is approved.
+ * React, Express, and Node are active. PostgreSQL now has an approved
+ * relationship-spine schema and local service scaffold, but it remains
+ * contract-ready until a governed driver, migration runner, and domain-owned
+ * repository adapters are connected to runtime writes.
  */
 
 export const PERN_LAYERS = ["postgresql", "express", "react", "node"] as const;
@@ -93,9 +93,13 @@ export const PROJECT_JENNIFER_PERN_FOUNDATION: readonly PernLayerDescriptor[] = 
     repositoryEvidence: [
       "packages/shared/src/pern-foundation.ts",
       ".env.example",
+      "docker-compose.persistence.yml",
+      "infra/postgres/migrations/0001_relationship_spine.sql",
+      "docs/architecture/adr-0003-mern-pern-relationship-spine.md",
       "PERN_ROADMAP.md",
     ],
-    nextGate: "Approve schema, select governed driver, add migrations, and validate local persistence.",
+    nextGate:
+      "Install the governed driver, add a migration runner and connection pool, then route writes through domain-owned repositories.",
   },
   {
     layer: "express",
@@ -128,6 +132,6 @@ export function getPernFoundationStatus(): {
     layers: PROJECT_JENNIFER_PERN_FOUNDATION,
     nextGate: complete
       ? "PERN runtime is active. Continue governed feature delivery."
-      : "Activate PostgreSQL through the approved Phase 2 adapter and migration gate.",
+      : "Connect PostgreSQL through the approved repository-adapter and migration-runner gate.",
   };
 }
