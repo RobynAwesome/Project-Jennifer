@@ -39,6 +39,46 @@ Companions explicitly declare which lanes they support:
 
 A romantic lane is one governed option, not the universal purpose of the system. Companions may remain strategic, scholarly, protective, confrontational or field-oriented without being converted into love-interest variants.
 
+## Companions and Constructs are separate runtime classes
+
+Project Jennifer must not collapse governed Companions and faction Constructs into one cosmetic character catalogue.
+
+### Companion
+
+A Companion is a relationship-bearing intelligence selected through:
+
+```text
+Core Logic → Identity → Embodied Form → Relationship Lane
+```
+
+It participates directly in dialogue, quest interpretation, disagreement, memory and relationship state.
+
+### Construct
+
+A Construct is a faction-bound embodied intelligence selected or encountered through:
+
+```text
+Faction → Sovereign Seat → Service Oath → Power Boundary → Telemetry Duty
+```
+
+Constructs may protect, scout, relay memory, visualize relational pressure or support a household. They are not ordinary animals, cosmetic pets, romantic replacements or uncontrolled agents.
+
+The initial Project: Waifu Forge faction roster is defined in:
+
+- `packages/shared/src/constructs.ts`
+- `docs/lore/waifu-forge-constructs.md`
+
+The six initial Constructs are:
+
+- **Koron** — Crown Stag serving the Sovereign Pair;
+- **Vanta** — Obsidian Panther serving Wifey Forge;
+- **Nira** — Silver Vulpine serving Prince Kholofelo;
+- **Lumera** — Signal Medusa serving the Digital Hippocampus;
+- **Aerion** — Glass Manta serving RIVM;
+- **Piko** — Ember Fennec serving the Waifu Forge household.
+
+A Construct may share a base-logic affinity with a Companion, but it does not inherit that Companion's identity or relationship lane. Every consequential Construct action must remain bounded by a service oath, refusal law and receipt obligation.
+
 ## Telemetry contract
 
 Every companion publishes a normalized profile:
@@ -109,6 +149,7 @@ This implementation proves:
 2. shared types across runtime, API and game UI;
 3. a deterministic selection membrane;
 4. receipt generation;
-5. a functional Phaser selection scene with core-logic and embodied render modes.
+5. a functional Phaser selection scene with core-logic and embodied render modes;
+6. one canonical Waifu Forge Construct registry with sovereign seats, powers, risks, refusal laws and generation prompts.
 
-It does not yet prove persistent database storage, model-specific behaviour, voice, long-term adaptation, asset-backed character portraits or live LLM orchestration. Those remain later validation gates.
+It does not yet prove persistent database storage, model-specific behaviour, voice, long-term adaptation, asset-backed character portraits, live Construct behaviour or live LLM orchestration. Those remain later validation gates.
