@@ -23,8 +23,7 @@ ncmpRouter.get("/", (_req, res) => {
       acronym: "NCMP",
       name: NCMP_PROTOCOL_NAME,
       version: NCMP_VERSION,
-      definition:
-        "Recognition and governance of a new concept that originated inside Multi-Agent Mobile Orchestration.",
+      definition: NCMP_SELF_DECLARATION.definition,
     },
     states: NCMP_STATES,
     selfDeclaration: NCMP_SELF_DECLARATION,

@@ -96,6 +96,34 @@ function requireText(value: string, field: string): void {
   }
 }
 
+function cloneNCMPRecord(record: NCMPRecord): NCMPRecord {
+  return {
+    ...record,
+    candidate: {
+      ...record.candidate,
+      origin: {
+        ...record.candidate.origin,
+        sourceEvidence: [...record.candidate.origin.sourceEvidence],
+      },
+      tags: record.candidate.tags ? [...record.candidate.tags] : undefined,
+    },
+    recognition: record.recognition ? { ...record.recognition } : undefined,
+    validation: record.validation
+      ? {
+          ...record.validation,
+          evidence: [...record.validation.evidence],
+        }
+      : undefined,
+  };
+}
+
+function cloneNCMPReceipt(receipt: NCMPReceipt): NCMPReceipt {
+  return {
+    ...receipt,
+    evidence: [...receipt.evidence],
+  };
+}
+
 export function validateNCMPCandidate(candidate: NCMPConceptCandidate): string[] {
   const errors: string[] = [];
 
@@ -239,17 +267,19 @@ export class NCMPRegistry {
   }
 
   get(conceptId: string): NCMPRecord | undefined {
-    return this.records.get(conceptId);
+    const record = this.records.get(conceptId);
+    return record ? cloneNCMPRecord(record) : undefined;
   }
 
   list(): readonly NCMPRecord[] {
-    return [...this.records.values()];
+    return [...this.records.values()].map(cloneNCMPRecord);
   }
 
   getReceipts(conceptId?: string): readonly NCMPReceipt[] {
-    return conceptId
+    const receipts = conceptId
       ? this.receipts.filter((receipt) => receipt.conceptId === conceptId)
-      : [...this.receipts];
+      : this.receipts;
+    return receipts.map(cloneNCMPReceipt);
   }
 
   private requireRecord(conceptId: string): NCMPRecord {

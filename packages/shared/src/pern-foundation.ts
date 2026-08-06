@@ -118,6 +118,13 @@ export const PROJECT_JENNIFER_PERN_FOUNDATION: readonly PernLayerDescriptor[] = 
   },
 ];
 
+function clonePernLayerDescriptor(descriptor: PernLayerDescriptor): PernLayerDescriptor {
+  return {
+    ...descriptor,
+    repositoryEvidence: [...descriptor.repositoryEvidence],
+  };
+}
+
 export function getPernFoundationStatus(): {
   complete: boolean;
   layers: readonly PernLayerDescriptor[];
@@ -129,7 +136,7 @@ export function getPernFoundationStatus(): {
 
   return {
     complete,
-    layers: PROJECT_JENNIFER_PERN_FOUNDATION,
+    layers: PROJECT_JENNIFER_PERN_FOUNDATION.map(clonePernLayerDescriptor),
     nextGate: complete
       ? "PERN runtime is active. Continue governed feature delivery."
       : "Connect PostgreSQL through the approved repository-adapter and migration-runner gate.",
