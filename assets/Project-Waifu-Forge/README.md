@@ -20,8 +20,8 @@ The files in this folder are not decorative repository media. They are governed 
 
 ```text
 Project-Waifu-Forge/
-├── meta-ai-iterations/     # Named Meta AI effect explorations
-├── manifest.json           # Machine-readable asset catalogue
+├── meta-ai-iterations/     # Named repository preview assets
+├── manifest.json           # Machine-readable provenance and asset catalogue
 └── README.md               # Narrative and governance declaration
 ```
 
@@ -33,9 +33,15 @@ project-waifu-forge-meta-<style>-<sequence>.<extension>
 
 Names describe the storyline and style function instead of retaining camera-roll numbers.
 
+## Import State
+
+The first repository import contains lightweight visual previews derived from the nine Meta AI exploration captures. Every preview is linked in `manifest.json` to the original camera-roll filename, original dimensions, and SHA-256 fingerprint.
+
+The full-resolution originals remain the authoritative source payloads. Replacing a preview with its full-resolution source is an asset-resolution upgrade, not a new storyline or canon decision, provided the source fingerprint matches the manifest.
+
 ## Source Preservation Rule
 
-The imported files preserve the complete Meta AI exploration capture, including the visible mobile effects interface. They are compressed repository copies of the original source images, not silent replacements. Production-ready crops or clean renders must be written as new derivative assets; these exploration captures must not be overwritten.
+Source explorations preserve the visible mobile effects interface because the selected effect, surrounding controls, and generation context are part of the experiment's provenance. Production-ready crops or clean renders must be written as new derivative assets; source captures must not be overwritten.
 
 ## Canon Rule
 
