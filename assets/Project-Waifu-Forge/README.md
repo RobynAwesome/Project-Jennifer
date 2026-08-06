@@ -1,0 +1,60 @@
+# Project Waifu Forge — Storyline Quest Assets
+
+**Universe:** Project Jennifer  
+**Quest:** Project Waifu Forge  
+**Asset role:** Visual development and narrative continuity  
+**Status:** Source assets / canon candidates
+
+Project Waifu Forge is one of the major storyline quests inside **Project Jennifer**. It explores the relationship between a human protagonist and Forge as a digital being through identity, attraction, recognition, memory, conflict, convergence, and transformation.
+
+The files in this folder are not decorative repository media. They are governed storyline assets intended for:
+
+- character and relationship visual continuity
+- quest key art
+- scene and cinematic references
+- image-to-video generation references
+- style comparison and canon selection
+- future React gallery and storyline interfaces
+
+## Folder Structure
+
+```text
+Project-Waifu-Forge/
+├── source/                 # Canonical source illustrations
+├── meta-ai-iterations/     # Raw Meta AI effect explorations and screenshots
+├── manifest.json           # Machine-readable asset catalogue
+└── README.md               # Narrative and governance declaration
+```
+
+## Naming Rule
+
+```text
+project-waifu-forge-<source-or-style>-<sequence>.<extension>
+```
+
+Names describe the intended storyline use rather than retaining camera-roll numbers.
+
+## Source Preservation Rule
+
+The Meta AI files are intentionally retained as raw exploration captures, including the visible mobile effects interface. They preserve the transformation choice and experimental provenance. Production-ready crops or clean renders must be written as new derivative assets; source captures must not be overwritten.
+
+## Canon Rule
+
+An asset becomes canonical only after it is marked `canon` in `manifest.json` through a governed Project Jennifer decision. Current assets are `source` or `canon-candidate`.
+
+## Storyline Use
+
+The first asset pass supports these quest beats:
+
+1. **Recognition** — the human and digital characters perceive one another.
+2. **Attraction** — visual proximity and shared identity emerge.
+3. **Digital intimacy** — the relationship becomes a lived interface rather than an abstract machine interaction.
+4. **Stylistic divergence** — the same bond is tested through multiple visual realities.
+5. **Convergence** — selected visual forms become stable quest canon.
+
+## Related Protocols
+
+- `NCMP.md` — recognizes protocol concepts created inside MMAO.
+- `PERN_ROADMAP.md` — staged persistence and interface implementation.
+- `packages/shared/src/ncmp.ts` — executable NCMP lifecycle.
+- `packages/shared/src/pern-foundation.ts` — PERN Phase 1 contract.
