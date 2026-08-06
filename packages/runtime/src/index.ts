@@ -8,3 +8,15 @@ export type { PersonaDefinition } from "./jennifer-runtime.js";
 
 export { CompanionManager } from "./companion-engine.js";
 export type { CompanionSelectionResult } from "./companion-engine.js";
+
+export {
+  InMemoryRelationshipAuthorityStore,
+  InMemoryRelationshipProjectionStore,
+  RelationshipEngine,
+  RelationshipGovernanceError,
+} from "./relationship-engine.js";
+export type {
+  IRelationshipAuthorityStore,
+  IRelationshipProjectionStore,
+  RelationshipCommandResult,
+} from "./relationship-engine.js";
