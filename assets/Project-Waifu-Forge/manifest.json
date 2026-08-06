@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.1.0",
+  "project": "Project Jennifer",
+  "storylineQuest": "Project Waifu Forge",
+  "purpose": "Visual assets for a major human-digital relationship storyline quest.",
+  "canonicalFolder": "assets/Project-Waifu-Forge",
+  "repositoryRepresentation": {
+    "kind": "preview",
+    "width": 32,
+    "height": 73,
+    "fullResolutionGate": "Replace a preview only when the full-resolution source SHA-256 matches its manifest record."
+  },
+  "assets": [
+    {
+      "id": "pwf-meta-colour-pencil-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-colour-pencil-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150504.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "71fba3b8cb7f1957ae26fdb8450ce4d0d2fab73703e009a33eef03027cecc271"
+      },
+      "status": "source",
+      "storylineUse": ["memory-fragment", "illustrated-reality"]
+    },
+    {
+      "id": "pwf-meta-lofi-dusk-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-lofi-dusk-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150505.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "a4528970bb09557a371569a59e956923e4f4637b1ca1d38324b8168656d683cc"
+      },
+      "status": "source",
+      "storylineUse": ["drift", "partial-dissolution"]
+    },
+    {
+      "id": "pwf-meta-flash-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-flash-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150506.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "f80186adab5b64f478bf8d49bb038169c3b6052e17309ba7740b840f3979206f"
+      },
+      "status": "source",
+      "storylineUse": ["recognition", "direct-presence"]
+    },
+    {
+      "id": "pwf-meta-super-hd-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-super-hd-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150508.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "bb0bd5d0b57e5c5270941876ee27c7b76d2ecfbc27ad529f295144f78d665397"
+      },
+      "status": "canon-candidate",
+      "storylineUse": ["identity-lock", "character-reference"]
+    },
+    {
+      "id": "pwf-meta-90s-flash-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-90s-flash-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150509.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "8033c130d98e55c399644147f062b4aa553313d6d1a574d7173dcd60943dc666"
+      },
+      "status": "source",
+      "storylineUse": ["retro-memory", "archival-love"]
+    },
+    {
+      "id": "pwf-meta-expired-film-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-expired-film-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150510.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "c06e3d170d4ec54a1cf38d0d81c62b581092e628a857988ef0d6036eefd9b9d1"
+      },
+      "status": "source",
+      "storylineUse": ["nostalgia", "memory-decay"]
+    },
+    {
+      "id": "pwf-meta-expired-film-002",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-expired-film-002.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150511.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "dd9254b0d9d2e676735b37a1943b56d24c58eb885c1b8cccc7d471d93eb75c5c"
+      },
+      "status": "source",
+      "storylineUse": ["conflict", "fading-presence"]
+    },
+    {
+      "id": "pwf-meta-instant-photo-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-instant-photo-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150512.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "e762610b00de33c3e50f75925dfa7749d9ac11ec21f50081328ca5ad88af170c"
+      },
+      "status": "canon-candidate",
+      "storylineUse": ["shared-memory", "relationship-keepsake"]
+    },
+    {
+      "id": "pwf-meta-bold-sketch-001",
+      "file": "meta-ai-iterations/project-waifu-forge-meta-bold-sketch-001.jpg",
+      "kind": "style-exploration",
+      "source": {
+        "provider": "Meta AI effects capture",
+        "originalFileName": "1000150513.jpg",
+        "width": 674,
+        "height": 1536,
+        "sha256": "4d8883788cc5f04b220fecfa2f033868e6a7678ad41a12bd45745a6057959bdd"
+      },
+      "status": "canon-candidate",
+      "storylineUse": ["transformation", "graphic-novel-scene"]
+    }
+  ]
+}

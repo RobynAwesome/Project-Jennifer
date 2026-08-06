@@ -1,13 +1,14 @@
 import express, { type Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { InMemoryEventBus } from "@jennifer/shared";
+import { getPernFoundationStatus, InMemoryEventBus } from "@jennifer/shared";
 import { TelemetryCollector, TimeTracker, EnvironmentMonitor } from "@jennifer/telemetry";
 import { telemetryMiddleware, errorHandler } from "./middleware/index.js";
 import { governanceRouter } from "./routes/governance.js";
 import { memoryRouter } from "./routes/memory.js";
 import { crisisRouter } from "./routes/crisis.js";
 import { runtimeRouter } from "./routes/runtime.js";
+import { ncmpRouter } from "./routes/ncmp.js";
 
 const PORT = process.env.PORT ?? 3001;
 
@@ -35,6 +36,7 @@ app.get("/health", (_req, res) => {
     uptime: timeTracker.uptimeMs(),
     tick: timeTracker.currentTick(),
     environment: envMonitor.snapshot(),
+    pern: getPernFoundationStatus(),
     timestamp: new Date().toISOString(),
   });
 });
@@ -45,6 +47,7 @@ app.use("/api/governance", governanceRouter);
 app.use("/api/memory", memoryRouter);
 app.use("/api/crisis", crisisRouter);
 app.use("/api/runtime", runtimeRouter);
+app.use("/api/ncmp", ncmpRouter);
 
 // Telemetry endpoint
 app.get("/api/telemetry", (_req, res) => {
