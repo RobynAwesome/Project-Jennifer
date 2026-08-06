@@ -14,7 +14,7 @@ import {
  * by governed PostgreSQL persistence. Phase 1 exposes the canonical definition
  * without pretending that an in-memory registry is permanent protocol state.
  */
-export const ncmpRouter = Router();
+export const ncmpRouter: Router = Router();
 
 ncmpRouter.get("/", (_req, res) => {
   res.json({
