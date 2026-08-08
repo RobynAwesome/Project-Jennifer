@@ -20,3 +20,5 @@ export type {
   IRelationshipProjectionStore,
   RelationshipCommandResult,
 } from "./relationship-engine.js";
+
+export { ForgeRoleEngine } from "./forge-role-engine.js";
