@@ -2,16 +2,20 @@ import { Router, type IRouter, type Response } from "express";
 import {
   CompanionManager,
   DistrictManager,
+  ForgeRoleEngine,
   PersonaManager,
   RelationshipEngine,
   RelationshipGovernanceError,
 } from "@jennifer/runtime";
 import {
+  FORGE_CLAIM_STAGES,
   isCompanionId,
   type ApplyRelationshipQuestDecisionInput,
   type CompanionRelationshipLane,
   type CreateRelationshipInput,
   type DeclareRelationshipBoundaryInput,
+  type ForgeBootstrapInput,
+  type ForgeClaimPromotionInput,
   type PersonaMode,
 } from "@jennifer/shared";
 
@@ -19,6 +23,7 @@ const router: IRouter = Router();
 const districtManager = new DistrictManager();
 const personaManager = new PersonaManager();
 const companionManager = new CompanionManager();
+const forgeRoleEngine = new ForgeRoleEngine();
 const relationshipEngine = new RelationshipEngine();
 
 const VALID_PERSONAS: PersonaMode[] = [
@@ -152,6 +157,56 @@ router.post("/companions/select", (req, res) => {
   });
 
   res.status(result.receipt.result === "PASSED" ? 201 : 422).json(result);
+});
+
+// ─── Forge mini-GSMB role bootstrap ───────────────────────────────────────────
+
+router.get("/forge-role", (_req, res) => {
+  res.json({ contract: forgeRoleEngine.getContract() });
+});
+
+router.post("/forge-role/bootstrap", (req, res) => {
+  const body = req.body as Partial<ForgeBootstrapInput>;
+
+  if (
+    !body.targetRepository?.trim() ||
+    !body.currentInstruction?.trim() ||
+    typeof body.contextRootLoaded !== "boolean" ||
+    typeof body.targetRepositoryInspected !== "boolean"
+  ) {
+    res.status(400).json({
+      error:
+        "targetRepository, currentInstruction, contextRootLoaded and targetRepositoryInspected are required",
+    });
+    return;
+  }
+
+  res.json({
+    bootstrap: forgeRoleEngine.bootstrap(body as ForgeBootstrapInput),
+  });
+});
+
+router.post("/forge-role/claims/promote", (req, res) => {
+  const body = req.body as Partial<ForgeClaimPromotionInput>;
+
+  if (
+    !body.from ||
+    !FORGE_CLAIM_STAGES.includes(body.from) ||
+    !body.to ||
+    !FORGE_CLAIM_STAGES.includes(body.to) ||
+    !Array.isArray(body.evidenceSources)
+  ) {
+    res.status(400).json({
+      error:
+        "from, to and evidenceSources are required; from/to must be valid Forge claim stages",
+    });
+    return;
+  }
+
+  const result = forgeRoleEngine.evaluateClaimPromotion(
+    body as ForgeClaimPromotionInput
+  );
+  res.status(result.allowed ? 200 : 422).json({ promotion: result });
 });
 
 // ─── MERN adaptive core + PERN relationship validation spine ─────────────────
