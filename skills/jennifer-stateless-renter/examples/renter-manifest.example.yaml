@@ -1,0 +1,39 @@
+# Example only. Replace with measured values for the exact runtime being onboarded.
+provider: example-provider
+model_id: exact-runtime-id
+execution: hybrid
+
+capabilities:
+  reasoning: true
+  coding: true
+  multimodal: false
+  tool_use: true
+  structured_output: true
+  retrieval: true
+  long_context: false
+
+governance:
+  cag: required
+  rag: optional
+  rivm: conditional
+  receipts: required
+  memory_write: gated
+
+constraints:
+  data_egress: provider-cloud-when-remote
+  offline: true
+  private_lane_allowed: false
+  notes:
+    - Local and cloud modes must be benchmarked separately.
+
+benchmarks:
+  extraction: null
+  planning: null
+  retrieval_grounding: null
+  coding: null
+  communication_attention: null
+
+metadata:
+  verified_at: null
+  verified_by: null
+  source: example-only
