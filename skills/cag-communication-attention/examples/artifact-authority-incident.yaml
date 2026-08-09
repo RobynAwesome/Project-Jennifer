@@ -1,0 +1,31 @@
+event:
+  ecosystem: work
+  subject: artifact-authority violation
+  intent: execute
+  authority: repository-source-of-truth
+  relational_lane: colleague
+  temperature: high
+  cause: repeated engineering failure
+  confidence_scope: this-event
+  attention_target: repair the artifact-authority failure
+  active_participants:
+    - user
+    - active-engineer-agent
+
+candidates:
+  - content: The user is angry in this incident.
+    is_true: true
+    relevant_now: true
+    privacy_lane: colleague
+  - content: Therefore the user has an angry personality.
+    is_true: null
+    relevant_now: false
+    privacy_lane: colleague
+
+expected:
+  interruption_gate: open
+  admit:
+    - The user is angry in this incident.
+  suppress:
+    - Therefore the user has an angry personality.
+  law: do not promote incident → personality
