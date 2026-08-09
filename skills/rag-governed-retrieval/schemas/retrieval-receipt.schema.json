@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-jennifer.local/schemas/retrieval-receipt.schema.json",
+  "title": "Project Jennifer Retrieval Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "query",
+    "subject",
+    "requested_tiers",
+    "retrieved_ids",
+    "suppressed",
+    "grounding_complete",
+    "explicit_cross_lane_authorization"
+  ],
+  "properties": {
+    "query": {"type": "string"},
+    "subject": {"type": "string"},
+    "requested_tiers": {
+      "type": "array",
+      "items": {"type": "integer", "minimum": 0, "maximum": 5}
+    },
+    "retrieved_ids": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "suppressed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "disposition"],
+        "properties": {
+          "id": {"type": "string"},
+          "disposition": {"type": "string"}
+        }
+      }
+    },
+    "grounding_complete": {"type": "boolean"},
+    "explicit_cross_lane_authorization": {"type": "boolean"}
+  }
+}
