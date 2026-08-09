@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-jennifer.local/schemas/evidence-bundle.schema.json",
+  "title": "Project Jennifer Evidence Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["query", "subject", "evidence", "suppressed", "grounding_complete"],
+  "properties": {
+    "query": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "grounding_complete": {"type": "boolean"},
+    "model_prior_allowed": {"type": "boolean"},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence_id",
+          "content",
+          "source_id",
+          "authority_tier",
+          "authority_scope",
+          "score",
+          "source_lane"
+        ],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "content": {"type": "string"},
+          "source_id": {"type": "string", "minLength": 1},
+          "source_uri": {"type": ["string", "null"]},
+          "authority_tier": {"type": "integer", "minimum": 0, "maximum": 5},
+          "authority_scope": {"type": "string", "minLength": 1},
+          "score": {"type": "number"},
+          "source_lane": {"type": "string"},
+          "observed_at": {"type": ["string", "null"]},
+          "checksum": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "suppressed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "disposition"],
+        "properties": {
+          "id": {"type": "string"},
+          "disposition": {
+            "enum": [
+              "retrieved",
+              "suppressed-by-cag",
+              "suppressed-by-privacy",
+              "deduplicated",
+              "not-found"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
