@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-jennifer.local/schemas/capability-manifest.schema.json",
+  "title": "Project Jennifer Stateless Renter Capability Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["provider", "model_id", "execution", "capabilities", "governance", "constraints", "benchmarks"],
+  "properties": {
+    "provider": {"type": "string", "minLength": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "execution": {"enum": ["local", "cloud", "hybrid"]},
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reasoning", "coding", "multimodal", "tool_use", "structured_output", "retrieval", "long_context"],
+      "properties": {
+        "reasoning": {"type": "boolean"},
+        "coding": {"type": "boolean"},
+        "multimodal": {"type": "boolean"},
+        "tool_use": {"type": "boolean"},
+        "structured_output": {"type": "boolean"},
+        "retrieval": {"type": "boolean"},
+        "long_context": {"type": "boolean"}
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cag", "rag", "rivm", "receipts", "memory_write"],
+      "properties": {
+        "cag": {"enum": ["required", "optional", "conditional", "gated", "disabled"]},
+        "rag": {"enum": ["required", "optional", "conditional", "gated", "disabled"]},
+        "rivm": {"enum": ["required", "optional", "conditional", "gated", "disabled"]},
+        "receipts": {"enum": ["required", "optional", "conditional", "gated", "disabled"]},
+        "memory_write": {"enum": ["required", "optional", "conditional", "gated", "disabled"]}
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_egress", "offline", "private_lane_allowed"],
+      "properties": {
+        "data_egress": {"type": "string"},
+        "offline": {"type": "boolean"},
+        "private_lane_allowed": {"type": "boolean"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "benchmarks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extraction", "planning", "retrieval_grounding", "coding", "communication_attention"],
+      "properties": {
+        "extraction": {"type": ["number", "null"]},
+        "planning": {"type": ["number", "null"]},
+        "retrieval_grounding": {"type": ["number", "null"]},
+        "coding": {"type": ["number", "null"]},
+        "communication_attention": {"type": ["number", "null"]}
+      }
+    },
+    "metadata": {"type": "object"}
+  }
+}
