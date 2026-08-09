@@ -1,0 +1,40 @@
+# Copy this file per exact runtime. Do not treat provider family names as model IDs.
+provider: replace-me
+model_id: exact-runtime-id
+execution: cloud
+
+capabilities:
+  reasoning: false
+  coding: false
+  multimodal: false
+  tool_use: false
+  structured_output: false
+  retrieval: false
+  long_context: false
+
+governance:
+  cag: required
+  rag: optional
+  rivm: conditional
+  receipts: required
+  memory_write: gated
+
+constraints:
+  data_egress: unknown
+  offline: false
+  private_lane_allowed: false
+  notes: []
+
+benchmarks:
+  extraction: null
+  planning: null
+  retrieval_grounding: null
+  coding: null
+  communication_attention: null
+
+metadata:
+  verified_at: null
+  verified_by: null
+  provider_documentation: null
+  pricing_snapshot: null
+  licensing_snapshot: null
