@@ -1,0 +1,26 @@
+{
+  "query": "What is the current governed relationship boundary?",
+  "subject": "relationship-boundary",
+  "grounding_complete": true,
+  "model_prior_allowed": true,
+  "evidence": [
+    {
+      "evidence_id": "pg-boundary-42",
+      "content": "The active boundary receipt states that private relationship context requires explicit authorization before work-lane export.",
+      "source_id": "postgres-relationship-ledger",
+      "source_uri": "postgres://relationship-boundaries/42",
+      "authority_tier": 0,
+      "authority_scope": "relationship-boundary",
+      "score": 1.0,
+      "source_lane": "private",
+      "observed_at": "2026-08-09T22:00:00+02:00",
+      "checksum": null
+    }
+  ],
+  "suppressed": [
+    {
+      "id": "external-summary-9",
+      "disposition": "deduplicated"
+    }
+  ]
+}
