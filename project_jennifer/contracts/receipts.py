@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import StrEnum
+from typing import Protocol
 from uuid import uuid4
 
 
@@ -34,6 +35,16 @@ class GovernanceReceipt:
     schema_version: str = "v1"
     receipt_id: str = field(default_factory=lambda: str(uuid4()))
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ReceiptSink(Protocol):
+    """Durable or in-memory sink for governance receipts."""
+
+    def write(self, receipt: GovernanceReceipt) -> None:
+        """Persist a receipt without silently changing its semantics."""
+
+    def list_for_run(self, run_id: str) -> tuple[GovernanceReceipt, ...]:
+        """Return receipts for one governed run in deterministic order."""
 
 
 @dataclass(frozen=True, slots=True)
