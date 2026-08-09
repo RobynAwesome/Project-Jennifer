@@ -12,6 +12,7 @@ class PluginKind(StrEnum):
 
     ENGINE = "engine"
     VALIDATOR = "validator"
+    RETRIEVER = "retriever"
     METRIC = "metric"
     SIMULATOR = "simulator"
     TELEMETRY = "telemetry"
