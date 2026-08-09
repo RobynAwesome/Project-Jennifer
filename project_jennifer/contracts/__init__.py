@@ -14,7 +14,7 @@ from .attention import (
     UserIntent,
 )
 from .events import EventBus, EventEnvelope, EventSubscriber, FrameworkEvent, InMemoryEventBus
-from .receipts import GovernanceReceipt, PreferencePromotionCandidate, ReceiptOutcome
+from .receipts import GovernanceReceipt, PreferencePromotionCandidate, ReceiptOutcome, ReceiptSink
 from .renters import (
     CapabilitySet,
     ExecutionMode,
@@ -75,6 +75,7 @@ __all__ = [
     "PersistenceRole",
     "PreferencePromotionCandidate",
     "ReceiptOutcome",
+    "ReceiptSink",
     "RelationalLane",
     "RenterBenchmarks",
     "RenterCapabilityManifest",
