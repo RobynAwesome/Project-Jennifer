@@ -1,0 +1,103 @@
+version: 1
+project: Project Jennifer
+policy: resolve-exact-runtime-before-routing
+
+providers:
+  - alias: codex
+    family: OpenAI
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: antigravity
+    family: unresolved-or-project-specific
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: kiro
+    family: coding-agent
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: cursor
+    family: coding-agent
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: github-copilot
+    family: GitHub
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: kimi
+    family: cloud-ai
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: gemini
+    family: Google
+    runtime_id_required: true
+    capability_manifest_required: true
+    note: Benchmark exact Gemini runtime IDs; do not encode generation-number reputation as permanent truth.
+
+  - alias: gemma
+    family: Google-open-model
+    runtime_id_required: true
+    capability_manifest_required: true
+    note: Local/offline eligibility depends on the actual Gemma build, quantization, host and adapter.
+
+  - alias: google-notebook
+    family: Google-source-grounded
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: perplexity
+    family: retrieval-ai
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: ollama
+    family: local-model-runtime
+    runtime_id_required: true
+    capability_manifest_required: true
+    note: Provider field should identify Ollama/runtime adapter; model_id must identify the actual local model.
+
+  - alias: hugging-face
+    family: open-model-ecosystem
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: microsoft-azure-ai
+    family: Microsoft
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: kc
+    family: Project-Jennifer-native
+    runtime_id_required: true
+    capability_manifest_required: true
+
+  - alias: rtcp
+    family: Project-Jennifer-native
+    runtime_id_required: true
+    capability_manifest_required: true
+    note: Each Roundtable Council Protocol agent declares its own manifest; RTCP is not one undifferentiated model.
+
+required_evidence:
+  - exact_runtime_id
+  - capability_declaration
+  - data_egress_behavior
+  - offline_behavior
+  - tool_use_behavior
+  - retrieval_behavior
+  - current_benchmark_results
+  - verification_timestamp
+
+business_evaluation_optional:
+  - unit_cost
+  - latency
+  - throughput
+  - licensing
+  - deployment_constraints
+  - support_sla
+  - partnership_owner
+  - projected_b2b_roi
