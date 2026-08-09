@@ -1,0 +1,83 @@
+version: 1
+project: Project Jennifer
+intake_type: ai-provider-collaboration
+
+partner:
+  organization: replace-me
+  technical_contact: null
+  partnership_contact: null
+  documentation: null
+
+runtime:
+  provider: replace-me
+  model_id: exact-runtime-id
+  execution: local | cloud | hybrid
+  region: null
+  adapter_owner: null
+
+capability_manifest:
+  path: config/renters/capability-manifest.template.yaml
+  verified_at: null
+  verified_by: null
+
+skills_requested:
+  - cag-communication-attention
+  - rag-governed-retrieval
+  - jennifer-stateless-renter
+
+data_governance:
+  data_egress: unknown
+  data_retention: unknown
+  private_lane_allowed: false
+  customer_data_terms: null
+  training_on_project_data: unknown
+
+integration:
+  delivery_mode: adapter-required
+  tool_interfaces: []
+  retrieval_interfaces: []
+  structured_output: false
+  offline_support: false
+  observability_support: false
+
+benchmark_evidence:
+  extraction: null
+  planning: null
+  retrieval_grounding: null
+  coding: null
+  communication_attention: null
+  benchmark_receipt_ids: []
+
+commercial:
+  pricing_model: null
+  unit_cost_assumption: null
+  latency_target_ms: null
+  throughput_target: null
+  support_sla: null
+  licensing: null
+  minimum_commitment: null
+
+roi_hypothesis:
+  current_baseline_cost: null
+  projected_runtime_cost: null
+  projected_time_saved: null
+  projected_quality_gain: null
+  projected_offline_value: null
+  projected_risk_reduction: null
+  decision_metric: null
+
+validation:
+  poc_scope: null
+  success_criteria: []
+  failure_criteria: []
+  receipt_requirements:
+    - execution
+    - evidence
+    - validation
+  human_approval_required_for_training_promotion: true
+
+outcome:
+  technical_fit: pending
+  governance_fit: pending
+  commercial_fit: pending
+  partnership_decision: pending
