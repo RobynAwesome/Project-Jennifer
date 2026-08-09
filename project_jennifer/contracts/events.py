@@ -14,12 +14,26 @@ class FrameworkEvent(StrEnum):
 
     RUN_STARTED = "run.started"
     RUN_COMPLETED = "run.completed"
+
+    CAG_PRE_INFERENCE = "cag.pre_inference"
+    CAG_INTERRUPTION_GATE = "cag.interruption_gate"
+    CAG_POST_INFERENCE = "cag.post_inference"
+
+    RAG_REQUESTED = "rag.requested"
+    RAG_COMPLETED = "rag.completed"
+
+    RENTER_ROUTING_REQUESTED = "renter.routing_requested"
+    RENTER_SELECTED = "renter.selected"
+
     VALIDATION_REQUESTED = "validation.requested"
     VALIDATION_COMPLETED = "validation.completed"
     EVALUATION_RECORDED = "evaluation.recorded"
     SIMULATION_REQUESTED = "simulation.requested"
     SIMULATION_COMPLETED = "simulation.completed"
     TELEMETRY_RECORDED = "telemetry.recorded"
+    RECEIPT_RECORDED = "receipt.recorded"
+    MEMORY_PROMOTION_REQUESTED = "memory.promotion_requested"
+    MEMORY_PROMOTION_COMPLETED = "memory.promotion_completed"
 
 
 @dataclass(frozen=True, slots=True)
