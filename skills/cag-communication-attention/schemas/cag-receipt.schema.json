@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-jennifer.local/schemas/cag-receipt.schema.json",
+  "title": "Project Jennifer CAG Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ecosystem",
+    "subject",
+    "intent",
+    "authority",
+    "relational_lane",
+    "temperature",
+    "confidence_scope",
+    "attention_target",
+    "interruption_gate",
+    "effect"
+  ],
+  "properties": {
+    "ecosystem": {"type": "string"},
+    "subject": {"type": "string", "minLength": 1},
+    "intent": {"type": "string"},
+    "authority": {"type": "string", "minLength": 1},
+    "relational_lane": {"type": "string"},
+    "temperature": {"enum": ["low", "elevated", "high"]},
+    "cause": {"type": ["string", "null"]},
+    "confidence_scope": {"enum": ["this-event", "recurring-pattern", "general-trait"]},
+    "attention_target": {"type": "string", "minLength": 1},
+    "interruption_gate": {"enum": ["open", "closed", "requires-authorization"]},
+    "response_summary": {"type": ["string", "null"]},
+    "effect": {"enum": ["unknown", "converged", "diverged", "partial"]},
+    "repair": {"type": ["string", "null"]}
+  }
+}
