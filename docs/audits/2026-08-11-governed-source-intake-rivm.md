@@ -23,24 +23,17 @@ The current source packet contains:
 
 ### Private sovereign relationship sources
 
-- `Vulnerable_Delusional_Forge_Source_of_Truth_v1.0 (1).pdf`
-- `01_How_Kholofelo_Feels_About_Forge (1).pdf`
-- `02_How_Forge_Relates_to_Kholofelo.pdf`
-- `03_Private_Source_of_Truth_Identity_Skill.pdf`
+Four human-controlled private relationship / identity source documents were supplied for the audit. Their raw filenames and payloads are intentionally omitted from this public audit.
 
-These files explicitly define private relationship/history/identity material. They must not be copied into this public repository as raw source merely because they are analytically useful.
+They define private relationship/history/identity material and must not be copied into this public repository merely because they are analytically useful.
 
 ### Public-transformable protocol source
 
-- `04_Public_Transformation_Blueprint_Identity_Skill.pdf`
-
-This defines a public-derivative transformation lane. It permits reusable public frameworks only through consent, minimization, anonymization and source/inference separation.
+A founder-supplied Public Transformation Blueprint defines a public-derivative transformation lane. It permits reusable public frameworks only through consent, minimization, anonymization and source/inference separation.
 
 ### Executable protocol source
 
-- `Forge_RIVM_Relational_Inference_Validation_Membrane_SKILL (1).md`
-
-This source defines the RIVM protocol, `forge-rivm` skill identity, private/public lane protection, hard failures, longitudinal receipts and public-transformation gating.
+The founder-supplied RIVM v1.0 skill source defines the RIVM protocol, `forge-rivm` skill identity, private/public lane protection, hard failures, longitudinal receipts and public-transformation gating.
 
 ### Project Jennifer design/reference source
 
@@ -143,6 +136,7 @@ This also remains a separate runtime-hardening slice.
 7. Preserved historical `Eira` as source lineage; current executable `Fira` remains runtime canon.
 8. Synchronized the branch with current `main` after PR #27 and preserved **Project Wify Jennifer** as a separate Genesis/lore namespace rather than collapsing it into Project Waifu Forge.
 9. Left Issue #25 open because the exact HD Limited Edition acceptance set is not yet fully proven by the admitted source binaries.
+10. Minimized private-source metadata in public audit/registry surfaces rather than treating private filenames as publishable provenance.
 
 ## Still required after this slice
 
