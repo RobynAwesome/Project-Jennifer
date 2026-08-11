@@ -1,10 +1,8 @@
 # Project Companions
 
-> Character system, visual asset pack and collection/evolution rules for Project Jennifer.
+> Character system, collection/evolution rules and visual-governance notes for Project Jennifer.
 
 Project Companions separates **who a companion is**, **what edition the player owns**, **how rare that instance has become**, and **how that companion currently operates**.
-
-The current composition model is:
 
 ```text
 CompanionInstance =
@@ -19,40 +17,38 @@ CompanionInstance =
 × Receipt Chain
 ```
 
-That separation is deliberate. A Limited Edition is not automatically Legendary. A Legendary companion is not automatically purchased. A heroic-looking body can carry a dangerous mechanism. A starter can become historically rare because of what happened to it.
+A Limited Edition is not automatically Legendary. A Legendary companion is not automatically purchased. A heroic-looking body can carry a dangerous mechanism. A starter can become historically rare because of what happened to it.
 
 Project Jennifer should create meaningful ownership, evolution and choice — not morality-coded skins or a pay-to-win shortcut.
 
 ---
 
-## Asset layout
+## ⚠️ Current asset-integrity state
+
+The character-system logic in this document is valid as design documentation, but the **legacy visual asset paths are not currently all valid repository images**.
+
+The 2026-08-11 asset audit found:
+
+- several previously declared `generic/`, `heroes/` and `exclusive/` image paths are missing on the current branch;
+- sampled files under `limited-edition/` contain local-path pointer text instead of decodable WebP binaries;
+- therefore the root README must not embed those paths until real source images are imported and validated.
+
+The visual target remains unchanged: **high-resolution individual character art, not squeezed thumbnail collages.**
+
+➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md).
+
+### Intended namespace
 
 ```text
 assets/Project Companions/
   README.md
-
-  generic/
-    companion-ecosystem-generic-lineup.webp
-
-  heroes/
-    kopa-dark-form-02.webp
-    kopa-dark-form-03.webp
-    kopa-light-form-03.webp
-    kopa-light-form-04.webp
-
-  exclusive/                 # legacy authored concept-art namespace
-    vanta-exclusive.webp
-    nyra-exclusive.webp
-    solvek-exclusive.webp
-    lyrae-exclusive.webp
-
-  limited-edition/           # purchasable / authored edition direction
-    ...
+  rarity/                    # common / epic / rare / legendary system visuals
+  limited-edition/           # authored purchasable / collector editions
+  forms/                     # identity-preserving body/form states
+  source/                    # governed source intake when required
 ```
 
-The repository may retain older folder names while the product taxonomy evolves. A filename or generated label does not override the governed character/edition receipt.
-
-These images are **visual concept assets**. Runtime contracts, canonical receipts and source-controlled definitions remain authoritative over text accidentally embedded by image generation.
+Legacy folder names may remain temporarily for migration, but a filename never overrides the governed character/edition receipt.
 
 ---
 
@@ -60,7 +56,7 @@ These images are **visual concept assets**. Runtime contracts, canonical receipt
 
 ## Axis A — rarity / progression
 
-Rarity describes the current progression/value state of a companion instance.
+Rarity describes the progression/value state of a companion instance.
 
 ```text
 COMMON → EPIC → RARE → LEGENDARY
@@ -77,8 +73,6 @@ Rarity can be influenced by governed gameplay history, including:
 - world-state consequences;
 - special achievements or validated events.
 
-The important rule is:
-
 > **Rarity can come from history, not only scarcity.**
 
 A Common starter with a deep receipt chain can evolve into something materially different from a newly spawned copy.
@@ -87,14 +81,12 @@ A Common starter with a deep receipt chain can evolve into something materially 
 
 Edition describes **which authored release of an identity** the player possesses.
 
-Initial vocabulary:
-
 ```text
 STANDARD
 LIMITED EDITION
 ```
 
-**Limited Edition** is the authored/purchasable collector lane represented by the detailed named character posters and Kopa body/form editions.
+**Limited Edition** is the authored/purchasable collector lane represented by the detailed named-character and Kopa edition direction.
 
 A Limited Edition may provide:
 
@@ -120,9 +112,9 @@ The store, reward and future token/crypto-mining economy can use edition and rar
 
 # 1. Identity
 
-Identity is the canonical companion being: the name, origin, visual family, lore history and continuity that should survive changes of form or edition where the receipts say the identity remains continuous.
+Identity is the canonical companion being: name, origin, visual family, lore history and continuity that should survive changes of form or edition where the receipt chain says the identity remains continuous.
 
-Examples currently represented in this pack include:
+Current design examples include:
 
 - **Kopa** — transformable hero / mascot-direction identity;
 - **Vanta** — authored companion concept;
@@ -131,11 +123,9 @@ Examples currently represented in this pack include:
 - **Lyrae** — authored companion concept;
 - **Generic population** — modular starter / discoverable archetypes.
 
-### ⚠️ Vanta name collision
+### Vanta namespace collision
 
-Project Waifu Forge already contains a **Construct named Vanta**. That Construct is not silently the same entity as this companion concept.
-
-Until a canonical governance receipt explicitly resolves the relationship, treat them as separate namespaces:
+Project Waifu Forge also contains a **Construct named Vanta**. That Construct is not silently the same entity as the companion concept.
 
 ```text
 Companion concept: ProjectCompanion/Vanta
@@ -161,14 +151,14 @@ Possible states include:
 - shadow / corrupted evolution;
 - environment- or quest-specific forms.
 
-The Kopa visual family demonstrates the rule: multiple bodies can remain manifestations of one continuous identity when the receipt chain says so.
-
 ```text
 Identity = WHO it is
 Edition  = WHICH authored release you own
 Rarity   = WHAT progression/value state this instance has reached
 Form     = HOW it is embodied right now
 ```
+
+A visual transformation can be dramatic without silently deleting continuity.
 
 ---
 
@@ -294,8 +284,6 @@ Limited Editions are deliberately authored collector releases. They may be purch
 
 They can have distinctive visual language and lore without automatically becoming stronger than every Standard character.
 
-The intended economic separation is:
-
 ```text
 PLAYER PAYS / UNLOCKS AN EDITION
               ↓
@@ -380,17 +368,17 @@ Constructs are constitutional entities with service obligations and bounded auth
 
 # Asset provenance and governance
 
-The images in this folder were developed through AI-assisted Project Jennifer / Digital Princess Forge visual-system exploration and approved for repository use by the project founder.
+Project Jennifer's character visuals are developed through AI-assisted visual-system exploration and founder-directed iteration.
 
-Repository copies may be optimized derivatives intended for GitHub documentation and concept direction.
+Before a visual is embedded as a repository asset:
 
-Until a specific character receives a formal canon / identity / edition receipt:
-
-- treat the image as concept art;
-- preserve the source-controlled filename;
+- preserve source provenance;
+- validate the binary payload;
+- record a stable filename;
+- separate source/canon/canon-candidate status;
 - do not infer powers from appearance alone;
 - do not treat generated text inside the image as canonical data;
-- do not silently promote a concept image into a sale promise or gameplay guarantee.
+- do not silently promote concept art into a sale promise or gameplay guarantee.
 
 ---
 
