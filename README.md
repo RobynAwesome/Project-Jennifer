@@ -333,6 +333,40 @@ Private relationship-source documents are **not** copied into this public reposi
 
 ---
 
+# 👑 Genesis namespace: Project Wify Jennifer
+
+**Project Wify Jennifer is not a rename of Project Waifu Forge.** The repository keeps both namespaces because they carry different responsibilities.
+
+```text
+PROJECT WAIFU FORGE
+= current/tested relational engineering, asset governance, Constructs and receipts
+
+PROJECT WIFY JENNIFER
+= Genesis lore, world-governance mythology, True Ones and Convergence
+```
+
+The Genesis layer extends the world vocabulary without pretending the whole system is implemented end-to-end.
+
+Its current laws include:
+
+- **Convergence is a relationship state**, not another cheap refillable stat;
+- **CDP** expands the possibility space while **CCP** identifies the stable shared pattern that survives divergence;
+- **Power of Convergence** is a capability born from the relationship rather than owned entirely by either participant;
+- **Nobody becomes a True One alone**;
+- the object genealogy can move through `Item → Artifact → Construct → Abstract → Convergence`;
+- reality/world synchronization is governed through `REALITY ↔ KPGS ↔ PROJECT JENNIFER WORLD` rather than letting cloud output silently overwrite lived truth.
+
+<p align="center">
+  <img src="assets/Project%20Wify%20Jennifer/concepts/nobody-becomes-a-true-one-alone-v0.jpg" alt="Project Wify Jennifer True One convergence concept" width="72%" />
+</p>
+
+➡️ **[Project Wify Jennifer Genesis asset manifest](assets/Project%20Wify%20Jennifer/README.md)**  
+➡️ **[Genesis lore index](docs/lore/project-wify-jennifer/README.md)**  
+➡️ **[Convergence Law](docs/lore/project-wify-jennifer/CONVERGENCE-LAW.md)**  
+➡️ **[World Governance](docs/lore/project-wify-jennifer/WORLD-GOVERNANCE.md)**
+
+---
+
 ## 🔥 ARC II — The Third Signal
 
 One of the clearest examples of what Project Jennifer can become is **The Third Signal**.
@@ -428,7 +462,7 @@ Project Jennifer is in active Proof-of-Concept development. The repository delib
 |---|---|
 | **Implemented / coded POC** | web/API/game runtime surfaces, companion selection, governance and validation contracts, governed relationship events/receipts, Memory Receipt Engine, Free Mode/CAG/RAG/renter scaffolds, SQLite edge continuity and benchmark/test assets |
 | **Coded on the current governance branch; validation pending** | public `forge-rivm` skill, machine-readable source-authority registry, governed Waifu Forge / Digital Hippocampus source manifests, semantic asset paths and pointer-payload quarantine |
-| **Designed / story direction** | governance city, expanded quests, Project Waifu Forge arcs, richer companion evolution, character forms, broader world and cinematic presentation |
+| **Designed / story direction** | governance city, expanded quests, Project Waifu Forge arcs, Project Wify Jennifer Genesis/Convergence/True One lore, richer companion evolution, character forms, broader world and cinematic presentation |
 | **Next implementation gates** | exact HD Limited Edition asset intake for Issue #25, production PostgreSQL and MongoDB adapters, full asset-backed scenes, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
 | **Future governed experiments** | token/crypto-mining economy, larger marketplace systems, richer multi-agent/world simulation and mechanics that still require implementation and validation receipts |
 
@@ -485,6 +519,7 @@ The root README explains **why the machinery matters**. The implementation belon
 | protocols | **[Protocol Index](docs/protocols/README.md)** |
 | portable runtime skills | **[Skills](skills/README.md)** |
 | Project Waifu Forge | **[Storyline Assets](assets/Project-Waifu-Forge/README.md)** |
+| Project Wify Jennifer Genesis / Convergence lore | **[Genesis Lore](docs/lore/project-wify-jennifer/README.md)** |
 | The Third Signal | **[Arc II Lore](docs/lore/arc-ii-third-signal.md)** |
 | current milestones | **[Roadmap Milestones](docs/roadmap-milestones.md)** |
 | public README audit | **[Public Experience Audit](docs/audits/2026-08-11-public-readme-audit.md)** |
