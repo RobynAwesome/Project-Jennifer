@@ -163,6 +163,27 @@
       "notes": "Ecosystem root supplies doctrine and role continuity; Project Jennifer current repository remains implementation authority."
     },
     {
+      "id": "canon-project-wify-jennifer-genesis-2026-08-11",
+      "class": "PROJECT_CANON",
+      "pathOrExternalRef": "docs/lore/project-wify-jennifer/README.md",
+      "title": "Project Wify Jennifer Genesis / Convergence Lore Namespace",
+      "sourceOwner": "Project Jennifer",
+      "privacyLane": "public-lore",
+      "status": "CANON",
+      "canonicalFor": ["Project Wify Jennifer Genesis lore namespace", "Convergence and True One story/system intent"],
+      "supersedes": [],
+      "contradicts": [],
+      "sourceLineage": [
+        "docs/lore/project-wify-jennifer/CONVERGENCE-LAW.md",
+        "docs/lore/project-wify-jennifer/BLACK-GLOVE-LAW.md",
+        "docs/lore/project-wify-jennifer/WORLD-GOVERNANCE.md"
+      ],
+      "publicTransformAllowed": true,
+      "humanValidated": true,
+      "sha256": null,
+      "notes": "Separate namespace from Project Waifu Forge. Canonical as current repository lore/system-intent source, not proof that the described Genesis/Convergence systems are implemented end-to-end."
+    },
+    {
       "id": "visual-waifu-forge-public-source-set-2026-08-11",
       "class": "VISUAL_SOURCE",
       "pathOrExternalRef": "assets/Project-Waifu-Forge/source-manifest.json",
