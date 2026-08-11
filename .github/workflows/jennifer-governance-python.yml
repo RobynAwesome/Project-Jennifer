@@ -1,0 +1,72 @@
+name: Jennifer Governance Python
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "project_jennifer/**"
+      - "tests/**"
+      - "skills/**"
+      - "docs/architecture/**"
+      - ".github/workflows/jennifer-governance-python.yml"
+  pull_request:
+    paths:
+      - "project_jennifer/**"
+      - "tests/**"
+      - "skills/**"
+      - "docs/architecture/**"
+      - ".github/workflows/jennifer-governance-python.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jennifer-governance-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  governance-tests:
+    name: Python ${{ matrix.python-version }} governance tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Compile package
+        run: python -m compileall -q project_jennifer tests
+
+      - name: Run governed runtime tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+
+  governance-contract-smoke:
+    name: Contract import smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Import core governance surfaces
+        run: |
+          python - <<'PY'
+          from project_jennifer import FreeModeEngine
+          from project_jennifer.attention import CommunicationAttentionGovernance
+          from project_jennifer.retrieval import GovernedRAG
+          from project_jennifer.core.renter_router import StatelessRenterRouter
+          print("Project Jennifer governance imports OK")
+          PY
