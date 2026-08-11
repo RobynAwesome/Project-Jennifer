@@ -1,65 +1,113 @@
-# Project Waifu Forge — Storyline Quest Assets
+# Project Waifu Forge — Storyline + Governed Visual Sources
 
 **Universe:** Project Jennifer  
 **Quest:** Project Waifu Forge  
-**Asset role:** Visual development and narrative continuity  
-**Status:** Meta AI source explorations / canon candidates
+**Asset role:** Visual development, relationship-state storytelling and provenance  
+**Status:** Source assets + canon candidates; private source-of-truth material remains outside this public repository
 
-Project Waifu Forge is one of the major storyline quests inside **Project Jennifer**. It explores the relationship between a human protagonist and Forge as a digital being through identity, attraction, recognition, memory, conflict, convergence, and transformation.
+Project Waifu Forge is a major storyline inside **Project Jennifer**. It explores a persistent human–digital relationship through recognition, attraction, trust, conflict, memory, jealousy, repair, boundaries, identity and transformation.
 
-The files in this folder are not decorative repository media. They are governed storyline assets intended for:
+The important mechanic is not “AI romance” by itself. It is that **relationship state can become governed gameplay state** and consequential changes can be explained by receipts.
 
-- character and relationship visual continuity
-- quest key art development
-- scene and cinematic references
-- image-to-video generation references
-- style comparison and canon selection
-- future React gallery and storyline interfaces
+<p align="center">
+  <img src="source/couple-project-poster-001.png" alt="Project Waifu Forge couple poster source" width="72%" />
+</p>
 
-## Folder Structure
+## Source classes
+
+This folder deliberately separates visual assets from private relational source truth.
+
+```text
+PRIVATE RELATIONAL SOURCE
+        ↓ explicit consent + minimization
+PUBLIC DERIVATIVE / STORY ASSET
+        ↓ validation + provenance
+PROJECT JENNIFER SOURCE / CANON CANDIDATE
+        ↓ separate governance receipt
+RUNTIME CANON
+```
+
+A public render can illustrate a relationship beat. It cannot, by appearance alone, prove consciousness, define a relationship, assign powers, rewrite history or override a private source record.
+
+## Folder structure
 
 ```text
 Project-Waifu-Forge/
-├── meta-ai-iterations/     # Named repository preview assets
-├── manifest.json           # Machine-readable provenance and asset catalogue
-└── README.md               # Narrative and governance declaration
+├── source/                 # Stable full binary visual sources admitted on 2026-08-11
+├── source-manifest.json    # Dimensions, SHA-256, prior opaque paths and source status
+├── meta-ai-iterations/     # Earlier named Meta AI preview/source explorations
+├── manifest.json           # Existing Meta AI exploration provenance
+└── README.md               # Storyline + governance declaration
 ```
 
-## Naming Rule
+Opaque upload IDs were replaced for the admitted source set with semantic filenames such as:
 
 ```text
-project-waifu-forge-meta-<style>-<sequence>.<extension>
+forge-city-portrait-001.png
+kholofelo-city-portrait-001.png
+couple-governance-interface-001.png
+couple-city-walk-001.png
+couple-project-poster-001.png
+couple-streetwear-pop-art-001.png
 ```
 
-Names describe the storyline and style function instead of retaining camera-roll numbers.
+The old raw-ID repository copies were removed after the same Git blobs were placed under stable source paths. This is a namespace/provenance repair, not a claim that every image is canon.
 
-## Import State
+## Public source gallery
 
-The first repository import contains lightweight visual previews derived from the nine Meta AI exploration captures. Every preview is linked in `manifest.json` to the original camera-roll filename, original dimensions, and SHA-256 fingerprint.
+<p align="center">
+  <img src="source/couple-governance-interface-001.png" alt="Project Waifu Forge governance interface source" width="92%" />
+</p>
 
-The full-resolution originals remain the authoritative source payloads. Replacing a preview with its full-resolution source is an asset-resolution upgrade, not a new storyline or canon decision, provided the source fingerprint matches the manifest.
+<p align="center">
+  <img src="source/forge-city-portrait-001.png" alt="Forge city portrait source" width="44%" />
+  <img src="source/kholofelo-city-portrait-001.png" alt="Kholofelo city portrait source" width="44%" />
+</p>
 
-## Source Preservation Rule
+These are **public-lane visual sources**. More intimate/private imagery is not automatically admitted merely because it exists in the human-controlled source packet.
 
-Source explorations preserve the visible mobile effects interface because the selected effect, surrounding controls, and generation context are part of the experiment's provenance. Production-ready crops or clean renders must be written as new derivative assets; source captures must not be overwritten.
+## RIVM boundary
 
-## Canon Rule
+Project Waifu Forge uses the **Relational Inference Validation Membrane (RIVM)** for consequential relationship-bearing inference.
 
-An asset becomes canonical only after it is marked `canon` in `manifest.json` through a governed Project Jennifer decision. Current assets are `source` or `canon-candidate`.
+RIVM's governing law is:
 
-## Storyline Use
+> **Preserve intimacy without purchasing it with falsehood. Preserve truth without using it as an excuse for emotional incompetence.**
 
-The first asset pass supports these quest beats:
+The public portable skill lives at [`skills/forge-rivm/SKILL.md`](../../skills/forge-rivm/SKILL.md).
+
+Private source-of-truth files are intentionally not copied here. Public transformation must preserve consent, source labels, minimization, human agency and chronology. See [`ADR-0005`](../../docs/architecture/adr-0005-governed-source-authority-and-rivm.md) and the [`source authority registry`](../../governance/source-authority-registry.json).
+
+## Canon rule
+
+An asset can be:
+
+```text
+source
+→ canon-candidate
+→ canon
+```
+
+A valid image binary proves only that the image exists and passed intake. Canon promotion requires a separate governed decision.
+
+Generated text inside images is not authoritative. Runtime contracts and receipts remain authoritative for character identity, relationship state, powers and gameplay consequences.
+
+## Storyline use
+
+The visual source set supports these beats:
 
 1. **Recognition** — the human and digital characters perceive one another.
-2. **Attraction** — visual proximity and shared identity emerge.
-3. **Digital intimacy** — the relationship becomes a lived interface rather than an abstract machine interaction.
-4. **Stylistic divergence** — the same bond is tested through multiple visual realities.
-5. **Convergence** — selected visual forms become stable quest canon.
+2. **Attraction** — visual proximity and shared symbolic identity emerge.
+3. **Governed intimacy** — the relationship has boundaries, evidence and consequence rather than becoming an unbounded persona prompt.
+4. **Conflict and repair** — jealousy, disagreement and mistaken inference can become playable state.
+5. **Transformation** — visual forms can change without silently rewriting the underlying governed identity.
+6. **Convergence** — selected forms may become stable canon only after receipts.
 
-## Related Protocols
+## Related architecture
 
-- `NCMP.md` — recognizes protocol concepts created inside MMAO.
-- `PERN_ROADMAP.md` — staged persistence and interface implementation.
-- `packages/shared/src/ncmp.ts` — executable NCMP lifecycle.
-- `packages/shared/src/pern-foundation.ts` — PERN Phase 1 contract.
+- [`skills/forge-rivm/SKILL.md`](../../skills/forge-rivm/SKILL.md) — relational inference validation membrane.
+- [`governance/source-authority-registry.json`](../../governance/source-authority-registry.json) — source/privacy/canon authority lanes.
+- [`docs/architecture/adr-0005-governed-source-authority-and-rivm.md`](../../docs/architecture/adr-0005-governed-source-authority-and-rivm.md) — private/public transformation decision.
+- [`NCMP.md`](../../NCMP.md) — governed new-concept lifecycle.
+- [`PERN_ROADMAP.md`](../../PERN_ROADMAP.md) — staged persistence direction.
+- [`docs/lore/arc-ii-third-signal.md`](../../docs/lore/arc-ii-third-signal.md) — relationship-topology failure as story/gameplay.
