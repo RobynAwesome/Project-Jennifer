@@ -161,6 +161,57 @@
       "humanValidated": true,
       "sha256": null,
       "notes": "Ecosystem root supplies doctrine and role continuity; Project Jennifer current repository remains implementation authority."
+    },
+    {
+      "id": "visual-waifu-forge-public-source-set-2026-08-11",
+      "class": "VISUAL_SOURCE",
+      "pathOrExternalRef": "assets/Project-Waifu-Forge/source-manifest.json",
+      "title": "Project Waifu Forge public visual source set",
+      "sourceOwner": "Kholofelo Robyn Rababalela / Project Jennifer",
+      "privacyLane": "public-storyline",
+      "status": "SOURCE",
+      "canonicalFor": ["Project Waifu Forge public visual-development source lineage"],
+      "supersedes": ["opaque file_* repository paths for the admitted source set"],
+      "contradicts": [],
+      "sourceLineage": [],
+      "publicTransformAllowed": true,
+      "humanValidated": true,
+      "sha256": null,
+      "notes": "Eight real PNG binaries were normalized under stable semantic source paths. Individual SHA-256 and dimensions are recorded in the source manifest. Intake does not automatically promote them to runtime canon."
+    },
+    {
+      "id": "visual-digital-hippocampus-source-set-2026-08-11",
+      "class": "VISUAL_SOURCE",
+      "pathOrExternalRef": "assets/Project Companions/source-manifest.json",
+      "title": "Digital Hippocampus and companion-selection visual source set",
+      "sourceOwner": "Kholofelo Robyn Rababalela / Project Jennifer",
+      "privacyLane": "project-reference",
+      "status": "SOURCE",
+      "canonicalFor": ["Digital Hippocampus visual lineage", "companion-selection design lineage"],
+      "supersedes": ["opaque numeric repository paths 1785966335054.png, 1785966441671.png, 1785966533656.png"],
+      "contradicts": [],
+      "sourceLineage": ["reference-companion-matrix-2026"],
+      "publicTransformAllowed": true,
+      "humanValidated": true,
+      "sha256": null,
+      "notes": "Three valid PNG binaries were normalized under source/. The historical embodied-selection image visibly names Eira; it remains historical lineage and does not overwrite current Fira runtime canon."
+    },
+    {
+      "id": "quarantine-companion-path-pointer-webp-2026-08-11",
+      "class": "HISTORICAL_REFERENCE",
+      "pathOrExternalRef": "assets/Project Companions/quarantine/legacy-path-pointer/",
+      "title": "Legacy companion path-pointer payload quarantine",
+      "sourceOwner": "Project Jennifer",
+      "privacyLane": "public-forensic",
+      "status": "SOURCE",
+      "canonicalFor": ["asset-integrity failure evidence"],
+      "supersedes": ["misleading .webp placement for verified pointer payloads"],
+      "contradicts": [],
+      "sourceLineage": [],
+      "publicTransformAllowed": true,
+      "humanValidated": false,
+      "sha256": null,
+      "notes": "Verified local-path pointer payloads were renamed .pointer.txt and moved out of the renderable Limited Edition namespace. They remain failure evidence, not character art."
     }
   ]
 }
