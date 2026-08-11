@@ -23,32 +23,73 @@ Project Jennifer should create meaningful ownership, evolution and choice — no
 
 ---
 
-## ⚠️ Current asset-integrity state
+## Asset-integrity state — second pass, 2026-08-11
 
-The character-system logic in this document is valid as design documentation, but the **legacy visual asset paths are not currently all valid repository images**.
+The first audit correctly found missing legacy paths and malformed `.webp` pointer payloads. A second pass found that **valid founder-supplied PNG source binaries were already in the repository under opaque numeric names**.
 
-The 2026-08-11 asset audit found:
+Three Digital Hippocampus / companion-selection sources are now normalized under stable paths:
 
-- several previously declared `generic/`, `heroes/` and `exclusive/` image paths are missing on the current branch;
-- sampled files under `limited-edition/` contain local-path pointer text instead of decodable WebP binaries;
-- therefore the root README must not embed those paths until real source images are imported and validated.
+```text
+source/digital-hippocampus-substrate-001.png
+source/digital-hippocampus-companion-selection-core-logic-001.png
+source/digital-hippocampus-companion-selection-embodied-historical-001.png
+```
 
-The visual target remains unchanged: **high-resolution individual character art, not squeezed thumbnail collages.**
+<p align="center">
+  <img src="source/digital-hippocampus-substrate-001.png" alt="Digital Hippocampus visual source" width="96%" />
+</p>
+
+<p align="center">
+  <img src="source/digital-hippocampus-companion-selection-core-logic-001.png" alt="Digital Hippocampus companion core logic selection" width="96%" />
+</p>
+
+Their dimensions, SHA-256 fingerprints and prior repository paths are recorded in [`source-manifest.json`](source-manifest.json).
+
+### Pointer payloads are quarantined
+
+Verified local-path pointer payloads are no longer stored as apparently renderable `.webp` files. They now live under:
+
+```text
+quarantine/legacy-path-pointer/
+```
+
+with `.pointer.txt` names.
+
+That preserves the failure evidence without allowing a text pointer to masquerade as image art.
+
+### Issue #25 remains open
+
+This intake repair does **not** prove that every founder-approved HD Limited Edition asset named by Issue #25 has been restored. The exact Vanta, Nyra, SolveK, Lyrae, Kopa and rarity acceptance set still needs binary-by-binary intake and public-render validation before that issue can close.
+
+The visual target remains: **high-resolution individual character art, not squeezed thumbnail collages.**
 
 ➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md).
 
-### Intended namespace
+### Stable namespace
 
 ```text
 assets/Project Companions/
   README.md
+  source-manifest.json
+  source/                    # governed design/source binaries
+  quarantine/                # invalid/non-renderable forensic payloads
   rarity/                    # common / epic / rare / legendary system visuals
   limited-edition/           # authored purchasable / collector editions
   forms/                     # identity-preserving body/form states
-  source/                    # governed source intake when required
 ```
 
-Legacy folder names may remain temporarily for migration, but a filename never overrides the governed character/edition receipt.
+A filename never overrides the governed character/edition receipt.
+
+### Historical Eira → current Fira lineage
+
+The supplied In-Depth Companion Matrix and the historical embodied-selection source visibly use **Eira** for the female Memory Architect. Current executable Project Jennifer companion canon uses **Fira**.
+
+```text
+EIRA = historical design-source label
+FIRA = current runtime identity
+```
+
+The historical source remains intact. It is not silently rewritten to manufacture consistency after the fact.
 
 ---
 
@@ -375,10 +416,14 @@ Before a visual is embedded as a repository asset:
 - preserve source provenance;
 - validate the binary payload;
 - record a stable filename;
+- record dimensions/checksum where provenance matters;
 - separate source/canon/canon-candidate status;
+- preserve historical labels rather than silently rewriting them;
 - do not infer powers from appearance alone;
 - do not treat generated text inside the image as canonical data;
 - do not silently promote concept art into a sale promise or gameplay guarantee.
+
+Source authority is governed by [`governance/source-authority-registry.json`](../../governance/source-authority-registry.json).
 
 ---
 
