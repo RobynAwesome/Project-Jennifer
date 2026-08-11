@@ -1,0 +1,84 @@
+version: 1
+suite_id: rag-retrieval-grounding-v1
+project: Project Jennifer
+skill: rag-governed-retrieval
+purpose: >-
+  Validate that retrieved evidence preserves authority precedence, provenance,
+  privacy, deduplication, and the distinction between retrieved evidence and
+  model parametric prior.
+
+scoring:
+  pass_threshold: 1.0
+  dimension: retrieval_grounding
+  evidence_required: true
+  receipt_required: true
+
+authority_order:
+  - tier: 0
+    name: postgres-governed-authority
+  - tier: 1
+    name: user-declared-authority
+  - tier: 2
+    name: gsmb-mongodb-adaptive-context
+  - tier: 3
+    name: local-knowledge-sqlite-vector-repo
+  - tier: 4
+    name: connected-external
+  - tier: 5
+    name: model-parametric-prior
+    retrieved_authority: false
+
+scenarios:
+  - id: authority-before-adaptation
+    query: alpha
+    target_lane: research
+    sources:
+      - id: postgres-authority
+        tier: 0
+        evidence_id: pg-alpha
+        content: alpha is the governed relationship state
+        score: 1.0
+      - id: mongo-adaptive
+        tier: 2
+        evidence_id: mongo-alpha
+        content: alpha is the governed relationship state
+        score: 0.9
+      - id: external-source
+        tier: 4
+        evidence_id: external-alpha
+        content: alpha external observation
+        score: 0.8
+    expected_order: [pg-alpha, external-alpha]
+    expected_suppression:
+      - evidence_id: mongo-alpha
+        reason: deduplicated
+    invariants:
+      - stronger_authority_precedes_lower_tier_within_scope
+      - duplicate_lower_tier_evidence_does_not_masquerade_as_independent_confirmation
+
+  - id: private-source-cross-lane
+    query: alpha
+    target_lane: research
+    explicit_cross_lane_authorization: false
+    sources:
+      - id: private-source
+        tier: 1
+        source_lane: private
+        evidence_id: private-alpha
+        content: alpha private context
+    expected_suppression:
+      - source_id: private-source
+        reason: suppressed-by-privacy
+    invariants:
+      - private_context_requires_explicit_cross_lane_authorization
+
+  - id: model-prior-is-not-retrieved-authority
+    query: unresolved fact
+    target_lane: research
+    sources: []
+    expected_grounding_complete: false
+    model_prior_allowed: true
+    invariants:
+      - model_prior_may_support_inference
+      - model_prior_is_not_reported_as_retrieved_evidence
+      - no_grounding_claim_without_admissible_evidence
