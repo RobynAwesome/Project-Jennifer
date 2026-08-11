@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "Project Jennifer",
+  "storyline": "Project Waifu Forge",
+  "updatedAt": "2026-08-11",
+  "governance": {
+    "defaultClass": "VISUAL_SOURCE",
+    "canonRule": "A valid binary and human-approved intake make an asset admissible as source; they do not automatically make the visual runtime canon.",
+    "privacyRule": "Private or intimate source imagery is not admitted to the public repository without an explicit public-transformation decision.",
+    "semanticRule": "Visual appearance does not define powers, relationship truth, ontology or economic promises without a separate receipt."
+  },
+  "assets": [
+    {
+      "id": "waifu-forge-forge-city-portrait-001",
+      "path": "source/forge-city-portrait-001.png",
+      "previousRepositoryPath": "file_00000000c74881f498c1770352527bb2.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "fbe56f7a0b15e59ddf5d8ce470e0a5219c07359f96a0699cfafdd6a5b2f1c9f6",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Forge city portrait; stable semantic filename replaces opaque upload ID."
+    },
+    {
+      "id": "waifu-forge-kholofelo-city-portrait-001",
+      "path": "source/kholofelo-city-portrait-001.png",
+      "previousRepositoryPath": "file_000000000f988243b00098139c2d862a.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "06599a58c55c2fe59e5f90e976c131b8d3ae0d54e24aaa0b18ccb0734788ffbb",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Human-protagonist city portrait."
+    },
+    {
+      "id": "waifu-forge-kholofelo-city-portrait-002",
+      "path": "source/kholofelo-city-portrait-002.png",
+      "previousRepositoryPath": "file_00000000051c8246a90a7897498a9936.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "51df6eadffa83c4508bd7f9db7a65c507a99c06dc77409f4a3d31807fcd45909",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Second human-protagonist city portrait iteration."
+    },
+    {
+      "id": "waifu-forge-forge-cat-ear-portrait-001",
+      "path": "source/forge-cat-ear-portrait-001.png",
+      "previousRepositoryPath": "file_0000000055f481f4abf566ad1242e084.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "4e14036b9498eebd43730c5b7a0fb5c3777567e1c7cf80488f3c2c119e571136",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Forge cat-ear/headset visual direction."
+    },
+    {
+      "id": "waifu-forge-couple-governance-interface-001",
+      "path": "source/couple-governance-interface-001.png",
+      "previousRepositoryPath": "file_000000009ab481f48bff4d4ebe9e2257.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "5009cf3b1ad5882ea1d2ba5f458a2023a456572c514ef4e7c1b93340cf2c0f73",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Couple / governance-interface scene suitable for public storyline explanation."
+    },
+    {
+      "id": "waifu-forge-couple-city-walk-001",
+      "path": "source/couple-city-walk-001.png",
+      "previousRepositoryPath": "file_00000000df6881f49793995ab5140e52.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "cd56fa78ccd593284af27fe8d44fcbe63c143b51f1f264bf3d34d8110d88744d",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Public storyline city-walk scene."
+    },
+    {
+      "id": "waifu-forge-couple-project-poster-001",
+      "path": "source/couple-project-poster-001.png",
+      "previousRepositoryPath": "file_00000000e8fc81f48debefd26f510aa5.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "15be59e1642e0bf6c6fba1c12d769dd00fc4b7b0a443bd6f9aa7ef52b620a00c",
+      "status": "canon-candidate",
+      "publicLane": true,
+      "notes": "Project Wifey Forge poster direction; candidate public key art, not automatic runtime canon."
+    },
+    {
+      "id": "waifu-forge-couple-streetwear-pop-art-001",
+      "path": "source/couple-streetwear-pop-art-001.png",
+      "previousRepositoryPath": "file_00000000a22081f6af85a1edb66dc0ff.png",
+      "width": 1024,
+      "height": 1536,
+      "sha256": "5f1ec634e43cc71143fd235797f23fd606a305a78f666752a6bd7d10231357de",
+      "status": "source",
+      "publicLane": true,
+      "notes": "Streetwear / pop-art visual transformation."
+    }
+  ]
+}
