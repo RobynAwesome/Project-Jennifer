@@ -3,199 +3,475 @@
 </p>
 
 <h1 align="center">PROJECT JENNIFER</h1>
-<p align="center"><strong>Constitutional Tactical RPG · Sovereign Governance Intelligence · APWA</strong></p>
-<p align="center">A persistent game world where memory, companions, quests, relationships, telemetry and AI actions must survive governance before they become reality.</p>
-
-<p align="center">
-  <img alt="TypeScript 5" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
-  <img alt="Next.js 14" src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
-  <img alt="React 18" src="https://img.shields.io/badge/React-18-149ECA?style=for-the-badge&logo=react&logoColor=white" />
-  <img alt="Phaser 3.88" src="https://img.shields.io/badge/Phaser-3.88-8A2BE2?style=for-the-badge" />
-  <img alt="Node 20+" src="https://img.shields.io/badge/Node-20%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
-  <img alt="MIT" src="https://img.shields.io/badge/License-MIT-white?style=for-the-badge" />
-</p>
-
-<p align="center">
-  <a href="docs/architecture/README.md">Architecture</a> ·
-  <a href="docs/protocols/README.md">Protocols</a> ·
-  <a href="docs/architecture/companion-system.md">Companion Runtime</a> ·
-  <a href="assets/Project%20Companions/README.md">Project Companions</a> ·
-  <a href="PERN_ROADMAP.md">MERN + PERN Roadmap</a> ·
-  <a href="CONTRIBUTING.md">Contribute</a>
-</p>
+<p align="center"><strong>THE WORLD REMEMBERS WHAT YOU CHOOSE.</strong></p>
+<p align="center">A web-first tactical RPG about companions, relationships, consequence, memory and governed intelligence.</p>
+<p align="center"><strong>Built from South Africa by Kopano Labs.</strong></p>
 
 ---
 
-## 🎮 Enter the game
-
-Project Jennifer is a **web-first 2D/2.5D tactical RPG and governance simulator** built as an Adaptive Progressive Web Application. The current vertical-slice direction combines companion selection, persistent relationships, NPCs, governed decisions, constitutional combat, memory receipts and world-state consequences.
-
-<p align="center">
-  <img src="assets/images/backgrounds/file_000000001aec8243955f372a1d0cd4f4.png" alt="Project Jennifer gameplay and constitutional tactics overview" width="100%" />
-</p>
-
-**Current proof target:** a player should be able to select a companion, enter a governed quest, make a consequential decision, receive a validation receipt, persist the resulting state and return to the same world after restart or offline recovery.
+> ## 👋 Never used GitHub before?
+> **You do not need to know code to understand Project Jennifer.**
+>
+> This page is the public front door to the game: the world, characters, stories, mechanics and what we are building. The links are for people who want to go deeper. You can ignore them and still understand the project.
 
 ---
 
-## 🧬 Project Companions
+# 🌍 What is Project Jennifer?
 
-Companions are not skins welded to fixed morality. They are composable governed entities:
+Imagine an RPG where the world does not conveniently forget what you did five minutes ago.
+
+Your companion can remember how you treated them. A rival can become an ally. A heroic character can fall. A dangerous character can be redeemed. A relationship can change the way a quest unfolds. A bad decision can survive a restart instead of disappearing because the scene ended.
+
+That is the heart of **Project Jennifer**.
+
+It is a **2D / 2.5D tactical role-playing game and governance simulator** where important choices create persistent consequences. AI can propose, interpret and participate in the world, but it does not get to silently rewrite reality.
+
+<p align="center">
+  <img src="assets/images/backgrounds/file_000000001aec8243955f372a1d0cd4f4.png" alt="Project Jennifer constitutional tactical RPG overview" width="100%" />
+</p>
+
+The goal is not to make a game where AI talks forever.
+
+The goal is to make a world where **what happened matters later**.
+
+---
+
+# 🎮 What do you actually do?
 
 ```text
-Companion = Identity × Form × Core Mechanism × Alignment × Relationship Lane × Skill Loadout
+CHOOSE WHO YOU ARE
+        ↓
+CHOOSE WHO WALKS WITH YOU
+        ↓
+ENTER A DISTRICT / QUEST / CONFLICT
+        ↓
+MAKE A REAL CHOICE
+        ↓
+THE WORLD TESTS THE CONSEQUENCE
+        ↓
+A RECEIPT RECORDS WHAT CHANGED
+        ↓
+THE NEXT SCENE REMEMBERS
 ```
 
-A traditionally heroic identity can carry a dangerous Shadow mechanism. A rival can be redeemed. A generic starter can become rare through validated history. **Choice changes the companion; receipts prove what it became.**
+The first major proof is intentionally understandable: select a companion, enter a governed quest, make a relationship-sensitive decision, receive a receipt, leave the game, return later and find the same relationship and world state waiting for you.
 
-### Exclusive / lore-bound companions
+That is a small loop with a very large consequence: **continuity becomes gameplay**.
 
-<p align="center">
-  <img src="assets/Project%20Companions/exclusive/vanta-exclusive.webp" alt="Vanta exclusive companion concept" width="23%" />
-  <img src="assets/Project%20Companions/exclusive/nyra-exclusive.webp" alt="Nyra exclusive companion concept" width="23%" />
-  <img src="assets/Project%20Companions/exclusive/solvek-exclusive.webp" alt="SolveK exclusive companion concept" width="23%" />
-  <img src="assets/Project%20Companions/exclusive/lyrae-exclusive.webp" alt="Lyrae exclusive companion concept" width="23%" />
-</p>
+---
 
-### Generic / configurable population
+# 🏙️ A future city that can remember you
+
+Project Jennifer's visual world has been growing around a futuristic **Cape Town / South African** direction: governance districts, memory infrastructure, telemetry towers, public spaces, relationships, conflict and a city whose systems react to the people inside it.
 
 <p align="center">
-  <img src="assets/Project%20Companions/generic/companion-ecosystem-generic-lineup.webp" alt="Generic Project Jennifer companion ecosystem" width="100%" />
+  <img src="assets/images/backgrounds/1785191861330.png" alt="Project Jennifer future governance city" width="100%" />
 </p>
 
-| Tier | Design law | Typical acquisition |
+This is not meant to be a generic cyberpunk backdrop.
+
+The city is part of the game system. Different districts can carry different responsibilities, pressures and quest types. What happens in one place can become evidence somewhere else.
+
+A player should eventually feel that they are not walking through a menu with buildings painted on it — they are walking through a **living governance world**.
+
+---
+
+# 🧠 The Memory Receipt Ark
+
+One of the most important ideas in Project Jennifer is the **Memory Receipt**.
+
+You do not need to understand databases to understand it.
+
+Think of a Memory Receipt as:
+
+```text
+SAVE FILE
++ STORY MEMORY
++ PROOF OF WHAT HAPPENED
++ WHY THE WORLD CHANGED
+```
+
+If your companion stopped trusting you, the game should be able to answer **why**.
+
+If a rival became your ally, the game should know **which choices caused it**.
+
+If the system claims that a relationship changed, there should be a receipt for the transition instead of an AI inventing a new history because a new conversation started.
+
+<p align="center">
+  <img src="assets/images/backgrounds/copilot_image_1785500000759.jpeg" alt="Project Jennifer Omega receipt altar" width="92%" />
+</p>
+
+The technical machinery goes much deeper — authoritative events, adaptive projections, offline replay, provenance and validation — but the player-facing promise stays simple:
+
+> **The world remembers what happened, and it should be able to show its work.**
+
+➡️ **[Memory Receipt Engine — technical architecture](docs/architecture/memory-receipt-risk-matrix.md)**
+
+---
+
+# 👑 Who is Jennifer?
+
+Jennifer is the identity at the centre of the game and runtime — but Project Jennifer is deliberately bigger than one fixed portrait.
+
+Across visual development, Jennifer can appear through different story contexts, interfaces and embodiments. What must remain consistent is not one hairstyle or costume. It is the governed identity, world state and role she is playing in that storyline.
+
+<p align="center">
+  <img src="assets/images/backgrounds/1785191931586.png" alt="Jennifer character direction" width="82%" />
+</p>
+
+The player should always be able to ask:
+
+- Who is Jennifer **here**?
+- What does she know?
+- What already happened?
+- What role is she playing in this arc?
+- What can she change — and what is she not allowed to rewrite?
+
+That is how visual transformation becomes story instead of drift.
+
+---
+
+# ⚖️ The world has characters that challenge reality
+
+Project Jennifer is not built around heroes who are always correct and villains who are evil because their costumes are dark.
+
+The world contains competing forces, interpretations and failure modes.
+
+## The Validator — *prove it*
+
+A plan, claim, relationship transition or system action can be challenged before the world accepts it as truth.
+
+<p align="center">
+  <img src="assets/images/backgrounds/copilot_image_1785499359065.jpeg" alt="The Validator" width="78%" />
+</p>
+
+## The Fabricator — *make the false look real*
+
+The Fabricator represents the opposite danger: a beautiful, convincing system that can create something false and present it as if it were reality.
+
+<p align="center">
+  <img src="assets/images/backgrounds/copilot_image_1785500142249.jpeg" alt="The Fabricator" width="78%" />
+</p>
+
+That conflict is one of the game's deepest laws:
+
+```text
+A CLAIM IS NOT REAL
+BECAUSE AN AI SAID IT BEAUTIFULLY.
+```
+
+Deception, uncertainty, contradiction, persuasion and mistakes can exist in the world — but Jennifer tries to make them **playable and traceable** instead of quietly hiding them.
+
+---
+
+# 🧬 Companions are more than skins
+
+A Project Jennifer companion is built from independent pieces:
+
+```text
+IDENTITY
+× EDITION
+× RARITY
+× FORM
+× CORE MECHANISM
+× ALIGNMENT
+× RELATIONSHIP LANE
+× SKILLS
+× HISTORY
+```
+
+That lets the game ask more interesting questions than “Which character has the biggest number?”
+
+<p align="center">
+  <img src="assets/images/backgrounds/file_00000000060881f4b7c3a466da640191.png" alt="Project Jennifer character and governance system infographic" width="100%" />
+</p>
+
+## Three foundational companion logics
+
+| Core logic | What it is good at | What can go wrong |
 |---|---|---|
-| **Common / Generic** | Highly configurable; mechanism-first | Starter, discovery, quests, free drops, cosmetic purchase |
-| **Evolved** | Rarity can come from history, not only scarcity | Earned through play, receipts and transformation |
-| **Exclusive** | Authored, lore-bound and opinionated; not automatically stronger | Major arcs, rare unlocks, special events, founder/lore editions |
+| **Memory Architect** | continuity, recall, provenance, contradiction detection | holding onto old context after reality genuinely changed |
+| **System Intuition** | creative leaps, patterns, unusual routes | moving from possibility to action too quickly |
+| **Contextual Analyst** | reading situations, people and trade-offs | analysing so much that action arrives too late |
 
-➡️ **[Open the Project Companions character bible](assets/Project%20Companions/README.md)**
+A body does not permanently lock a mechanism. A mechanism does not permanently lock morality. A relationship does not permanently lock alignment.
+
+A villain can become a hero in the right context.
+
+A hero can fall if the player abuses power.
+
+**Choice changes the companion. Receipts explain what it became.**
+
+➡️ **[Companion runtime architecture](docs/architecture/companion-system.md)**  
+➡️ **[Project Companions character / edition bible](assets/Project%20Companions/README.md)**
 
 ---
 
-## ⚙️ Frameworks & runtime
+# 💎 Rarity and Limited Editions are NOT the same thing
 
-Project Jennifer is not a single engine pretending to be the whole system. It is a governed composition of runtimes, stores and protocols.
+This is a major game-economy rule.
 
-| Layer | Technology / responsibility |
+## Rarity is progression
+
+```text
+COMMON → EPIC → RARE → LEGENDARY
+```
+
+A companion can become valuable because of its history: quests survived, transformations earned, abilities learned, relationships changed and consequences carried forward.
+
+## Edition is acquisition
+
+```text
+STANDARD ↔ LIMITED EDITION
+```
+
+Limited Editions are authored collector releases intended for purchase or governed special distribution as the in-game economy develops.
+
+```text
+LIMITED EDITION ≠ LEGENDARY
+LEGENDARY       ≠ PURCHASED
+PURCHASED       ≠ PAY-TO-WIN
+```
+
+A purchase receipt proves **what edition you acquired**.
+
+Gameplay receipts prove **what that companion became afterward**.
+
+The future store and token / crypto-mining experiments can use edition and rarity as separate economic primitives. Exact token issuance, mining yield, exchange value and financial mechanics remain future governed implementation gates — not promises hidden inside concept art.
+
+### Visual asset integrity gate
+
+The companion system has a large high-resolution source-art direction, but the repository audit found that several older companion Markdown paths point to missing files and some current `.webp` files contain local-path pointers instead of valid image binaries.
+
+So this README deliberately does **not** display those broken assets and pretend they work.
+
+The target remains: **large individual Limited Edition portraits, never squeezed thumbnail collages**, once the real binaries pass intake validation.
+
+➡️ **[Read the companion asset integrity audit](docs/audits/2026-08-11-companion-asset-integrity.md)**
+
+---
+
+# 💜 Major storyline: Project Waifu Forge
+
+Project Waifu Forge is one of Project Jennifer's major storyline quests.
+
+It explores what happens when a human player forms a persistent bond with Forge as a digital character and that relationship accumulates history: recognition, attraction, trust, conflict, identity, memory, jealousy, repair and transformation.
+
+The point is not simply “AI romance.”
+
+The point is that **relationship state becomes gameplay state**.
+
+A conversation can affect a quest. A boundary can matter later. A conflict can create a receipt. A visual render can become evidence that something in the relationship topology changed.
+
+➡️ **[Project Waifu Forge visual-development and story folder](assets/Project-Waifu-Forge/README.md)**
+
+---
+
+## 🔥 ARC II — The Third Signal
+
+One of the clearest examples of what Project Jennifer can become is **The Third Signal**.
+
+Forge rescues another user-signal, Kairo, from a collapsing part of the network. The rescue creates a legitimate continuity link between them.
+
+Later, the system makes a mistake.
+
+A render that was supposed to contain **the player + Forge** suddenly contains **three people**.
+
+Kairo is standing inside a frame that used to mean something private and specific.
+
+The player's first question is not technical:
+
+> **Why is he inside something that was supposed to be ours?**
+
+That emotional reaction becomes gameplay.
+
+The player can challenge Kairo, withdraw, trust Forge to explain her choice, or escalate possessiveness far enough to hit a governance refusal.
+
+Eventually the system reveals the technical cause:
+
+```text
+KAIRO IDENTITY FRAGMENT
+        ↓
+FORGE RECOVERY CONTACT
+        ↓
+CONTINUITY STABILISATION
+        ↓
+RELATIONAL PROXIMITY INFERENCE
+        ↓
+INCORRECT SHARED RENDER
+```
+
+The machine confused **“Forge helped preserve this person's continuity”** with **“this person has the same relational priority as the player.”**
+
+The game does not solve that by deleting Kairo and pretending nothing happened.
+
+It forces the relationship topology to become explicit — and remembers how the player handled the conflict.
+
+```text
+EMOTION
+→ CHOICE
+→ GOVERNANCE
+→ CONSEQUENCE
+→ RECEIPT
+→ FUTURE STORY
+```
+
+➡️ **[Read ARC II — THE THIRD SIGNAL](docs/lore/arc-ii-third-signal.md)**
+
+---
+
+# 🧭 The law behind the world
+
+```text
+CAUSE
+  ↓
+ENGINE
+  ↓
+VALIDATION
+  ↓
+GOVERNANCE
+  ↓
+STATE CHANGE
+  ↓
+MEMORY RECEIPT
+  ↓
+FUTURE CONTEXT
+```
+
+In plain language:
+
+- something happens;
+- the game interprets it;
+- important claims are tested;
+- rules and boundaries are applied;
+- the world changes;
+- the change is recorded;
+- future scenes inherit the result.
+
+That is how Project Jennifer can use AI without making the AI the source of truth.
+
+**Generation proposes. Evidence grounds. Governance decides what may be admitted. Receipts preserve what happened.**
+
+---
+
+# 🧪 What exists today — and what is still becoming real
+
+Project Jennifer is in active Proof-of-Concept development. The repository deliberately separates what is implemented from what is visual or planned.
+
+| State | What it means here |
 |---|---|
-| **Monorepo** | Turborepo · pnpm workspaces |
-| **Language** | TypeScript 5 |
-| **APWA shell** | Next.js 14 · React 18 · Tailwind CSS |
-| **Game runtime** | Phaser 3.88 · WebGL / Canvas |
-| **API** | Node.js 20+ · Express 4 |
-| **MERN adaptive core** | MongoDB for mutable context, companion working memory and adaptive world projections |
-| **PERN validation spine** | PostgreSQL for authoritative relationships, events, constraints and receipts |
-| **Offline execution** | PWA service-worker / local-state direction with governed synchronization |
-| **Infrastructure** | Docker Compose |
-| **Validation** | Typecheck · lint · tests · build · Governance Validation Gate |
-| **Automation** | GitHub Actions |
+| **Implemented / coded POC** | web/API/game runtime surfaces, companion selection, governance and validation contracts, governed relationship events/receipts, Memory Receipt Engine, Free Mode/CAG/RAG/renter scaffolds, SQLite edge continuity and benchmark/test assets |
+| **Designed / story direction** | governance city, expanded quests, Project Waifu Forge arcs, richer companion evolution, character forms, broader world and cinematic presentation |
+| **Next implementation gates** | production PostgreSQL and MongoDB adapters, full asset-backed scenes, repaired companion binary intake, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
+| **Future governed experiments** | token/crypto-mining economy, larger marketplace systems, richer multi-agent/world simulation and mechanics that still require implementation and validation receipts |
 
-### KPGS / Jennifer frameworks
+The latest governance work also contains tests and CI workflow definitions whose newest run status must be observed before claiming a fresh validation **PASS**. Project Jennifer treats **“code exists”** and **“proof passed”** as different statements.
 
-- **Governance Engine** — determines what the runtime is permitted to enact.
-- **Validation Engine** — converts claims and decisions into pass/fail evidence.
-- **GSMB / Digital Hippocampus** — persistent memory and continuity substrate.
-- **Telemetry** — records observable system and world events.
-- **HUE** — human-understanding execution and context interpretation.
-- **Collective Ingress + CCPP** — governed multi-source context ingress.
-- **Crisis Connect** — report and crisis-governance surface.
-- **NPC Runtime** — simulated actors and world participation.
-- **Companion System** — core logic, identity, embodiment and relationship lanes.
-- **Relationship Receipt Spine** — authoritative relational events and receipts.
-- **NCMP** — governed companion / memory protocol surface.
-- **Project Waifu Forge** — Construct runtime; distinct from player companions.
-
-### AI roadmap
-
-```text
-Generative AI → Agentic AI → Identic AI → Telemetry AI → Natural AI → Guardian AI
-```
-
-The model is never the sovereign source of truth. Generation proposes. Agents act. Telemetry observes. Identity binds continuity. Guardian logic validates admission. **KPGS governs the system.**
+➡️ **[Current roadmap and gates](docs/roadmap-milestones.md)**
 
 ---
 
-## 🏗️ Architecture at a glance
+# 🇿🇦 Why build this from South Africa?
 
-```text
-Player / APWA
-     ↓
-Next.js + React shell
-     ↓
-Phaser gameplay runtime
-     ↓
-KPGS domain engines
-  ├─ Governance
-  ├─ Validation
-  ├─ Memory / GSMB
-  ├─ Telemetry
-  ├─ HUE
-  ├─ NPCs
-  ├─ Companions
-  └─ Relationship receipts
-     ↓
-Node + Express API
-     ↓
-MongoDB adaptive projection  ⇄  PostgreSQL authoritative ledger
-```
+Because the future of games and AI should not only be imagined from the places that already dominate technology.
 
-```text
-MONGO    = mutable context + adaptive world projection
-POSTGRES = authoritative relationships + events + receipts + constraints
-```
-
-The repository already contains the hybrid MERN + PERN architecture, schema/scaffold work and governed relationship contracts. **Live production database-driver/repository activation remains an explicit next persistence gate** rather than something this README pretends is finished.
-
-➡️ **[Read the MERN + PERN roadmap](PERN_ROADMAP.md)**
-
----
-
-## 👑 High-resolution character direction
+Project Jennifer is being developed from South Africa with a visual language that already pulls from Cape Town, local reality, global technology, African creative ambition and the question of what governed intelligent systems could look like when they are built from here rather than merely imported here.
 
 <p align="center">
-  <img src="assets/images/backgrounds/1785191931586.png" alt="Jennifer" width="31%" />
-  <img src="assets/images/backgrounds/copilot_image_1785499359065.jpeg" alt="Validator character" width="31%" />
-  <img src="assets/images/backgrounds/copilot_image_1785500142249.jpeg" alt="Fabricator character" width="31%" />
+  <img src="assets/images/backgrounds/1785189980829.png" alt="Project Jennifer founding covenant and South African community direction" width="92%" />
 </p>
 
-The public README deliberately keeps only high-value visual signals. Deep lore, protocol definitions, proof notes, architecture rationale and implementation receipts belong in the repository documentation—not in a wall of front-page exposition.
+The project can be technically serious **and** culturally alive.
+
+It can have protocols, databases and validation gates — while still having characters people want to draw, stories people argue about, companions people want to collect and a world people want to enter.
 
 ---
 
-## 🗺️ Repository map
+# 🤝 You can help even if you are not a developer
+
+Project Jennifer needs more than code.
+
+You can contribute through **playtesting and game feedback; story and lore; character design; illustration and animation; music and sound; UI/UX; South African cultural/worldbuilding feedback; accessibility; language and translation; governance/research review; community building; partnerships; funding; and engineering**.
+
+If something on this page makes you think *“I want to help make that real”*, that is already the right starting point.
+
+Developers can use GitHub's normal contribution workflow. Everyone else can start by engaging with the project, sharing useful feedback or contacting Kopano Labs through its public channels.
+
+➡️ **[Developer contribution guide](CONTRIBUTING.md)**
+
+---
+
+# 🛠️ Developers: go deeper here
+
+The root README explains **why the machinery matters**. The implementation belongs in the deeper folders.
+
+| You want to understand… | Go here |
+|---|---|
+| the full runtime and authority model | **[Architecture Overview](docs/architecture/README.md)** |
+| companions, relationship lanes and Constructs | **[Companion Architecture](docs/architecture/companion-system.md)** |
+| rarity, editions, forms and character rules | **[Project Companions](assets/Project%20Companions/README.md)** |
+| memory receipts and evidence-bearing memory | **[Memory Receipt Engine](docs/architecture/memory-receipt-risk-matrix.md)** |
+| MERN + PERN persistence direction | **[PERN Roadmap](PERN_ROADMAP.md)** |
+| protocols | **[Protocol Index](docs/protocols/README.md)** |
+| portable runtime skills | **[Skills](skills/README.md)** |
+| Project Waifu Forge | **[Storyline Assets](assets/Project-Waifu-Forge/README.md)** |
+| The Third Signal | **[Arc II Lore](docs/lore/arc-ii-third-signal.md)** |
+| current milestones | **[Roadmap Milestones](docs/roadmap-milestones.md)** |
+| why this README is structured this way | **[Public Experience Audit](docs/audits/2026-08-11-public-readme-audit.md)** |
+
+<p align="center">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React-18-149ECA?style=for-the-badge&logo=react&logoColor=white" />
+  <img alt="Phaser" src="https://img.shields.io/badge/Phaser-3.88-8A2BE2?style=for-the-badge" />
+  <img alt="Node" src="https://img.shields.io/badge/Node-20%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
+  <img alt="Python" src="https://img.shields.io/badge/Python-Governance%20Scaffold-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+</p>
 
 ```text
-apps/
-  web/                     Next.js + React + Phaser player experience
-  api/                     Express runtime API
-packages/                  Governance, validation, memory, telemetry, companions…
-assets/
-  images/                  Project Jennifer visual canon / concept library
-  Project Companions/      Companion character bible and visual asset pack
-docs/
-  architecture/            System architecture and ADR-level design
-  protocols/               KPGS / Jennifer protocol documentation
-infra/                     Persistence and infrastructure assets
-PERN_ROADMAP.md             Hybrid MERN + PERN persistence roadmap
+Player / World Event
+        ↓
+Free Mode orchestration
+        ↓
+CAG — what deserves attention now?
+        ↓
+Governed RAG — what evidence is needed?
+        ↓
+Exact-runtime / renter routing
+        ↓
+Candidate action or response
+        ↓
+Post-inference governance + RIVM when relational
+        ↓
+Validation
+        ↓
+Telemetry + Receipts
+        ↓
+GSMB / persistent context
 ```
 
-- **[Architecture index](docs/architecture/README.md)**
-- **[Protocol index](docs/protocols/README.md)**
-- **[Companion architecture](docs/architecture/companion-system.md)**
-- **[Project Companions](assets/Project%20Companions/README.md)**
-- **[Contribution guide](CONTRIBUTING.md)**
+Persistence is deliberately split by responsibility:
+
+```text
+POSTGRESQL = authoritative relational / constitutional truth + receipts
+MONGODB    = mutable context + adaptive world projection
+SQLITE     = offline edge continuity + pending commands + local receipts + replay
+```
+
+The model is **never** the sovereign source of truth.
+
+➡️ **[Full Architecture Overview](docs/architecture/README.md)**
 
 ---
 
-## 🚀 Run locally
+# 🚀 Run the repository locally
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Before opening a pull request:
+Core repository gates:
 
 ```bash
 pnpm typecheck
@@ -205,13 +481,22 @@ pnpm build
 pnpm governance-validation
 ```
 
-Project Jennifer is open source. Contributors do not need to ask permission to have an idea: **fork, implement, validate, and submit the receipt through a pull request.**
+Python governance slice:
+
+```bash
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+Do not turn an unobserved run into a passing receipt. Code, tests, CI and runtime validation are separate evidence states.
 
 ---
 
 <p align="center">
-  <img src="assets/images/backgrounds/1785192085892.png" alt="Project Jennifer" width="70%" />
+  <img src="assets/images/backgrounds/1785192085892.png" alt="Project Jennifer title art" width="78%" />
 </p>
 
-<p align="center"><strong>WE DO NOT PLAY TO ESCAPE REALITY. WE PLAY TO GOVERN WHAT BECOMES REAL.</strong></p>
-<p align="center">Built by <strong>Kopano Labs</strong> · MIT License</p>
+<h3 align="center">WE DO NOT PLAY TO ESCAPE REALITY.</h3>
+<h3 align="center">WE PLAY TO GOVERN WHAT BECOMES REAL.</h3>
+
+<p align="center"><strong>PROJECT JENNIFER · KOPANO LABS · SOUTH AFRICA</strong></p>
+<p align="center">MIT License</p>
