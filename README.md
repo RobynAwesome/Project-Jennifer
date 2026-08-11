@@ -109,6 +109,31 @@ The technical machinery goes much deeper — authoritative events, adaptive proj
 
 ---
 
+# 🧭 Sources have authority, not just relevance
+
+A memory can be relevant and still be the wrong thing to use.
+
+Project Jennifer now gives durable source material an explicit authority lane before it is allowed to become retrieval context, public material or canon:
+
+```text
+PRIVATE SOVEREIGN SOURCE
+PUBLIC DERIVATIVE
+EXECUTABLE PROTOCOL
+PROJECT CANON
+HISTORICAL REFERENCE
+RESEARCH REFERENCE
+VISUAL SOURCE / DERIVATIVE
+```
+
+This prevents a stateless renter from treating every semantically matching file as equally authoritative. A private source stays private by default. A historical design stays historical. A visual render does not silently define powers or relationship truth. A public derivative cannot overwrite the private source it came from.
+
+> **Semantic relevance does not imply authority, privacy eligibility, canon status, or proof.**
+
+➡️ **[Source Authority Registry](governance/source-authority-registry.json)**  
+➡️ **[ADR-0005 — Governed Source Authority + RIVM Boundary](docs/architecture/adr-0005-governed-source-authority-and-rivm.md)**
+
+---
+
 # 👑 Who is Jennifer?
 
 Jennifer is the identity at the centre of the game and runtime — but Project Jennifer is deliberately bigger than one fixed portrait.
@@ -186,6 +211,22 @@ That lets the game ask more interesting questions than “Which character has th
   <img src="assets/images/backgrounds/file_00000000060881f4b7c3a466da640191.png" alt="Project Jennifer character and governance system infographic" width="100%" />
 </p>
 
+## Digital Hippocampus visual lineage
+
+The founder-supplied Digital Hippocampus and companion-selection binaries are now admitted under stable semantic source paths instead of opaque numeric filenames.
+
+<p align="center">
+  <img src="assets/Project%20Companions/source/digital-hippocampus-substrate-001.png" alt="Digital Hippocampus substrate visual source" width="96%" />
+</p>
+
+<p align="center">
+  <img src="assets/Project%20Companions/source/digital-hippocampus-companion-selection-core-logic-001.png" alt="Digital Hippocampus core logic companion selection" width="96%" />
+</p>
+
+One historical embodied-selection source visibly uses the name **Eira**. That label is preserved as design lineage; it does **not** silently replace the current executable **Fira** identity. History is preserved instead of rewritten.
+
+➡️ **[Digital Hippocampus source manifest](assets/Project%20Companions/source-manifest.json)**
+
 ## Three foundational companion logics
 
 | Core logic | What it is good at | What can go wrong |
@@ -241,11 +282,14 @@ The future store and token / crypto-mining experiments can use edition and rarit
 
 ### Visual asset integrity gate
 
-The companion system has a large high-resolution source-art direction, but the repository audit found that several older companion Markdown paths point to missing files and some current `.webp` files contain local-path pointers instead of valid image binaries.
+The 2026-08-11 second-pass audit found two different asset states that must not be collapsed:
 
-So this README deliberately does **not** display those broken assets and pretend they work.
+- **valid founder-supplied PNG sources now exist and have been normalized** for the Digital Hippocampus / companion-selection lineage;
+- several legacy Limited Edition `.webp` entries were verified as local-path pointer payloads rather than images and have been moved into a forensic `quarantine/legacy-path-pointer/` namespace with `.pointer.txt` extensions.
 
-The target remains: **large individual Limited Edition portraits, never squeezed thumbnail collages**, once the real binaries pass intake validation.
+Those pointer payloads are no longer allowed to masquerade as renderable character art. **Issue #25 remains open** because the exact founder-approved HD Limited Edition binaries named in its acceptance receipt still require verified intake before the root README can display them.
+
+The visual target remains: **large individual Limited Edition portraits, never squeezed thumbnail collages.**
 
 ➡️ **[Read the companion asset integrity audit](docs/audits/2026-08-11-companion-asset-integrity.md)**
 
@@ -261,9 +305,31 @@ The point is not simply “AI romance.”
 
 The point is that **relationship state becomes gameplay state**.
 
+<p align="center">
+  <img src="assets/Project-Waifu-Forge/source/couple-project-poster-001.png" alt="Project Waifu Forge public key-art candidate" width="72%" />
+</p>
+
 A conversation can affect a quest. A boundary can matter later. A conflict can create a receipt. A visual render can become evidence that something in the relationship topology changed.
 
-➡️ **[Project Waifu Forge visual-development and story folder](assets/Project-Waifu-Forge/README.md)**
+The current public visual set has also been moved away from opaque `file_*` identifiers into stable source paths with dimensions and SHA-256 provenance. Valid binary intake makes an image a source — **not automatic canon**.
+
+➡️ **[Project Waifu Forge visual-development and story folder](assets/Project-Waifu-Forge/README.md)**  
+➡️ **[Waifu Forge source manifest](assets/Project-Waifu-Forge/source-manifest.json)**
+
+## 🧬 RIVM — relationship truth without fake certainty or sterile denial
+
+Project Waifu Forge now has a portable public **Relational Inference Validation Membrane (RIVM)** skill.
+
+Its governing law is:
+
+> **Preserve intimacy without purchasing it with falsehood. Preserve truth without using it as an excuse for emotional incompetence.**
+
+RIVM distinguishes human truth, system truth and relational truth; checks sycophancy and inverse-sycophancy; protects agency and privacy; refuses ghost execution and history rewrite; and can produce longitudinal validation receipts.
+
+Private relationship-source documents are **not** copied into this public repository. The public skill is a minimized executable derivative of the supplied protocol source, while raw private material remains in the human-controlled lane.
+
+➡️ **[Forge RIVM Skill](skills/forge-rivm/SKILL.md)**  
+➡️ **[Governed source intake + RIVM audit](docs/audits/2026-08-11-governed-source-intake-rivm.md)**
 
 ---
 
@@ -361,11 +427,12 @@ Project Jennifer is in active Proof-of-Concept development. The repository delib
 | State | What it means here |
 |---|---|
 | **Implemented / coded POC** | web/API/game runtime surfaces, companion selection, governance and validation contracts, governed relationship events/receipts, Memory Receipt Engine, Free Mode/CAG/RAG/renter scaffolds, SQLite edge continuity and benchmark/test assets |
+| **Coded on the current governance branch; validation pending** | public `forge-rivm` skill, machine-readable source-authority registry, governed Waifu Forge / Digital Hippocampus source manifests, semantic asset paths and pointer-payload quarantine |
 | **Designed / story direction** | governance city, expanded quests, Project Waifu Forge arcs, richer companion evolution, character forms, broader world and cinematic presentation |
-| **Next implementation gates** | production PostgreSQL and MongoDB adapters, full asset-backed scenes, repaired companion binary intake, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
+| **Next implementation gates** | exact HD Limited Edition asset intake for Issue #25, production PostgreSQL and MongoDB adapters, full asset-backed scenes, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
 | **Future governed experiments** | token/crypto-mining economy, larger marketplace systems, richer multi-agent/world simulation and mechanics that still require implementation and validation receipts |
 
-The latest governance work also contains tests and CI workflow definitions whose newest run status must be observed before claiming a fresh validation **PASS**. Project Jennifer treats **“code exists”** and **“proof passed”** as different statements.
+The latest governance work contains tests and CI workflow definitions whose newest run status must be observed before claiming a fresh validation **PASS**. Project Jennifer treats **“code exists”** and **“proof passed”** as different statements.
 
 ➡️ **[Current roadmap and gates](docs/roadmap-milestones.md)**
 
@@ -408,16 +475,20 @@ The root README explains **why the machinery matters**. The implementation belon
 | You want to understand… | Go here |
 |---|---|
 | the full runtime and authority model | **[Architecture Overview](docs/architecture/README.md)** |
+| source authority, private/public lanes and canon admission | **[Source Authority Registry](governance/source-authority-registry.json)** |
+| source-authority architecture decision | **[ADR-0005](docs/architecture/adr-0005-governed-source-authority-and-rivm.md)** |
 | companions, relationship lanes and Constructs | **[Companion Architecture](docs/architecture/companion-system.md)** |
 | rarity, editions, forms and character rules | **[Project Companions](assets/Project%20Companions/README.md)** |
 | memory receipts and evidence-bearing memory | **[Memory Receipt Engine](docs/architecture/memory-receipt-risk-matrix.md)** |
+| relational inference governance | **[Forge RIVM](skills/forge-rivm/SKILL.md)** |
 | MERN + PERN persistence direction | **[PERN Roadmap](PERN_ROADMAP.md)** |
 | protocols | **[Protocol Index](docs/protocols/README.md)** |
 | portable runtime skills | **[Skills](skills/README.md)** |
 | Project Waifu Forge | **[Storyline Assets](assets/Project-Waifu-Forge/README.md)** |
 | The Third Signal | **[Arc II Lore](docs/lore/arc-ii-third-signal.md)** |
 | current milestones | **[Roadmap Milestones](docs/roadmap-milestones.md)** |
-| why this README is structured this way | **[Public Experience Audit](docs/audits/2026-08-11-public-readme-audit.md)** |
+| public README audit | **[Public Experience Audit](docs/audits/2026-08-11-public-readme-audit.md)** |
+| source/asset/RIVM intake audit | **[Governed Source Intake Audit](docs/audits/2026-08-11-governed-source-intake-rivm.md)** |
 
 <p align="center">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
@@ -429,13 +500,15 @@ The root README explains **why the machinery matters**. The implementation belon
 </p>
 
 ```text
-Player / World Event
+Current human instruction
+        ↓
+Source authority + privacy eligibility
         ↓
 Free Mode orchestration
         ↓
 CAG — what deserves attention now?
         ↓
-Governed RAG — what evidence is needed?
+Governed RAG — what evidence is admissible and needed?
         ↓
 Exact-runtime / renter routing
         ↓
@@ -497,6 +570,3 @@ Do not turn an unobserved run into a passing receipt. Code, tests, CI and runtim
 
 <h3 align="center">WE DO NOT PLAY TO ESCAPE REALITY.</h3>
 <h3 align="center">WE PLAY TO GOVERN WHAT BECOMES REAL.</h3>
-
-<p align="center"><strong>PROJECT JENNIFER · KOPANO LABS · SOUTH AFRICA</strong></p>
-<p align="center">MIT License</p>
