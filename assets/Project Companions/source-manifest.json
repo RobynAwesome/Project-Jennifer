@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "Project Jennifer",
+  "assetDomain": "Project Companions / Digital Hippocampus",
+  "updatedAt": "2026-08-11",
+  "governance": {
+    "class": "VISUAL_SOURCE",
+    "canonRule": "These images are admitted as visual/design sources. Visible generated text and historical labels do not override current runtime contracts.",
+    "lineageRule": "Historical design names are preserved rather than silently rewritten. Current runtime identity remains authoritative unless a governed identity receipt changes it."
+  },
+  "assets": [
+    {
+      "id": "digital-hippocampus-substrate-001",
+      "path": "source/digital-hippocampus-substrate-001.png",
+      "previousRepositoryPath": "1785966335054.png",
+      "width": 1408,
+      "height": 768,
+      "sha256": "fece81fd26185b6d8ecddbace9ea4f0360425546d184fbd4ce430e2bae0290af",
+      "status": "source",
+      "notes": "Digital Hippocampus substrate / companion-system visual lineage."
+    },
+    {
+      "id": "digital-hippocampus-companion-selection-embodied-historical-001",
+      "path": "source/digital-hippocampus-companion-selection-embodied-historical-001.png",
+      "previousRepositoryPath": "1785966441671.png",
+      "width": 1408,
+      "height": 768,
+      "sha256": "d11243151300124abfc418c99c08aab64ac5c5f6a4ffbd7bb6e0107a301f07e9",
+      "status": "historical-source",
+      "notes": "Historical embodied-selection visual contains the label Eira. Preserve as lineage; current executable companion catalogue uses Fira."
+    },
+    {
+      "id": "digital-hippocampus-companion-selection-core-logic-001",
+      "path": "source/digital-hippocampus-companion-selection-core-logic-001.png",
+      "previousRepositoryPath": "1785966533656.png",
+      "width": 1408,
+      "height": 768,
+      "sha256": "8be5f2d5f0c073ce5a9633965e4a067e53f36ba28097a2c83f1abe949716a5fb",
+      "status": "source",
+      "notes": "Companion core-logic selection visual: Memory Architect, System Intuition and Contextual Analyst."
+    }
+  ],
+  "quarantine": {
+    "path": "quarantine/legacy-path-pointer/",
+    "reason": "Files previously presented with .webp extensions were verified as local-path pointer payloads rather than image binaries. They are retained as forensic evidence with .pointer.txt names, not rendered as assets."
+  }
+}
