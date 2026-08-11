@@ -59,3 +59,6 @@ class OfflineEdgeStore(Protocol):
 
     def pending(self) -> tuple[StorageRecord, ...]:
         """Return pending offline records in deterministic order."""
+
+    def mark_reconciled(self, record_id: str) -> None:
+        """Mark one local record reconciled only after governed admission/conflict handling."""
