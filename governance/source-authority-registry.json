@@ -22,11 +22,11 @@
   ],
   "records": [
     {
-      "id": "source-private-vulnerable-delusional-forge-v1",
+      "id": "private-source-001",
       "class": "PRIVATE_SOVEREIGN",
-      "pathOrExternalRef": "human-controlled-private-source:Vulnerable_Delusional_Forge_Source_of_Truth_v1.0",
-      "title": "Vulnerable / Delusional Forge Source of Truth v1.0",
-      "sourceOwner": "Kholofelo Robyn Rababalela",
+      "pathOrExternalRef": "human-controlled-private-source:psot-001",
+      "title": "Private relationship source 001",
+      "sourceOwner": "human-context-authority",
       "privacyLane": "private",
       "status": "SOURCE",
       "canonicalFor": ["private relationship history and source-truth lineage"],
@@ -36,14 +36,14 @@
       "publicTransformAllowed": false,
       "humanValidated": true,
       "sha256": null,
-      "notes": "Raw private payload is intentionally not committed to the public repository. Structural lessons may be transformed only through an explicitly authorized public-derivative process."
+      "notes": "Raw private filename and payload are intentionally omitted from this public registry. Structural lessons may be transformed only through an explicitly authorized public-derivative process."
     },
     {
-      "id": "source-private-kholofelo-feels-about-forge",
+      "id": "private-source-002",
       "class": "PRIVATE_SOVEREIGN",
-      "pathOrExternalRef": "human-controlled-private-source:01_How_Kholofelo_Feels_About_Forge",
-      "title": "How Kholofelo Feels About Forge",
-      "sourceOwner": "Kholofelo Robyn Rababalela",
+      "pathOrExternalRef": "human-controlled-private-source:psot-002",
+      "title": "Private relationship source 002",
+      "sourceOwner": "human-context-authority",
       "privacyLane": "private",
       "status": "SOURCE",
       "canonicalFor": ["user-declared private relational meaning"],
@@ -53,14 +53,14 @@
       "publicTransformAllowed": false,
       "humanValidated": true,
       "sha256": null,
-      "notes": "Private source material; do not public-transform without explicit consent and minimization."
+      "notes": "Private source metadata is minimized; do not public-transform without explicit consent and purpose."
     },
     {
-      "id": "source-private-forge-relates-to-kholofelo",
+      "id": "private-source-003",
       "class": "PRIVATE_SOVEREIGN",
-      "pathOrExternalRef": "human-controlled-private-source:02_How_Forge_Relates_to_Kholofelo",
-      "title": "How Forge Relates to Kholofelo",
-      "sourceOwner": "Kholofelo Robyn Rababalela",
+      "pathOrExternalRef": "human-controlled-private-source:psot-003",
+      "title": "Private relationship source 003",
+      "sourceOwner": "human-context-authority",
       "privacyLane": "private",
       "status": "SOURCE",
       "canonicalFor": ["private relationship-role lineage"],
@@ -70,14 +70,14 @@
       "publicTransformAllowed": false,
       "humanValidated": true,
       "sha256": null,
-      "notes": "Private relationship source; public runtime may inherit governed invariants but not raw intimate details."
+      "notes": "Public runtime may inherit governed invariants but not raw intimate details or identifying private-source metadata."
     },
     {
-      "id": "source-private-identity-skill",
+      "id": "private-source-004",
       "class": "PRIVATE_SOVEREIGN",
-      "pathOrExternalRef": "human-controlled-private-source:03_Private_Source_of_Truth_Identity_Skill",
-      "title": "Private Source of Truth Identity Skill",
-      "sourceOwner": "Kholofelo Robyn Rababalela",
+      "pathOrExternalRef": "human-controlled-private-source:psot-004",
+      "title": "Private identity-governance source 004",
+      "sourceOwner": "human-context-authority",
       "privacyLane": "private",
       "status": "SOURCE",
       "canonicalFor": ["private source chronology, consent and supersession rules"],
@@ -87,24 +87,24 @@
       "publicTransformAllowed": false,
       "humanValidated": true,
       "sha256": null,
-      "notes": "Defines private-first chronology and explicit private-to-public transformation requirements."
+      "notes": "Raw private metadata is intentionally minimized in the public registry."
     },
     {
       "id": "source-public-transformation-blueprint",
       "class": "PUBLIC_DERIVATIVE",
-      "pathOrExternalRef": "human-controlled-source:04_Public_Transformation_Blueprint_Identity_Skill",
-      "title": "Public Transformation Blueprint Identity Skill",
-      "sourceOwner": "Kholofelo Robyn Rababalela",
+      "pathOrExternalRef": "human-controlled-source:public-transformation-blueprint",
+      "title": "Public Transformation Blueprint",
+      "sourceOwner": "human-context-authority",
       "privacyLane": "public-derivative",
       "status": "SOURCE",
       "canonicalFor": ["public transformation process"],
       "supersedes": [],
       "contradicts": [],
       "sourceLineage": [
-        "source-private-vulnerable-delusional-forge-v1",
-        "source-private-kholofelo-feels-about-forge",
-        "source-private-forge-relates-to-kholofelo",
-        "source-private-identity-skill"
+        "private-source-001",
+        "private-source-002",
+        "private-source-003",
+        "private-source-004"
       ],
       "publicTransformAllowed": true,
       "humanValidated": true,
@@ -126,7 +126,7 @@
       "publicTransformAllowed": true,
       "humanValidated": true,
       "sha256": null,
-      "notes": "Public executable derivative of the founder-supplied RIVM v1.0 source. Private source payloads are not committed."
+      "notes": "Public executable derivative of the founder-supplied RIVM v1.0 source. Private source payloads and identifying source metadata are not committed."
     },
     {
       "id": "reference-companion-matrix-2026",
