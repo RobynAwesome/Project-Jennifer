@@ -2,6 +2,21 @@
 
 This directory defines how Project Jennifer's portable `SKILL.md` workflows are handed to stateless renters without changing the underlying governance contract.
 
+## Discovery path
+
+External agents no longer need to reverse-engineer the repository before selecting a skill.
+
+```text
+skills.md
+→ skills/project-jennifer/SKILL.md
+→ smallest relevant specialist skill(s)
+→ current implementation/source
+→ bounded execution
+→ evidence + receipt
+```
+
+The root [`../../skills.md`](../../skills.md) is the repo-level **Awesome Skills entry**. The umbrella [`../project-jennifer/SKILL.md`](../project-jennifer/SKILL.md) handles capability routing.
+
 ## Distribution law
 
 ```text
@@ -12,18 +27,58 @@ SKILL.md source of truth
 → evidence + result + receipt
 ```
 
-Provider-specific delivery mechanisms may change. Jennifer's CAG, RAG, privacy, authority and memory semantics do not silently change with them.
+Provider-specific delivery mechanisms may change. Jennifer's CAG, RAG, conceptual-suite proof boundaries, privacy, authority and memory semantics do not silently change with them.
+
+## Core portable catalog
+
+```text
+project-jennifer
+cdp-conceptual-divergence
+ceep-conceptual-evaluation
+poc-foc-evaluation
+ccp-conceptual-convergence
+ncmp-concept-intake
+cag-communication-attention
+rag-governed-retrieval
+jennifer-stateless-renter
+forge-rivm
+authored-relational-attention
+```
+
+A runtime may expose the catalog without invoking every skill on every request. CAG and task intent determine the smallest relevant path.
+
+## Conceptual suite
+
+```text
+CDP
+→ CEEP
+→ POC-vs-FOC
+→ CCP
+→ canonical/evolution receipt
+→ NCMP when a new agent-originated concept needs human recognition + governed registration
+```
+
+Important proof boundaries:
+
+- **CDP** is canonically specified and packaged as a portable workflow; no dedicated `packages/conceptual/src/cdp/` runtime module is currently proven.
+- **CEEP** has a current TypeScript implementation under `packages/conceptual/src/ceep/`.
+- **POC-vs-FOC** has a current TypeScript evaluator under `packages/conceptual/src/pocvsfoc/`.
+- **CCP** has a current TypeScript implementation under `packages/conceptual/src/ccp/`.
+- **NCMP** has a coded storage-agnostic/in-memory registry; agents may propose but human recognition is mandatory before its recognition transition.
+
+Adapters must preserve those distinctions.
 
 ## Why this matters for collaboration
 
 A provider or partner should not need to reverse-engineer Project Jennifer before contributing. The minimum integration packet is:
 
-1. the relevant `SKILL.md` files;
-2. JSON schemas for receipts/evidence/capability manifests;
-3. the exact runtime capability manifest;
-4. benchmark results for the requested task lanes;
-5. the adapter that supplies the skill/context to the runtime;
-6. evidence and receipts returned after execution.
+1. `skills.md` or the umbrella `project-jennifer` skill;
+2. the relevant specialist `SKILL.md` files;
+3. JSON schemas for receipts/evidence/capability manifests where applicable;
+4. the exact runtime capability manifest;
+5. benchmark results for the requested task lanes;
+6. the adapter that supplies the skill/context to the runtime;
+7. evidence and receipts returned after execution.
 
 This creates a clean B2B evaluation surface:
 
@@ -67,7 +122,7 @@ Additional dimensions can be versioned later. Missing scores remain `null`; they
 Before sending context to a cloud renter:
 
 1. classify the current CAG relational lane;
-2. classify source privacy;
+2. classify source privacy and authority;
 3. apply the RAG authority/privacy guard;
 4. respect the renter's `data_egress` constraint;
 5. preserve provenance;
@@ -91,9 +146,17 @@ Human validation is mandatory before CAG/RAG/RIVM receipts or chosen/rejected pa
 
 ## Source skills
 
+- `../project-jennifer/SKILL.md`
+- `../cdp-conceptual-divergence/SKILL.md`
+- `../ceep-conceptual-evaluation/SKILL.md`
+- `../poc-foc-evaluation/SKILL.md`
+- `../ccp-conceptual-convergence/SKILL.md`
+- `../ncmp-concept-intake/SKILL.md`
 - `../cag-communication-attention/SKILL.md`
 - `../rag-governed-retrieval/SKILL.md`
 - `../jennifer-stateless-renter/SKILL.md`
+- `../forge-rivm/SKILL.md`
+- `../authored-relational-attention/SKILL.md`
 
 ## Provider onboarding checklist
 
