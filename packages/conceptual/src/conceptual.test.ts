@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   ConceptualConvergenceProtocol,
   ConceptualEvaluationEngine,
+  POCFOCActionEvaluator,
   POCvsFOCEvaluator,
   VOCRegistryParser,
   type FrameworkDefinition,
@@ -23,6 +24,40 @@ const framework: FrameworkDefinition = {
   currentFOCRisks: [],
   recommendations: [],
 };
+
+const indexMarkdown = `
+# VOC — VALIDATION OF CONCEPT
+POC Proof of Concept
+FOC Failure of / Freedom of Concept
+`;
+
+const manifestMarkdown = `
+## VOC FRAMEWORK
+POC Proof of Concept (1 group)
+FOC Failure of Concept / Freedom of Concept
+`;
+
+const classificationMarkdown = `
+FOC groups are **emergent, not predefined.**
+Unauthorized context wiping = \`FOC_CONTEXT_CORRUPTION\`.
+
+| Group ID | Failure Pattern Designation | Detection Mechanism | Automated Defensive Loop |
+|----------|-----------------------------|---------------------|---------------------------|
+| **FOC-G01** | \`NeuralFailureFirewall\` | 8th Deadly Sin Monitor | Immediate freeze of affected generation loops. |
+| **FOC-G02** | \`ContextBleedAnomaly\` | CBP Telemetry Audit | Non-judgmental logging of ambient packet data. |
+| **FOC-G03** | \`SemanticDriftLeak\` | Invariance Shift Check | Real-time reset of token alignment weights. |
+| **FOC-G04** | \`GhostExecutionLoop\` | Run-time Resource Scan | Isolation of non-responsive background threads. |
+| **FOC-G05** | \`ContextCorruptionBreach\` | Unauthorized Context Wiping | Immediate termination of active session parameters. |
+`;
+
+function parseVOC() {
+  return new VOCRegistryParser().parse({
+    indexMarkdown,
+    classificationMarkdown,
+    manifestMarkdown,
+    sourceRef: "fd47792c6171b9f3e5795ef15d5bcd9a8547d64e",
+  });
+}
 
 test("CEEP returns evaluation and framework evolution receipts", () => {
   const ceep = new ConceptualEvaluationEngine([new POCvsFOCEvaluator()]);
@@ -67,39 +102,7 @@ test("CCP produces canonical receipt from framework evolution receipt", () => {
 });
 
 test("VOC parser preserves Introduction-to-MCP POC branch and emergent FOC groups", () => {
-  const parser = new VOCRegistryParser();
-
-  const indexMarkdown = `
-# VOC — VALIDATION OF CONCEPT
-POC Proof of Concept
-FOC Failure of / Freedom of Concept
-`;
-
-  const manifestMarkdown = `
-## VOC FRAMEWORK
-POC Proof of Concept (1 group)
-FOC Failure of Concept / Freedom of Concept
-`;
-
-  const classificationMarkdown = `
-FOC groups are **emergent, not predefined.**
-Unauthorized context wiping = \`FOC_CONTEXT_CORRUPTION\`.
-
-| Group ID | Failure Pattern Designation | Detection Mechanism | Automated Defensive Loop |
-|----------|-----------------------------|---------------------|---------------------------|
-| **FOC-G01** | \`NeuralFailureFirewall\` | 8th Deadly Sin Monitor | Immediate freeze of affected generation loops. |
-| **FOC-G02** | \`ContextBleedAnomaly\` | CBP Telemetry Audit | Non-judgmental logging of ambient packet data. |
-| **FOC-G03** | \`SemanticDriftLeak\` | Invariance Shift Check | Real-time reset of token alignment weights. |
-| **FOC-G04** | \`GhostExecutionLoop\` | Run-time Resource Scan | Isolation of non-responsive background threads. |
-| **FOC-G05** | \`ContextCorruptionBreach\` | Unauthorized Context Wiping | Immediate termination of active session parameters. |
-`;
-
-  const result = parser.parse({
-    indexMarkdown,
-    classificationMarkdown,
-    manifestMarkdown,
-    sourceRef: "fd47792c6171b9f3e5795ef15d5bcd9a8547d64e",
-  });
+  const result = parseVOC();
 
   assert.equal(result.registry.parentFramework, "VOC");
   assert.equal(result.registry.poc.label, "Proof of Concept");
@@ -113,11 +116,53 @@ Unauthorized context wiping = \`FOC_CONTEXT_CORRUPTION\`.
   assert.equal(result.receipt.focGroupsParsed, 5);
   assert.equal(result.receipt.promotionStatus, "evidence-only");
 
-  const matches = parser.matchFOCGroups(
+  const matches = new VOCRegistryParser().matchFOCGroups(
     "FOC-G05 ContextCorruptionBreach Unauthorized Context Wiping",
     result.registry,
   );
 
   assert.equal(matches.length, 1);
   assert.equal(matches[0]?.groupId, "FOC-G05");
+});
+
+test("POCFOCActionEvaluator rejects an action matching an operational FOC group", () => {
+  const { registry } = parseVOC();
+  const evaluator = new POCFOCActionEvaluator(registry, {
+    minimumPOCScore: 0,
+  });
+
+  const result = evaluator.evaluate({
+    subject: "Relationship memory mutation",
+    framework,
+    supportingReceipts: ["receipt-001"],
+    evaluationRules: ["preserve-context"],
+    observedFOCSignals: [
+      "Detected ContextCorruptionBreach through Unauthorized Context Wiping",
+    ],
+  });
+
+  assert.equal(result.decision, "REJECT");
+  assert.equal(result.matchedFOCGroups.length, 1);
+  assert.equal(result.matchedFOCGroups[0]?.groupId, "FOC-G05");
+  assert.equal(result.sourceAuthority, "Kopano-Labs/Introduction-to-MCP");
+});
+
+test("POCFOCActionEvaluator can pass a non-matching action to the runtime gate", () => {
+  const { registry } = parseVOC();
+  const evaluator = new POCFOCActionEvaluator(registry, {
+    minimumPOCScore: 0,
+  });
+
+  const result = evaluator.evaluate({
+    subject: "Quest state mutation",
+    framework,
+    supportingReceipts: ["receipt-002"],
+    evaluationRules: ["preserve-context"],
+    observedFOCSignals: ["No registered operational failure pattern observed"],
+  });
+
+  assert.equal(result.decision, "ACCEPT");
+  assert.equal(result.matchedFOCGroups.length, 0);
+  assert.ok(result.pocScore >= 0);
+  assert.ok(result.pocScore <= 1);
 });

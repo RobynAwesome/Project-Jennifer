@@ -30,7 +30,9 @@ project_jennifer_surface:
   - project-jennifer
   - cdp-conceptual-divergence
   - ceep-conceptual-evaluation
+  - poc-foc-registry-parser
   - poc-foc-evaluation
+  - poc-foc-runtime-gate
   - ccp-conceptual-convergence
   - ncmp-concept-intake
   - cag-communication-attention
@@ -47,3 +49,4 @@ proof_rules:
   human_task_authority_required: true
   receipts_required_for_execution_claims: true
   third_party_publication_requires_live_url: true
+  awesome_skills_is_discovery_not_kpgs_authority: true

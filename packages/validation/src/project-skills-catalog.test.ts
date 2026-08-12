@@ -39,6 +39,20 @@ test("root SKILL.md exposes Project Jennifer as a stateless-renter AwesomeSkills
   assert.match(rootSkill, /Do not promote FOC to POC/i);
 });
 
+test("root and AwesomeSkills manifest expose the POC/FOC registry parser and runtime mutation gate", () => {
+  const rootSkill = read("SKILL.md");
+  const manifest = read("skills/distribution/awesome-skills-project-jennifer.yaml");
+
+  for (const skillName of ["poc-foc-registry-parser", "poc-foc-runtime-gate"] as const) {
+    assert.match(rootSkill, new RegExp(`skills/${skillName}/SKILL\\.md`), `root SKILL.md must route to ${skillName}`);
+    assert.match(manifest, new RegExp(`- ${skillName}`), `Project Jennifer AwesomeSkills manifest must expose ${skillName}`);
+    assert.equal(existsSync(repoPath(`skills/${skillName}/SKILL.md`)), true, `${skillName} skill must exist`);
+  }
+
+  assert.match(rootSkill, /POCFOCActionEvaluator[\s\S]*POCFOCRuntimeGate[\s\S]*MemoryReceiptEngine/);
+  assert.match(manifest, /awesome_skills_is_discovery_not_kpgs_authority:\s*true/);
+});
+
 test("skills.md resolves every linked SKILL.md and includes the Jennifer conceptual suite", () => {
   const catalog = read("skills.md");
   const linkedSkills = new Set<string>();
