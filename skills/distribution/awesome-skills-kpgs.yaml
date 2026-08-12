@@ -31,6 +31,14 @@ skills:
     path: skills/kpgs-deployment-parser/SKILL.md
     deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-deployment-parser
     purpose: provider docs to KPGS DeploymentRecipe
+  - name: kpgs-tool-script-runtime
+    path: skills/kpgs-tool-script-runtime/SKILL.md
+    deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-tool-script-runtime
+    purpose: SKILL.md to declared script to bounded tool plan to receipted execution
+  - name: kpgs-apple-deployment-parser
+    path: skills/kpgs-apple-deployment-parser/SKILL.md
+    deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-apple-deployment-parser
+    purpose: Apple Xcode, TestFlight, App Store Connect, build uploads and notarization parser
   - name: kpgs-model-hardware-router
     path: skills/kpgs-model-hardware-router/SKILL.md
     deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-model-hardware-router
@@ -45,8 +53,10 @@ publication_receipt:
     kpgs-authority: 5809bc58ae1d84c77fca8e468eb2d59675236aff
     kpgs-parser-protocol: 0c2d78ed3eda4aca273ff44e91666d6670cc4618
     kpgs-deployment-parser: 3abef9b5728b63b705bce117e2ca072a786dd966
+    kpgs-tool-script-runtime: fce1a26d9e460aea5fb2545951d1b7d2cb3fa1c1
+    kpgs-apple-deployment-parser: 4d79ac293ef78d42b3ebe4ba5cbd690ecf687091
     kpgs-model-hardware-router: 3ce443a8d0abd008b9ac3c7af34cb895be97a8a5
     kpgs-mmao-mao-renter: 59a233515e51e3fc8a866105cad48dbe385371d7
-    kpgs-runtime-pack: 5a038bfaabba984a86512685ffba343d71bcb025
+    kpgs-runtime-pack: f8bf9c1f65e33aa37eda1e91772ac93ba6a12abc
   website_submission_receipt: null
   note: The GitHub artifacts are public and submission-ready. The AwesomeSkills website form itself has not been executed by this runtime.
