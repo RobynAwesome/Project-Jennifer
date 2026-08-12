@@ -1,14 +1,40 @@
-version: 1
+version: 2
 project: Project Jennifer
 orchestration_engine: free-mode
+repo_skill_index: ../../skills.md
+umbrella_skill: ../project-jennifer/SKILL.md
+
 source_of_truth:
+  - ../../skills.md
+  - ../project-jennifer/SKILL.md
+  - ../cdp-conceptual-divergence/SKILL.md
+  - ../ccp-conceptual-convergence/SKILL.md
   - ../cag-communication-attention/SKILL.md
   - ../rag-governed-retrieval/SKILL.md
   - ../jennifer-stateless-renter/SKILL.md
+  - ../forge-rivm/SKILL.md
+  - ../authored-relational-attention/SKILL.md
+
+available_skill_catalog:
+  - project-jennifer
+  - cdp-conceptual-divergence
+  - ccp-conceptual-convergence
+  - cag-communication-attention
+  - rag-governed-retrieval
+  - jennifer-stateless-renter
+  - forge-rivm
+  - authored-relational-attention
+
+proof_boundaries:
+  cdp-conceptual-divergence: specified_portable_workflow_no_dedicated_runtime_module_proven
+  ccp-conceptual-convergence: coded_typescript_protocol
+  forge-rivm: portable_protocol_runtime_wiring_requires_separate_receipt
 
 rules:
   preserve_skill_semantics: true
   preserve_yaml_metadata: true
+  preserve_proof_state: true
+  preserve_stateless_renter_posture: true
   require_exact_runtime_id: true
   verify_provider_support_at_runtime: true
   private_cross_lane_default: deny_without_explicit_authorization
@@ -20,88 +46,88 @@ engines:
   - id: openai-codex
     family: OpenAI
     delivery: skill-md-direct
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
     notes:
       - OpenAI publicly documents reusable Skills/SKILL.md workflows; still validate the exact runtime surface before deployment.
 
   - id: openai-chatgpt
     family: OpenAI
     delivery: skill-md-direct
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
     notes:
       - Use workspace/product permissions as an external tool boundary.
 
   - id: antigravity
     family: stateless-renter
     delivery: repository-context-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
     notes:
       - Resolve exact runtime/provider identity in its capability manifest.
 
   - id: kiro
     family: stateless-renter
     delivery: repository-context-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
 
   - id: cursor
     family: stateless-renter
     delivery: repository-context-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
 
   - id: github-copilot
     family: stateless-renter
     delivery: repository-context-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
 
   - id: kimi
     family: stateless-renter
     delivery: context-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
 
   - id: google-gemini
     family: Google
     delivery: context-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
     notes:
       - Do not hard-code Gemini generation numbers as permanent capability truth; benchmark exact model IDs.
 
   - id: google-notebook
     family: Google
     delivery: source-grounding-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval]
     notes:
       - Treat notebook/source collections as evidence sources, not constitutional authority by default.
 
   - id: perplexity
     family: stateless-renter
     delivery: retrieval-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
 
   - id: ollama
     family: local-open-model-runtime
     delivery: local-agent-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
     notes:
       - Preferred lane for offline-capable renters when the selected model satisfies task requirements.
 
   - id: hugging-face
     family: open-model-ecosystem
     delivery: inference-or-agent-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
 
   - id: microsoft-azure-ai
     family: Microsoft
     delivery: cloud-agent-adapter
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
 
   - id: kc
     family: project-jennifer-native
     delivery: native-project-contract
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
 
   - id: rtcp
     family: project-jennifer-native
     delivery: native-project-contract
-    skills: [cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter]
+    skills: [project-jennifer, cdp-conceptual-divergence, ccp-conceptual-convergence, cag-communication-attention, rag-governed-retrieval, jennifer-stateless-renter, forge-rivm, authored-relational-attention]
     notes:
       - Each Roundtable Council Protocol agent still declares its own exact capability manifest.
