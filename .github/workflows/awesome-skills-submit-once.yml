@@ -1,0 +1,97 @@
+name: AwesomeSkills Submit Once
+
+on:
+  push:
+    branches:
+      - forge/awesome-skills-submit
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright in ephemeral directory
+        shell: bash
+        run: |
+          mkdir -p /tmp/awesome-skills-submit
+          cd /tmp/awesome-skills-submit
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest
+          npx playwright install --with-deps chromium
+
+      - name: Submit Project Jennifer and verify live directory page
+        shell: bash
+        env:
+          PROJECT_URL: https://github.com/RobynAwesome/Project-Jennifer
+          SUBMIT_URL: https://www.awesomeskills.dev/en/submit
+          EXPECTED_URL: https://www.awesomeskills.dev/en/skill/robynawesome-project-jennifer
+        run: |
+          cd /tmp/awesome-skills-submit
+          node <<'NODE'
+          const { chromium } = require('playwright');
+
+          const projectUrl = process.env.PROJECT_URL;
+          const submitUrl = process.env.SUBMIT_URL;
+          const expectedUrl = process.env.EXPECTED_URL;
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage();
+
+            try {
+              console.log(`Opening submit page: ${submitUrl}`);
+              await page.goto(submitUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+              const input = page.locator('input').first();
+              await input.waitFor({ state: 'visible', timeout: 30000 });
+              await input.fill(projectUrl);
+
+              const submit = page.getByRole('button', { name: /submit skill/i });
+              await submit.waitFor({ state: 'visible', timeout: 30000 });
+              console.log(`Submitting: ${projectUrl}`);
+              await submit.click();
+
+              await page.waitForTimeout(5000);
+              console.log(`Post-submit URL: ${page.url()}`);
+              console.log(`Post-submit page text:\n${(await page.locator('body').innerText()).slice(0, 5000)}`);
+
+              console.log(`Verifying expected public URL: ${expectedUrl}`);
+              const response = await page.goto(expectedUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+              const status = response?.status() ?? 0;
+              const body = await page.locator('body').innerText();
+              console.log(`Verification status: ${status}`);
+              console.log(`Verification URL: ${page.url()}`);
+              console.log(`Verification page text:\n${body.slice(0, 5000)}`);
+
+              const normalized = body.toLowerCase();
+              if (status < 200 || status >= 400) {
+                throw new Error(`AwesomeSkills verification returned HTTP ${status}`);
+              }
+              if (!normalized.includes('project-jennifer') && !normalized.includes('project jennifer')) {
+                throw new Error('Expected Project Jennifer identity was not found on the public AwesomeSkills page.');
+              }
+              if (!normalized.includes('robynawesome')) {
+                throw new Error('Expected RobynAwesome source identity was not found on the public AwesomeSkills page.');
+              }
+
+              console.log('AWESOMESKILLS_PUBLICATION_RECEIPT=PASS');
+              console.log(`AWESOMESKILLS_PUBLIC_URL=${page.url()}`);
+            } finally {
+              await browser.close();
+            }
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
