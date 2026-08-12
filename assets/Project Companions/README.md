@@ -23,7 +23,7 @@ Project Jennifer should create meaningful ownership, evolution and choice — no
 
 ---
 
-## Asset-integrity state — second pass, 2026-08-11
+## Asset-integrity state — second pass, 2026-08-12
 
 The first audit correctly found missing legacy paths and malformed `.webp` pointer payloads. A second pass found that **valid founder-supplied PNG source binaries were already in the repository under opaque numeric names**.
 
@@ -35,13 +35,27 @@ source/digital-hippocampus-companion-selection-core-logic-001.png
 source/digital-hippocampus-companion-selection-embodied-historical-001.png
 ```
 
+### Digital Hippocampus substrate
+
 <p align="center">
   <img src="source/digital-hippocampus-substrate-001.png" alt="Digital Hippocampus visual source" width="96%" />
 </p>
 
+### Core-logic / abstract companion expression
+
 <p align="center">
   <img src="source/digital-hippocampus-companion-selection-core-logic-001.png" alt="Digital Hippocampus companion core logic selection" width="96%" />
 </p>
+
+### Embodied / human companion expression — historical source
+
+<p align="center">
+  <img src="source/digital-hippocampus-companion-selection-embodied-historical-001.png" alt="Digital Hippocampus historical embodied companion selection" width="96%" />
+</p>
+
+The third image is deliberately shown **at full breathing width**, not squeezed into a collage. It demonstrates that the same companion mechanisms can be represented through embodied/human forms while preserving the deeper logic underneath.
+
+Its visible historical `Eira` label remains historical lineage. Current executable identity remains `Fira` unless a governed identity receipt changes it.
 
 Their dimensions, SHA-256 fingerprints and prior repository paths are recorded in [`source-manifest.json`](source-manifest.json).
 
@@ -57,13 +71,36 @@ with `.pointer.txt` names.
 
 That preserves the failure evidence without allowing a text pointer to masquerade as image art.
 
+### Founder HD intake is now inventoried without hallucinated character mapping
+
+The folder also contains **14 real high-resolution PNG payloads** still carrying opaque generated filenames. They are now recorded in [`unclassified-intake.json`](unclassified-intake.json) with Git blob SHA, byte size and `unclassified-source` state.
+
+That inventory intentionally does **not** guess whether an opaque file is Kopa, Vanta, Nyra, SolveK, Lyrae, a rarity visual, a light/dark form or something else.
+
+```text
+REAL BINARY
+    ↓
+UNCLASSIFIED SOURCE RECEIPT
+    ↓
+POSITIVE VISUAL / FOUNDER IDENTIFICATION
+    ↓
+IDENTITY + EDITION + FORM CLASSIFICATION
+    ↓
+STABLE SEMANTIC PATH
+    ↓
+PUBLIC README / STORE / GAME USE
+```
+
+This is the bridge between “the files exist” and “the game knows what they are.”
+
 ### Issue #25 remains open
 
-This intake repair does **not** prove that every founder-approved HD Limited Edition asset named by Issue #25 has been restored. The exact Vanta, Nyra, SolveK, Lyrae, Kopa and rarity acceptance set still needs binary-by-binary intake and public-render validation before that issue can close.
+This intake repair does **not** prove that every founder-approved HD Limited Edition asset named by Issue #25 has been restored. The exact Vanta, Nyra, SolveK, Lyrae, Kopa and rarity acceptance set still needs binary-by-binary identity mapping and public-render validation before that issue can close.
 
 The visual target remains: **high-resolution individual character art, not squeezed thumbnail collages.**
 
-➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md).
+➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md).  
+➡️ See [`unclassified-intake.json`](unclassified-intake.json) for the current founder HD intake queue.
 
 ### Stable namespace
 
@@ -71,6 +108,7 @@ The visual target remains: **high-resolution individual character art, not squee
 assets/Project Companions/
   README.md
   source-manifest.json
+  unclassified-intake.json   # real HD binaries awaiting positive identity mapping
   source/                    # governed design/source binaries
   quarantine/                # invalid/non-renderable forensic payloads
   rarity/                    # common / epic / rare / legendary system visuals
@@ -438,5 +476,7 @@ Source authority is governed by [`governance/source-authority-registry.json`](..
 > **A purchase receipt proves acquisition. Gameplay receipts prove evolution.**
 
 > **A companion's receipts should explain what it became.**
+
+> **Opaque filenames are intake evidence, not identity.**
 
 Project Jennifer governs the combination. The player chooses the path.
