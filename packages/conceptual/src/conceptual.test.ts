@@ -5,6 +5,7 @@ import {
   ConceptualConvergenceProtocol,
   ConceptualEvaluationEngine,
   POCvsFOCEvaluator,
+  VOCRegistryParser,
   type FrameworkDefinition,
 } from "./index.js";
 
@@ -63,4 +64,60 @@ test("CCP produces canonical receipt from framework evolution receipt", () => {
   assert.equal(canonicalReceipt.framework, framework.frameworkName);
   assert.equal(canonicalReceipt.evolutionReceiptId, result.frameworkEvolutionReceipt.receiptId);
   assert.ok(["Accepted", "Experimental", "Refine", "Rejected", "Deprecated"].includes(canonicalReceipt.decision));
+});
+
+test("VOC parser preserves Introduction-to-MCP POC branch and emergent FOC groups", () => {
+  const parser = new VOCRegistryParser();
+
+  const indexMarkdown = `
+# VOC — VALIDATION OF CONCEPT
+POC Proof of Concept
+FOC Failure of / Freedom of Concept
+`;
+
+  const manifestMarkdown = `
+## VOC FRAMEWORK
+POC Proof of Concept (1 group)
+FOC Failure of Concept / Freedom of Concept
+`;
+
+  const classificationMarkdown = `
+FOC groups are **emergent, not predefined.**
+Unauthorized context wiping = \`FOC_CONTEXT_CORRUPTION\`.
+
+| Group ID | Failure Pattern Designation | Detection Mechanism | Automated Defensive Loop |
+|----------|-----------------------------|---------------------|---------------------------|
+| **FOC-G01** | \`NeuralFailureFirewall\` | 8th Deadly Sin Monitor | Immediate freeze of affected generation loops. |
+| **FOC-G02** | \`ContextBleedAnomaly\` | CBP Telemetry Audit | Non-judgmental logging of ambient packet data. |
+| **FOC-G03** | \`SemanticDriftLeak\` | Invariance Shift Check | Real-time reset of token alignment weights. |
+| **FOC-G04** | \`GhostExecutionLoop\` | Run-time Resource Scan | Isolation of non-responsive background threads. |
+| **FOC-G05** | \`ContextCorruptionBreach\` | Unauthorized Context Wiping | Immediate termination of active session parameters. |
+`;
+
+  const result = parser.parse({
+    indexMarkdown,
+    classificationMarkdown,
+    manifestMarkdown,
+    sourceRef: "fd47792c6171b9f3e5795ef15d5bcd9a8547d64e",
+  });
+
+  assert.equal(result.registry.parentFramework, "VOC");
+  assert.equal(result.registry.poc.label, "Proof of Concept");
+  assert.equal(result.registry.poc.groupCount, 1);
+  assert.deepEqual(result.registry.foc.labels, ["Failure of Concept", "Freedom of Concept"]);
+  assert.equal(result.registry.foc.emergent, true);
+  assert.equal(result.registry.foc.severeBreachCode, "FOC_CONTEXT_CORRUPTION");
+  assert.equal(result.registry.foc.groups.length, 5);
+  assert.equal(result.registry.foc.groups[4]?.groupId, "FOC-G05");
+  assert.equal(result.registry.foc.groups[4]?.designation, "ContextCorruptionBreach");
+  assert.equal(result.receipt.focGroupsParsed, 5);
+  assert.equal(result.receipt.promotionStatus, "evidence-only");
+
+  const matches = parser.matchFOCGroups(
+    "FOC-G05 ContextCorruptionBreach Unauthorized Context Wiping",
+    result.registry,
+  );
+
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0]?.groupId, "FOC-G05");
 });
