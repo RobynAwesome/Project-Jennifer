@@ -1,7 +1,7 @@
 ---
 name: project-jennifer
 title: "Project Jennifer Governed Skill Router"
-version: "1.1.0"
+version: "1.2.0"
 status: "POC"
 class: "Repository Umbrella Skill"
 repository: "RobynAwesome/Project-Jennifer"
@@ -54,6 +54,7 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 | Evaluate a conceptual subject and create evaluation/evolution receipts | `../ceep-conceptual-evaluation/SKILL.md` |
 | Parse authoritative KPGS VOC POC branch and emergent FOC-G## groups | `../poc-foc-registry-parser/SKILL.md` |
 | Separate evidence-bearing POC from FOC risk | `../poc-foc-evaluation/SKILL.md` |
+| Gate a consequential runtime mutation through POC/FOC + Memory Receipt admission | `../poc-foc-runtime-gate/SKILL.md` |
 | Decide which conceptual pattern survives and should converge | `../ccp-conceptual-convergence/SKILL.md` |
 | Govern a genuinely new agent-originated concept | `../ncmp-concept-intake/SKILL.md` |
 | Decide what deserves attention now | `../cag-communication-attention/SKILL.md` |
@@ -80,6 +81,17 @@ CDP
 → NCMP when new agent-originated concepts require human recognition + registration
 ```
 
+For consequential runtime actions, a second execution membrane applies:
+
+```text
+parsed VOCRegistry
+→ POCFOCActionEvaluator
+→ shared POCFOCActionEvaluation
+→ POCFOCRuntimeGate
+→ MemoryReceiptEngine
+→ mutate OR block
+```
+
 ### CDP
 
 Conceptual Divergence Protocol expands the possibility space: *what could this become?*
@@ -95,6 +107,12 @@ Conceptual Evaluation Engine evaluates the candidate/subject and emits an `Evalu
 Makes evidence strengths and FOC risks explicit before promotion.
 
 When KPGS immune-registry semantics themselves are required, parse `Kopano-Labs/Introduction-to-MCP/poc-vs-foc/` through `poc-foc-registry-parser` first. The resulting `FOC-G##` operational groups remain separate from Jennifer's semantic `FOCType` evaluation risks.
+
+### Runtime POC/FOC gate
+
+Use `poc-foc-runtime-gate` when an action can actually change world, relationship, companion, memory, economy or other consequential runtime state. Conceptual evaluation alone does not authorize mutation.
+
+The runtime gate requires the shared POC/FOC action evaluation, verifies evidence binding, issues a Memory Receipt, and only then runs the mutation callback when the result is admitted `ACCEPT`.
 
 ### CCP
 
