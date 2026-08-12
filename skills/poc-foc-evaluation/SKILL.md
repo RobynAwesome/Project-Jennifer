@@ -1,7 +1,7 @@
 ---
 name: poc-foc-evaluation
 title: "POC vs FOC Evaluation"
-version: "1.0.0"
+version: "1.1.0"
 status: "CODED_PORTABLE_WORKFLOW"
 class: "Project Jennifer Conceptual Skill"
 implementation: "packages/conceptual/src/pocvsfoc/POCvsFOCEvaluator.ts"
@@ -47,6 +47,26 @@ FandomOfConcept
 
 These are current repository categories. Do not silently replace them when claiming execution against the current evaluator.
 
+## KPGS VOC registry integration
+
+When the task depends on the **authoritative KPGS POC branch or FOC-G## operational groups**, route through [`../poc-foc-registry-parser/SKILL.md`](../poc-foc-registry-parser/SKILL.md) first.
+
+```text
+Introduction-to-MCP VOC source
+→ poc-foc-registry-parser
+→ VOCRegistry + VOCParseReceipt
+→ poc-foc-evaluation when conceptual scoring is required
+→ CEEP / CCP when promotion or convergence is required
+```
+
+Keep the namespaces separate:
+
+```text
+Project Jennifer FOCType risk category ≠ Introduction-to-MCP FOC-G## operational group
+```
+
+The parser preserves the immune-system registry. This evaluator scores conceptual FOC risk. One does not silently replace the other.
+
 ## Governing rule
 
 ```text
@@ -77,7 +97,8 @@ Do not:
 - fabricate receipts, implementations, tests, deployments, users, revenue, or runtime behavior;
 - erase high FOC risks merely because the aggregate POC score is acceptable;
 - treat a POC score as universal scientific truth outside the evaluator's declared framework;
-- confuse coded implementation with production deployment.
+- confuse coded implementation with production deployment;
+- collapse `FOC-G##` source groups into the evaluator's semantic FOC categories.
 
 ## Success condition
 
