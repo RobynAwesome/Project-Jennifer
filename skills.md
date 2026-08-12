@@ -48,6 +48,7 @@ A renter may execute within granted authority. It may not convert remembered con
 | [`kpgs-authority`](skills/kpgs-authority/SKILL.md) | **PORTABLE / GOVERNANCE** | Establish KPGS renter posture, authority boundaries and receipt expectations. | `Kopano-Labs/Introduction-to-MCP` |
 | [`kpgs-parser-protocol`](skills/kpgs-parser-protocol/SKILL.md) | **PORTABLE / CODED** | Parse heterogeneous provider docs, repo rules, skills, benchmarks and hardware evidence with provenance. | KMEC parser runtime |
 | [`poc-foc-registry-parser`](skills/poc-foc-registry-parser/SKILL.md) | **PORTABLE / CODED** | Parse the authoritative VOC POC branch and emergent FOC-G## immune registry before operational groups influence Jennifer evaluation or governance. | `Kopano-Labs/Introduction-to-MCP/poc-vs-foc/` + `packages/conceptual/src/pocvsfoc/` |
+| [`poc-foc-runtime-gate`](skills/poc-foc-runtime-gate/SKILL.md) | **PORTABLE / CODED** | Gate consequential runtime mutations through POC/FOC evaluation, evidence admission and Memory Receipts. | `packages/conceptual/src/pocvsfoc/POCFOCActionEvaluator.ts` + `packages/runtime/src/poc-foc-runtime-gate.ts` |
 | [`kpgs-deployment-parser`](skills/kpgs-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Normalize provider deployment truth into a KPGS `DeploymentRecipe`. | KMEC deployment parser contracts |
 | [`kpgs-tool-script-runtime`](skills/kpgs-tool-script-runtime/SKILL.md) | **PORTABLE / CODED** | Require `SKILL.md → script → bounded tool plan → executor → receipt` instead of raw model tool calls. | KMEC `tool_scripts.py` |
 | [`kpgs-apple-deployment-parser`](skills/kpgs-apple-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Parse Xcode/Xcode Cloud/App Store Connect/TestFlight/build-upload/notarization workflows without flattening them into cloud-service deployment. | KMEC Apple parser + Apple first-party docs |
@@ -133,6 +134,10 @@ The current evaluator makes evidence strengths and FOC risks visible before conc
 
 When a task depends on the KPGS immune-system registry itself, run `poc-foc-registry-parser` first so the source POC branch and `FOC-G##` groups remain provenance-bound and separate from Jennifer's semantic FOC risk categories.
 
+### Runtime gate
+
+When the action is consequential, conceptual evaluation is not enough. Route the decision through `poc-foc-runtime-gate`, bind it to verified evidence, issue a Memory Receipt and allow mutation only when the decision remains `ACCEPT` and the receipt is admitted.
+
 ### CCP
 
 **Question:** *What consistently works / survives the evidence?*
@@ -160,6 +165,15 @@ Parse KPGS VOC / immune registry
 → VOCRegistry + VOCParseReceipt
 → poc-foc-evaluation only when conceptual scoring is needed
 → CEEP / CCP only when promotion or convergence is requested
+
+Consequential runtime action
+→ current VOCRegistry
+→ POCFOCActionEvaluator
+→ poc-foc-runtime-gate
+→ verified evidence
+→ Memory Receipt
+→ ACCEPT: mutate once
+→ HOLD/REJECT: do not mutate
 
 Converge / canonicalize
 → source authority
