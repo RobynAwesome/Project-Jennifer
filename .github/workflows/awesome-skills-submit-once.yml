@@ -13,15 +13,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Playwright in ephemeral directory
+      - name: Install Playwright
         shell: bash
         run: |
           mkdir -p /tmp/awesome-skills-submit
@@ -30,7 +27,7 @@ jobs:
           npm install playwright@latest
           npx playwright install chromium
 
-      - name: Inspect validation, submit Project Jennifer, and verify publication
+      - name: Submit Project Jennifer or receipt the human-verification gate
         shell: bash
         env:
           PROJECT_URL: https://github.com/RobynAwesome/Project-Jennifer
@@ -45,106 +42,80 @@ jobs:
           const submitUrl = process.env.SUBMIT_URL;
           const expectedUrl = process.env.EXPECTED_URL;
 
-          async function snapshot(page, label) {
-            console.log(`\n===== ${label} =====`);
-            const inputs = await page.locator('input').evaluateAll((els) => els.map((el, index) => ({
-              index,
-              type: el.type,
-              name: el.name,
-              value: el.value,
-              placeholder: el.placeholder,
-              required: el.required,
-              checked: el.checked,
-              disabled: el.disabled,
-              ariaInvalid: el.getAttribute('aria-invalid'),
-              className: el.className,
-            })));
-            const buttons = await page.locator('button').evaluateAll((els) => els.map((el, index) => ({
-              index,
-              text: el.textContent?.trim(),
-              type: el.type,
-              disabled: el.disabled,
-              ariaDisabled: el.getAttribute('aria-disabled'),
-            })));
-            const iframes = await page.locator('iframe').evaluateAll((els) => els.map((el, index) => ({
-              index,
-              title: el.title,
-              src: el.src,
-              name: el.name,
-            })));
-            console.log('INPUTS', JSON.stringify(inputs, null, 2));
-            console.log('BUTTONS', JSON.stringify(buttons, null, 2));
-            console.log('IFRAMES', JSON.stringify(iframes, null, 2));
-            console.log('BODY', (await page.locator('body').innerText()).slice(0, 12000));
-          }
-
           (async () => {
             const browser = await chromium.launch({ headless: true });
-            const context = await browser.newContext({
-              locale: 'en-US',
-              viewport: { width: 1440, height: 1000 },
-              userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
-            });
+            const context = await browser.newContext({ locale: 'en-US', viewport: { width: 1440, height: 1000 } });
             const page = await context.newPage();
 
-            page.on('console', (msg) => {
-              const text = msg.text();
-              if (!text.includes('font-size:0;color:transparent')) console.log(`BROWSER[${msg.type()}] ${text}`);
-            });
-            page.on('pageerror', (err) => console.log(`PAGEERROR ${err.message}`));
-            page.on('response', (response) => {
-              const url = response.url();
-              const request = response.request();
-              if (request.method() !== 'GET' || response.status() >= 400 || url.includes('/api/')) {
-                console.log(`NETWORK ${response.status()} ${request.method()} ${url}`);
-              }
-            });
-
             try {
-              console.log(`Opening ${submitUrl}`);
-              const navigation = await page.goto(submitUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
-              console.log(`Initial HTTP status: ${navigation?.status()}`);
-              await page.waitForTimeout(6000);
-              await snapshot(page, 'INITIAL FORM STATE');
+              const response = await page.goto(submitUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+              console.log(`SUBMIT_PAGE_HTTP=${response?.status()}`);
+              await page.waitForTimeout(4000);
 
-              const githubInput = page.getByPlaceholder(/github\.com\/owner\/repo/i).first();
-              if (!(await githubInput.count())) throw new Error('Expected GitHub URL input was not found.');
+              const input = page.getByPlaceholder(/github\.com\/owner\/repo/i).first();
+              await input.fill(projectUrl);
+              await input.press('Tab');
+              console.log(`PROJECT_URL_FILLED=${await input.inputValue()}`);
+              await page.waitForTimeout(4000);
 
-              console.log(`Filling ${projectUrl}`);
-              await githubInput.click();
-              await githubInput.fill(projectUrl);
-              await githubInput.press('Tab');
-              await page.waitForTimeout(10000);
-              await snapshot(page, 'AFTER URL VALIDATION');
+              // Decline the unrelated optional newsletter offer if it appears.
+              const declineMarketing = page.getByRole('button', { name: /No thanks/i });
+              if (await declineMarketing.count()) {
+                console.log('OPTIONAL_NEWSLETTER_MODAL=present');
+                await declineMarketing.first().click();
+                console.log('OPTIONAL_NEWSLETTER=declined');
+                await page.waitForTimeout(3000);
+              } else {
+                console.log('OPTIONAL_NEWSLETTER_MODAL=absent');
+              }
+
+              const token = page.locator('input[name="cf-turnstile-response"]');
+              const tokenValue = await token.count() ? await token.first().inputValue() : '';
+              console.log(`TURNSTILE_TOKEN_LENGTH=${tokenValue.length}`);
+
+              const challengeFrames = page.frames().filter((frame) => frame.url().includes('challenges.cloudflare.com'));
+              console.log(`TURNSTILE_FRAME_COUNT=${challengeFrames.length}`);
+              for (let i = 0; i < challengeFrames.length; i += 1) {
+                const frame = challengeFrames[i];
+                console.log(`TURNSTILE_FRAME_${i}_URL=${frame.url()}`);
+                try {
+                  const text = (await frame.locator('body').innerText()).trim().replace(/\s+/g, ' ').slice(0, 3000);
+                  console.log(`TURNSTILE_FRAME_${i}_TEXT=${text}`);
+                  const checkboxes = await frame.getByRole('checkbox').count();
+                  console.log(`TURNSTILE_FRAME_${i}_CHECKBOXES=${checkboxes}`);
+                } catch (error) {
+                  console.log(`TURNSTILE_FRAME_${i}_INSPECTION_ERROR=${error.message}`);
+                }
+              }
 
               const submit = page.getByRole('button', { name: /submit skill/i }).first();
-              console.log(`Submit enabled: ${await submit.isEnabled()}`);
+              const enabled = await submit.isEnabled();
+              console.log(`SUBMIT_ENABLED=${enabled}`);
 
-              if (!(await submit.isEnabled())) {
-                const turnstileFrames = page.frames().filter((frame) => frame.url().includes('challenges.cloudflare.com'));
-                console.log(`Cloudflare challenge frame count: ${turnstileFrames.length}`);
-                throw new Error('AwesomeSkills Submit Skill is still disabled. Diagnostics above identify whether URL validation or Cloudflare human verification is the remaining prerequisite.');
+              if (!enabled) {
+                if (!tokenValue && challengeFrames.length > 0) {
+                  console.log('AWESOMESKILLS_PUBLICATION_GATE=HUMAN_TURNSTILE_REQUIRED');
+                  throw new Error('AwesomeSkills requires a Cloudflare Turnstile human-verification token before submission. The repository URL is valid, the optional newsletter was declined, and no automated bypass was attempted.');
+                }
+                throw new Error('Submit remains disabled for an unresolved non-Turnstile reason.');
               }
 
-              console.log('Submit enabled. Clicking.');
               await submit.click();
-              await page.waitForTimeout(8000);
-              console.log(`Post-submit URL: ${page.url()}`);
-              console.log(`Post-submit body: ${(await page.locator('body').innerText()).slice(0, 12000)}`);
+              await page.waitForTimeout(7000);
+              console.log(`POST_SUBMIT_URL=${page.url()}`);
+              console.log(`POST_SUBMIT_TEXT=${(await page.locator('body').innerText()).slice(0, 6000)}`);
 
-              console.log(`Verifying ${expectedUrl}`);
               const verifyResponse = await page.goto(expectedUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
-              await page.waitForTimeout(3000);
+              await page.waitForTimeout(2500);
               const status = verifyResponse?.status() ?? 0;
               const body = await page.locator('body').innerText();
-              console.log(`Verification HTTP status: ${status}`);
-              console.log(`Verification final URL: ${page.url()}`);
-              console.log(`Verification body: ${body.slice(0, 12000)}`);
-
               const normalized = body.toLowerCase();
-              if (status < 200 || status >= 400) throw new Error(`Verification returned HTTP ${status}`);
-              if (!normalized.includes('project-jennifer') && !normalized.includes('project jennifer')) throw new Error('Project Jennifer identity not found on directory page.');
-              if (!normalized.includes('robynawesome')) throw new Error('RobynAwesome source identity not found on directory page.');
+              console.log(`PUBLIC_PAGE_HTTP=${status}`);
+              console.log(`PUBLIC_PAGE_URL=${page.url()}`);
+
+              if (status < 200 || status >= 400 || !normalized.includes('project jennifer') || !normalized.includes('robynawesome')) {
+                throw new Error('Submission action completed but the expected live directory receipt could not be verified.');
+              }
 
               console.log('AWESOMESKILLS_PUBLICATION_RECEIPT=PASS');
               console.log(`AWESOMESKILLS_PUBLIC_URL=${page.url()}`);
