@@ -44,6 +44,14 @@ A renter may execute within granted authority. It may not convert remembered con
 | Skill | State | Use it when… | Primary truth source |
 |---|---|---|---|
 | [`project-jennifer`](skills/project-jennifer/SKILL.md) | **PORTABLE / ROUTER** | You need the complete Jennifer capability map or do not know which specialist applies. | `skills.md`, current repo state |
+| [`kpgs-runtime-pack`](skills/kpgs-runtime-pack/SKILL.md) | **PORTABLE / ROUTER** | You need KPGS authority, parser, model-routing, deployment or MAO/MMAO execution skills. | KPGS source + KMEC runtime |
+| [`kpgs-authority`](skills/kpgs-authority/SKILL.md) | **PORTABLE / GOVERNANCE** | Establish KPGS renter posture, authority boundaries and receipt expectations. | `Kopano-Labs/Introduction-to-MCP` |
+| [`kpgs-parser-protocol`](skills/kpgs-parser-protocol/SKILL.md) | **PORTABLE / CODED** | Parse heterogeneous provider docs, repo rules, skills, benchmarks and hardware evidence with provenance. | KMEC parser runtime |
+| [`kpgs-deployment-parser`](skills/kpgs-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Normalize provider deployment truth into a KPGS `DeploymentRecipe`. | KMEC deployment parser contracts |
+| [`kpgs-tool-script-runtime`](skills/kpgs-tool-script-runtime/SKILL.md) | **PORTABLE / CODED** | Require `SKILL.md → script → bounded tool plan → executor → receipt` instead of raw model tool calls. | KMEC `tool_scripts.py` |
+| [`kpgs-apple-deployment-parser`](skills/kpgs-apple-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Parse Xcode/Xcode Cloud/App Store Connect/TestFlight/build-upload/notarization workflows without flattening them into cloud-service deployment. | KMEC Apple parser + Apple first-party docs |
+| [`kpgs-model-hardware-router`](skills/kpgs-model-hardware-router/SKILL.md) | **PORTABLE / CODED** | Route exact models/runtimes by hard hardware constraints, demanded skills and measured benchmarks. | KMEC model router |
+| [`kpgs-mmao-mao-renter`](skills/kpgs-mmao-mao-renter/SKILL.md) | **PORTABLE / CODED** | Issue purpose-bound renter leases through non-linear MAO/MMAO workflows. | KMEC workflow graph + KPGS MMAO authority |
 | [`cdp-conceptual-divergence`](skills/cdp-conceptual-divergence/SKILL.md) | **PORTABLE / SPECIFIED** | Deliberately expand the possibility space before convergence. | Convergence Law |
 | [`ceep-conceptual-evaluation`](skills/ceep-conceptual-evaluation/SKILL.md) | **PORTABLE / CODED** | Evaluate a conceptual subject and emit evaluation/evolution receipts. | `packages/conceptual/src/ceep/` |
 | [`poc-foc-evaluation`](skills/poc-foc-evaluation/SKILL.md) | **PORTABLE / CODED** | Separate evidence-bearing proof from FOC risk before promotion. | `packages/conceptual/src/pocvsfoc/` |
@@ -165,14 +173,50 @@ Relationship-bearing inference
 → validation / receipt
 
 External model/provider execution
+→ kpgs-runtime-pack when KPGS workflow semantics are required
 → jennifer-stateless-renter
-→ capability manifest
+→ purpose-bound workflow node
 → exact specialist skill(s)
-→ bounded execution
-→ evidence + receipt
+→ provider/source parser when required
+→ model/hardware router
+→ lease
+→ SKILL.md
+→ declared script entrypoint
+→ bounded tool plan
+→ authorized executor
+→ consequence + receipt
+→ validation
 ```
 
 Not every request traverses every stage. **CAG applies to the skill graph too: use the minimum relevant governed path.**
+
+---
+
+## Tool execution membrane
+
+For KPGS tool-bearing workflows, the portable law is:
+
+```text
+SKILL.md
+→ SCRIPT
+→ TOOL PLAN
+→ EXECUTOR
+→ RECEIPT
+```
+
+The model should not receive a raw list of high-impact tools and silently decide authority, workflow and parameters in one inference step.
+
+A tool-bearing skill can declare:
+
+```yaml
+allowed-tools:
+  - shell:xcodebuild
+  - api:app-store-connect
+script-entrypoints:
+  - package.module:ScriptClass
+```
+
+The script is still not automatically trusted merely because discovery found it. Source authority, the active lease, executor permissions and receipts remain separate gates.
 
 ---
 
@@ -226,15 +270,17 @@ See [`governance/source-authority-registry.json`](governance/source-authority-re
 
 ```text
 skills.md
-→ project-jennifer umbrella skill
+→ project-jennifer or kpgs-runtime-pack router
 → specialist SKILL.md
+→ provider/source parser
 → provider/renter adapter
 → exact runtime capability manifest
+→ skill-declared script where a tool is required
 → bounded execution
 → evidence + result + receipt
 ```
 
-See [`skills/distribution/README.md`](skills/distribution/README.md) and [`skills/distribution/engines.yaml`](skills/distribution/engines.yaml).
+See [`skills/distribution/README.md`](skills/distribution/README.md), [`skills/distribution/engines.yaml`](skills/distribution/engines.yaml), and [`skills/distribution/awesome-skills-kpgs.yaml`](skills/distribution/awesome-skills-kpgs.yaml).
 
 A provider-specific adapter may change *how* a skill reaches a runtime. It must not silently change Jennifer's authority, privacy, validation, memory, proof-state, or receipt semantics.
 
@@ -244,13 +290,14 @@ A provider-specific adapter may change *how* a skill reaches a runtime. It must 
 
 ```text
 1. skills.md
-2. skills/project-jennifer/SKILL.md
+2. skills/project-jennifer/SKILL.md OR skills/kpgs-runtime-pack/SKILL.md
 3. selected specialist SKILL.md
 4. current source/implementation named by that skill
 5. relevant authority/privacy records
 6. current tests/receipts when making proof claims
+7. declared script only when the workflow requires a tool
 ```
 
 Do **not** dump the whole repository into context by default.
 
-> **A Project Jennifer skill tells a renter how to perform a governed workflow. The repository tells the renter what actually exists. Receipts tell the renter what actually passed. The human decides the task.**
+> **A Project Jennifer skill tells a renter how to perform a governed workflow. The repository tells the renter what actually exists. Scripts compile tool actions. Executors perform side effects. Receipts tell the renter what actually passed. The human decides the task.**
