@@ -27,7 +27,10 @@ If ecosystem context is required, consult `Kopano-Labs/Introduction-to-MCP` as t
 ```text
 project-jennifer
 cdp-conceptual-divergence
+ceep-conceptual-evaluation
+poc-foc-evaluation
 ccp-conceptual-convergence
+ncmp-concept-intake
 cag-communication-attention
 rag-governed-retrieval
 jennifer-stateless-renter
@@ -45,12 +48,16 @@ CDP — expand possibility space
 → POC-vs-FOC — separate proof from unsupported promotion
 → CCP — converge
 → canonical/evolution receipt
+→ NCMP when a genuinely new agent-originated concept needs human recognition + governed registration
 ```
 
-Proof-state boundary:
+Proof-state boundaries:
 
 - **CDP:** specified in the Convergence Law + portable workflow skill; no dedicated `packages/conceptual/src/cdp/` runtime module is currently proven.
+- **CEEP:** portable workflow + current TypeScript implementation under `packages/conceptual/src/ceep/`.
+- **POC-vs-FOC:** portable workflow + current TypeScript evaluator under `packages/conceptual/src/pocvsfoc/`.
 - **CCP:** portable workflow + current TypeScript implementation under `packages/conceptual/src/ccp/`.
+- **NCMP:** portable workflow + current storage-agnostic/in-memory registry; only the human architect may perform the recognition transition.
 
 Do not collapse those states.
 
@@ -71,7 +78,10 @@ Do not collapse those states.
 | Need | Route |
 |---|---|
 | Explore alternatives / new possibilities | `skills/cdp-conceptual-divergence/SKILL.md` |
+| Evaluate conceptual candidates | `skills/ceep-conceptual-evaluation/SKILL.md` |
+| Evaluate proof vs FOC risk | `skills/poc-foc-evaluation/SKILL.md` |
 | Converge on evidence-bearing conceptual state | `skills/ccp-conceptual-convergence/SKILL.md` |
+| Govern new agent-originated concepts | `skills/ncmp-concept-intake/SKILL.md` |
 | Focus context / attention | `skills/cag-communication-attention/SKILL.md` |
 | Retrieve governed evidence | `skills/rag-governed-retrieval/SKILL.md` |
 | Use another runtime/model/provider | `skills/jennifer-stateless-renter/SKILL.md` |
