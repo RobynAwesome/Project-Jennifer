@@ -1,6 +1,6 @@
 ---
 name: project-jennifer
-description: Govern Project Jennifer work through stateless-renter routing, CDP, CEEP, POC-vs-FOC, CCP, NCMP, CAG, governed RAG, RIVM, receipts, source authority and current repository evidence.
+description: Govern Project Jennifer work through stateless-renter routing, CDP, CEEP, POC-vs-FOC, VOC registry parsing, runtime mutation gates, CCP, NCMP, CAG, governed RAG, RIVM, receipts, source authority and current repository evidence.
 tags:
   - governance
   - agent-skills
@@ -65,8 +65,27 @@ CDP
 - **CDP — Conceptual Divergence Protocol:** expand the possibility space. Portable/specification surface exists; a dedicated Jennifer CDP runtime module is not currently proven.
 - **CEEP — Conceptual Evaluation Engine:** evaluate candidates and emit evaluation/evolution receipts.
 - **POC-vs-FOC:** separate evidence-bearing proof from unsupported conceptual promotion.
+- **VOC Registry Parser:** preserve the KPGS `POC` branch and emergent operational `FOC-G##` groups from `Kopano-Labs/Introduction-to-MCP` with provenance instead of flattening them into Jennifer semantic risk categories.
+- **POC/FOC Runtime Gate:** require a consequential action to survive conceptual evaluation, operational FOC checks, evidence binding and Memory Receipt admission before state mutation.
 - **CCP — Conceptual Convergence Protocol:** determine which pattern survives evidence and evaluation; current TypeScript implementation exists under `packages/conceptual/src/ccp/`.
 - **NCMP — New Concept MMAO Protocol:** govern genuinely new agent-originated concepts; human recognition remains mandatory.
+
+## Consequential runtime routing
+
+Conceptual acceptance is not permission to mutate the game world.
+
+```text
+parsed VOCRegistry
+→ POCFOCActionEvaluator
+→ shared POCFOCActionEvaluation
+→ POCFOCRuntimeGate
+→ verified evidence
+→ MemoryReceiptEngine
+→ admitted ACCEPT: mutate once
+→ HOLD / REJECT: preserve receipt, do not mutate
+```
+
+`Project Jennifer FOCType`, KPGS operational `FOC-G##`, and Memory Receipt admission are separate namespaces and must remain separately inspectable.
 
 ## Specialist skill index
 
@@ -74,7 +93,9 @@ Start at [`skills.md`](skills.md). Major portable routes include:
 
 - [`skills/cdp-conceptual-divergence/SKILL.md`](skills/cdp-conceptual-divergence/SKILL.md)
 - [`skills/ceep-conceptual-evaluation/SKILL.md`](skills/ceep-conceptual-evaluation/SKILL.md)
+- [`skills/poc-foc-registry-parser/SKILL.md`](skills/poc-foc-registry-parser/SKILL.md)
 - [`skills/poc-foc-evaluation/SKILL.md`](skills/poc-foc-evaluation/SKILL.md)
+- [`skills/poc-foc-runtime-gate/SKILL.md`](skills/poc-foc-runtime-gate/SKILL.md)
 - [`skills/ccp-conceptual-convergence/SKILL.md`](skills/ccp-conceptual-convergence/SKILL.md)
 - [`skills/ncmp-concept-intake/SKILL.md`](skills/ncmp-concept-intake/SKILL.md)
 - [`skills/cag-communication-attention/SKILL.md`](skills/cag-communication-attention/SKILL.md)
