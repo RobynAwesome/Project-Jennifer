@@ -1,10 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
+const repoRoot = path.resolve(process.cwd(), "../..");
 
 function repoPath(relativePath: string): string {
   return path.join(repoRoot, relativePath);
