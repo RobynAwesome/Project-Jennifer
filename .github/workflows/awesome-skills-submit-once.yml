@@ -30,7 +30,7 @@ jobs:
           npm install playwright@latest
           npx playwright install --with-deps chromium
 
-      - name: Submit Project Jennifer and verify live directory page
+      - name: Diagnose, submit Project Jennifer, and verify live directory page
         shell: bash
         env:
           PROJECT_URL: https://github.com/RobynAwesome/Project-Jennifer
@@ -45,39 +45,136 @@ jobs:
           const submitUrl = process.env.SUBMIT_URL;
           const expectedUrl = process.env.EXPECTED_URL;
 
+          async function dumpControls(page, label) {
+            console.log(`\n===== ${label}: INPUTS =====`);
+            console.log(JSON.stringify(await page.locator('input').evaluateAll((els) => els.map((el, index) => ({
+              index,
+              type: el.type,
+              name: el.name,
+              value: el.value,
+              placeholder: el.placeholder,
+              checked: el.checked,
+              required: el.required,
+              disabled: el.disabled,
+              ariaInvalid: el.getAttribute('aria-invalid'),
+              ariaDescribedBy: el.getAttribute('aria-describedby'),
+              outerHTML: el.outerHTML.slice(0, 700),
+            }))), null, 2));
+
+            console.log(`\n===== ${label}: BUTTONS =====`);
+            console.log(JSON.stringify(await page.locator('button').evaluateAll((els) => els.map((el, index) => ({
+              index,
+              text: el.textContent?.trim(),
+              type: el.type,
+              disabled: el.disabled,
+              ariaDisabled: el.getAttribute('aria-disabled'),
+              outerHTML: el.outerHTML.slice(0, 900),
+            }))), null, 2));
+
+            console.log(`\n===== ${label}: FORM TEXT =====`);
+            const forms = await page.locator('form').count();
+            if (forms) {
+              for (let i = 0; i < forms; i += 1) {
+                console.log(`FORM ${i}:\n${(await page.locator('form').nth(i).innerText()).slice(0, 5000)}`);
+              }
+            } else {
+              console.log('No <form> elements found. BODY:');
+              console.log((await page.locator('body').innerText()).slice(0, 8000));
+            }
+          }
+
           (async () => {
             const browser = await chromium.launch({ headless: true });
             const page = await browser.newPage();
 
+            page.on('console', (msg) => console.log(`BROWSER_CONSOLE[${msg.type()}] ${msg.text()}`));
+            page.on('pageerror', (err) => console.log(`BROWSER_PAGEERROR ${err.message}`));
+            page.on('response', (response) => {
+              const url = response.url();
+              const request = response.request();
+              if (url.includes('awesomeskills') || request.method() !== 'GET' || response.status() >= 400) {
+                console.log(`NETWORK ${response.status()} ${request.method()} ${url}`);
+              }
+            });
+
             try {
               console.log(`Opening submit page: ${submitUrl}`);
-              await page.goto(submitUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+              await page.goto(submitUrl, { waitUntil: 'networkidle', timeout: 60000 });
+              await dumpControls(page, 'BEFORE FILL');
 
-              const input = page.locator('input').first();
-              await input.waitFor({ state: 'visible', timeout: 30000 });
+              const candidates = [
+                page.getByPlaceholder(/github/i),
+                page.locator('input[type="url"]'),
+                page.locator('input[name*="url" i]'),
+                page.locator('input[type="text"]'),
+              ];
+
+              let input = null;
+              for (const candidate of candidates) {
+                if (await candidate.count()) {
+                  const visible = candidate.filter({ visible: true }).first();
+                  if (await visible.count()) {
+                    input = visible;
+                    break;
+                  }
+                }
+              }
+              if (!input) {
+                const visibleInputs = page.locator('input:visible');
+                if (!(await visibleInputs.count())) throw new Error('No visible submission input found.');
+                input = visibleInputs.first();
+              }
+
+              console.log(`Filling candidate input with ${projectUrl}`);
               await input.fill(projectUrl);
+              await input.dispatchEvent('input');
+              await input.dispatchEvent('change');
+              await input.blur();
+              await page.waitForTimeout(8000);
+              await dumpControls(page, 'AFTER FILL + ASYNC VALIDATION');
+
+              const validationText = (await page.locator('body').innerText()).slice(0, 12000);
+              console.log(`\n===== BODY AFTER VALIDATION =====\n${validationText}`);
+
+              const checkboxes = page.locator('input[type="checkbox"]:visible');
+              if (await checkboxes.count()) {
+                console.log('Visible checkboxes were detected. Their labels are being logged but NOT auto-accepted.');
+                for (let i = 0; i < await checkboxes.count(); i += 1) {
+                  const box = checkboxes.nth(i);
+                  const id = await box.getAttribute('id');
+                  let label = '';
+                  if (id) {
+                    const labelLocator = page.locator(`label[for="${id.replaceAll('"', '\\"')}"]`);
+                    if (await labelLocator.count()) label = (await labelLocator.first().innerText()).trim();
+                  }
+                  console.log(`CHECKBOX ${i}: id=${id} label=${label}`);
+                }
+              }
 
               const submit = page.getByRole('button', { name: /submit skill/i });
               await submit.waitFor({ state: 'visible', timeout: 30000 });
+              console.log(`Submit disabled after validation: ${await submit.isDisabled()}`);
+
+              if (await submit.isDisabled()) {
+                throw new Error('Submit Skill remains disabled after URL fill, input/change/blur events, and async validation. See diagnostics above for the governing prerequisite or validation rejection.');
+              }
+
               console.log(`Submitting: ${projectUrl}`);
               await submit.click();
-
-              await page.waitForTimeout(5000);
+              await page.waitForTimeout(7000);
               console.log(`Post-submit URL: ${page.url()}`);
-              console.log(`Post-submit page text:\n${(await page.locator('body').innerText()).slice(0, 5000)}`);
+              console.log(`Post-submit page text:\n${(await page.locator('body').innerText()).slice(0, 8000)}`);
 
               console.log(`Verifying expected public URL: ${expectedUrl}`);
-              const response = await page.goto(expectedUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+              const response = await page.goto(expectedUrl, { waitUntil: 'networkidle', timeout: 60000 });
               const status = response?.status() ?? 0;
               const body = await page.locator('body').innerText();
               console.log(`Verification status: ${status}`);
               console.log(`Verification URL: ${page.url()}`);
-              console.log(`Verification page text:\n${body.slice(0, 5000)}`);
+              console.log(`Verification page text:\n${body.slice(0, 8000)}`);
 
               const normalized = body.toLowerCase();
-              if (status < 200 || status >= 400) {
-                throw new Error(`AwesomeSkills verification returned HTTP ${status}`);
-              }
+              if (status < 200 || status >= 400) throw new Error(`AwesomeSkills verification returned HTTP ${status}`);
               if (!normalized.includes('project-jennifer') && !normalized.includes('project jennifer')) {
                 throw new Error('Expected Project Jennifer identity was not found on the public AwesomeSkills page.');
               }
