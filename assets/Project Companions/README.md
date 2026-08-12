@@ -1,8 +1,8 @@
 # Project Companions
 
-> Character system, collection/evolution rules and visual-governance notes for Project Jennifer.
+> **Character system, collection/evolution rules, Digital Hippocampus selection logic and visual-governance bible for Project Jennifer.**
 
-Project Companions separates **who a companion is**, **what edition the player owns**, **how rare that instance has become**, and **how that companion currently operates**.
+Project Companions separates **who a companion is**, **which authored edition the player owns**, **how rare that instance becomes**, **which body/form it currently inhabits**, and **how it operates inside the world**.
 
 ```text
 CompanionInstance =
@@ -17,88 +17,100 @@ CompanionInstance =
 × Receipt Chain
 ```
 
-A Limited Edition is not automatically Legendary. A Legendary companion is not automatically purchased. A heroic-looking body can carry a dangerous mechanism. A starter can become historically rare because of what happened to it.
+A Limited Edition is not automatically Legendary. A Legendary companion is not automatically purchased. A heroic-looking body can carry a dangerous mechanism. A rival can be redeemed. A starter can become historically valuable because of what actually happened to it.
 
-Project Jennifer should create meaningful ownership, evolution and choice — not morality-coded skins or a pay-to-win shortcut.
+**Project Jennifer governs the combination. The player chooses the path.**
 
 ---
 
-## ⚠️ Current asset-integrity state
+# 🧠 Digital Hippocampus — the companion selection core
 
-The character-system logic in this document is valid as design documentation, but the **legacy visual asset paths are not currently all valid repository images**.
+The **Digital Hippocampus** is the companion-selection and continuity layer: the place where the player chooses an expression of intelligence without pretending that a body, visual style, morality or name permanently determines the underlying mechanism.
 
-The 2026-08-11 asset audit found:
+<p align="center">
+  <img src="system/digital-hippocampus-core.png" alt="Digital Hippocampus core logic" width="100%" />
+</p>
 
-- several previously declared `generic/`, `heroes/` and `exclusive/` image paths are missing on the current branch;
-- sampled files under `limited-edition/` contain local-path pointer text instead of decodable WebP binaries;
-- therefore the root README must not embed those paths until real source images are imported and validated.
+The core can express the same base logic through different embodiments.
 
-The visual target remains unchanged: **high-resolution individual character art, not squeezed thumbnail collages.**
+## Human-form expression
 
-➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md).
+<p align="center">
+  <img src="system/companion-selector-human-forms.png" alt="Digital Hippocampus human companion forms" width="100%" />
+</p>
 
-### Intended namespace
+## Abstract/mechanism expression
+
+<p align="center">
+  <img src="system/companion-selector-abstract-forms.png" alt="Digital Hippocampus abstract companion forms" width="100%" />
+</p>
+
+The important rule is **not the names printed in exploratory concept art**. The canonical system idea is:
 
 ```text
-assets/Project Companions/
-  README.md
-  rarity/                    # common / epic / rare / legendary system visuals
-  limited-edition/           # authored purchasable / collector editions
-  forms/                     # identity-preserving body/form states
-  source/                    # governed source intake when required
+THREE BASE LOGICS
+      ↓
+MULTIPLE EXPRESSIONS / BODIES
+      ↓
+PLAYER SELECTS A COMPANION STATE
+      ↓
+GAMEPLAY + RELATIONSHIP + RECEIPTS
+      ↓
+THE INSTANCE BECOMES UNIQUE
 ```
 
-Legacy folder names may remain temporarily for migration, but a filename never overrides the governed character/edition receipt.
+Names such as Kael, Eira, Luna, Aris, Torin and Aura remain **concept-art labels** until a source-controlled identity definition promotes them into canon.
+
+➡️ **[Verified asset manifest](ASSET_MANIFEST.md)**
 
 ---
 
-# The two collection axes
+# 🧬 The two collection axes
 
 ## Axis A — rarity / progression
 
-Rarity describes the progression/value state of a companion instance.
+Rarity describes the **progression and historical value state** of a companion instance.
 
 ```text
 COMMON → EPIC → RARE → LEGENDARY
 ```
 
-Rarity can be influenced by governed gameplay history, including:
+Rarity can be influenced by governed gameplay history:
 
 - quests survived;
-- transformations;
+- transformations earned;
 - difficult choices;
 - relationship history;
 - unlocked skills;
 - failures and recoveries;
 - world-state consequences;
-- special achievements or validated events.
+- achievements backed by receipts.
 
 > **Rarity can come from history, not only scarcity.**
 
-A Common starter with a deep receipt chain can evolve into something materially different from a newly spawned copy.
+A Common starter with a deep receipt chain can become materially different from a newly spawned copy.
 
 ## Axis B — edition / acquisition
 
 Edition describes **which authored release of an identity** the player possesses.
 
 ```text
-STANDARD
-LIMITED EDITION
+STANDARD ↔ LIMITED EDITION
 ```
 
-**Limited Edition** is the authored/purchasable collector lane represented by the detailed named-character and Kopa edition direction.
+Limited Editions are authored collector releases intended for purchase or governed special distribution as the store/economy is implemented.
 
-A Limited Edition may provide:
+They can provide:
 
 - authored visual identity;
-- distinctive animation or presentation;
+- distinctive animation/presentation;
 - special lore;
 - special quest access;
 - unique voice/style direction;
 - collector scarcity;
 - edition-specific cosmetics or bounded affinities.
 
-It must **not silently mean automatic combat superiority**.
+They must **not silently equal automatic combat superiority**.
 
 ```text
 LIMITED EDITION ≠ LEGENDARY
@@ -106,33 +118,63 @@ LEGENDARY       ≠ PURCHASED
 PURCHASED       ≠ PAY-TO-WIN
 ```
 
-The store, reward and future token/crypto-mining economy can use edition and rarity as separate game-economy primitives. Exact token issuance, mining yield, exchange value, wallet mechanics and financial promises remain a **planned governed surface** until they receive implementation and validation receipts.
+The purchase receipt proves **which edition was acquired**. Gameplay receipts prove **what that companion became afterward**.
+
+---
+
+# 💎 Limited Edition direction
+
+The detailed Kopa and named rival/collector character posters belong to the **Limited Edition authored lane** once each source image is positively mapped and classified.
+
+Current authored identity direction includes:
+
+- **Kopa** — official mascot / transformable guardian identity;
+- **Vanta** — authored rival companion concept;
+- **Nyra** — authored rival companion concept;
+- **SolveK** — authored rival companion concept;
+- **Lyrae** — authored rival companion concept.
+
+The 2026-08-11/12 asset intake contains real high-resolution PNGs, but several still have opaque generated filenames. **We do not guess which file is which character.** They remain source candidates until visually/explicitly mapped.
+
+That is a governance feature, not administrative hesitation.
+
+```text
+REAL BINARY
+   ↓
+POSITIVE CHARACTER IDENTIFICATION
+   ↓
+IDENTITY / EDITION / FORM CLASSIFICATION
+   ↓
+STABLE CANONICAL PATH
+   ↓
+README / STORE / GAME USE
+```
+
+➡️ **[Asset intake and outstanding mappings](ASSET_MANIFEST.md)**
 
 ---
 
 # 1. Identity
 
-Identity is the canonical companion being: name, origin, visual family, lore history and continuity that should survive changes of form or edition where the receipt chain says the identity remains continuous.
+Identity is the canonical companion being: name, origin, visual family, lore history and continuity that should survive changes of form or edition when the receipt chain says the identity remains continuous.
 
-Current design examples include:
-
-- **Kopa** — transformable hero / mascot-direction identity;
-- **Vanta** — authored companion concept;
-- **Nyra** — authored companion concept;
-- **SolveK** — authored companion concept;
-- **Lyrae** — authored companion concept;
-- **Generic population** — modular starter / discoverable archetypes.
+```text
+Identity = WHO it is
+Edition  = WHICH authored release you own
+Rarity   = WHAT progression/value state this instance reached
+Form     = HOW it is embodied right now
+```
 
 ### Vanta namespace collision
 
-Project Waifu Forge also contains a **Construct named Vanta**. That Construct is not silently the same entity as the companion concept.
+Project Waifu Forge also contains a **Construct named Vanta**. That Construct is not silently the same entity as the companion identity.
 
 ```text
-Companion concept: ProjectCompanion/Vanta
-Waifu Forge Construct: Construct/Vanta
+Companion: ProjectCompanion/Vanta
+Construct: Construct/Vanta
 ```
 
-Do not merge lore, powers, memories or identity merely because the display name matches.
+Shared display names never merge memories, powers, identity or authority by accident.
 
 ---
 
@@ -140,39 +182,35 @@ Do not merge lore, powers, memories or identity merely because the display name 
 
 Form is an embodiment state, not a new identity by default.
 
-Possible states include:
+Possible form axes include:
 
 - dark body frame;
 - light body frame;
 - juvenile;
 - teenage;
 - mature;
-- guardian / armored evolution;
-- shadow / corrupted evolution;
-- environment- or quest-specific forms.
+- guardian/armored evolution;
+- shadow/corrupted evolution;
+- environment-specific form;
+- quest-specific form;
+- human expression;
+- abstract/mechanism expression.
 
-```text
-Identity = WHO it is
-Edition  = WHICH authored release you own
-Rarity   = WHAT progression/value state this instance has reached
-Form     = HOW it is embodied right now
-```
-
-A visual transformation can be dramatic without silently deleting continuity.
+This is why Kopa can have multiple bodies without turning every visual variation into a separate character.
 
 ---
 
 # 3. Core mechanisms
 
-The first companion architecture defines three base cognitive mechanisms:
+Project Jennifer currently centers three foundational cognitive mechanisms:
 
-| Mechanism | Runtime emphasis |
-|---|---|
-| **Memory Architect** | continuity, recall, provenance, contradiction detection |
-| **System Intuition** | pattern leaps, non-linear inference, creative navigation |
-| **Contextual Analyst** | social/context reading, subtext, trade-offs and situational interpretation |
+| Mechanism | Runtime emphasis | Failure pressure |
+|---|---|---|
+| **Memory Architect** | continuity, recall, provenance, contradiction detection | preserving stale context after reality genuinely changed |
+| **System Intuition** | pattern leaps, non-linear inference, creative navigation | moving from possibility to action too quickly |
+| **Contextual Analyst** | social/context reading, subtext, trade-offs | analysing so much that action arrives too late |
 
-Mechanism is independently assignable from visual identity.
+Mechanism is assignable independently from visual identity.
 
 ```text
 Nyra + Memory Architect
@@ -180,13 +218,13 @@ Kopa + Contextual Analyst
 SolveK + System Intuition
 ```
 
-Future mechanisms can extend the matrix without multiplying character bodies unnecessarily.
+Future mechanisms can expand the matrix without requiring a completely new character body for every new function.
 
 ---
 
 # 4. Alignment
 
-Alignment describes the current governed behavioral direction; it is **not an immutable morality stamp**.
+Alignment describes the current governed behavioral direction. It is **not an immutable morality stamp**.
 
 Initial vocabulary:
 
@@ -197,9 +235,11 @@ Initial vocabulary:
 - Corrupted
 - Redeemed
 
-A companion can change alignment through receipts, quests, relationships and state transitions. A hero can fail. A rival can protect the player. A dangerous mechanism can be used responsibly.
+A companion can change alignment through quests, relationships, player behavior, world events and validated transitions.
 
-Alignment is independent from edition and rarity.
+A villain can become a hero in the right context.
+
+A hero can fail if the player abuses power.
 
 ---
 
@@ -214,13 +254,15 @@ Relationship lanes define how the player and companion are currently allowed to 
 - platonic;
 - romantic.
 
-Relationship lane remains governed separately from identity, edition, rarity and visual form.
+Relationship lane is governed separately from identity, edition, rarity, alignment and form.
+
+A relationship change must be a state transition with a receipt, not a random dialogue-model mood swing.
 
 ---
 
 # 6. Skill loadout
 
-Skills determine concrete gameplay utility. Examples include:
+Skills determine concrete gameplay utility. Examples:
 
 - memory recall;
 - contradiction detection;
@@ -229,18 +271,18 @@ Skills determine concrete gameplay utility. Examples include:
 - navigation;
 - persuasion;
 - deception detection;
-- shield / defense;
+- shield/defense;
 - combat support;
 - restoration;
 - contextual inference.
 
-A companion's visual design may suggest capabilities without hard-coding them.
+A companion's visual design may suggest capabilities. It does not automatically hard-code them.
 
 ---
 
-# Generic / configurable population
+# 🌱 Generic / configurable population
 
-The generic ecosystem represents the broad population layer: starter, discoverable, quest-earned and freely distributed archetypes that can be configured by play.
+The generic ecosystem represents the broad population layer: starter, discoverable, quest-earned and freely distributed archetypes configured by play.
 
 ```text
 Generic Body
@@ -253,11 +295,15 @@ Generic Body
 = Player-specific companion instance
 ```
 
-Names or labels rendered inside exploratory concept art are **not authoritative canon** unless a source-controlled definition adopts them.
+This is the lane where **Common → Epic → Rare → Legendary** can become meaningful progression rather than a storefront label.
+
+Generic does not mean disposable.
+
+A generic companion with a long validated history can become one of the most meaningful objects a player owns.
 
 ---
 
-# Receipt-earned evolution
+# 🧾 Receipt-earned evolution
 
 The receipt chain answers **why this copy matters**.
 
@@ -267,42 +313,51 @@ Receipts can prove:
 - quest history;
 - transformations;
 - rarity promotion;
-- boundaries;
+- relationship boundaries;
 - relationship transitions;
 - learned skills;
 - failures;
 - redemptions;
 - world-state consequences.
 
-Two visually identical Standard companions can therefore diverge because their histories diverged.
-
----
-
-# Limited Edition characters
-
-Limited Editions are deliberately authored collector releases. They may be purchased through the in-game store or distributed through governed events/reward mechanisms as the economy is implemented.
-
-They can have distinctive visual language and lore without automatically becoming stronger than every Standard character.
+Two visually identical Standard companions can diverge because their histories diverged.
 
 ```text
-PLAYER PAYS / UNLOCKS AN EDITION
-              ↓
-        Edition Receipt
-              ↓
-      Companion Instance
-              ↓
-       Gameplay History
-              ↓
-         Rarity Changes
-              ↓
-      Evolution Receipts
+ACQUIRE
+  ↓
+PLAY
+  ↓
+CHOOSE
+  ↓
+CHANGE
+  ↓
+VALIDATE
+  ↓
+RECEIPT
+  ↓
+EVOLVE
 ```
-
-The purchase receipt proves acquisition. Gameplay receipts prove what the companion became afterward.
 
 ---
 
-# Combination governance
+# 💰 Economy boundary
+
+Project Jennifer can use edition, rarity, ownership receipts and later token/crypto-mining experiments as separate economic primitives.
+
+What is **not** allowed is collapsing them into one manipulative number.
+
+```text
+OWNERSHIP VALUE  ≠ COMBAT POWER
+RARITY            ≠ PRICE
+EDITION           ≠ RARITY
+TOKEN EXPERIMENT  ≠ CURRENT GUARANTEED RETURN
+```
+
+Exact token issuance, mining yield, exchange value, wallet mechanics and marketplace economics remain future governed implementation gates until the code, tests, legal/compliance surface and validation receipts exist.
+
+---
+
+# ⚖️ Combination governance
 
 Mixing identity, mechanism, alignment, edition, rarity and form should create gameplay rather than arbitrary hard bans.
 
@@ -322,7 +377,7 @@ Example:
 Identity: Vanta
 Edition: Limited Edition
 Rarity: Epic
-Loaded mechanism: Memory Architect
+Mechanism: Memory Architect
 Alignment: Guardian
 
 Result:
@@ -331,13 +386,13 @@ RARE BUILD
 Possible redemption / contradiction questline
 ```
 
-The system can reward unusual combinations while still rejecting combinations that violate explicit governance, consent, safety or world rules.
+Unusual combinations can be rewarded while combinations that violate explicit governance, consent, safety or world rules can still be rejected.
 
 ---
 
-# Companions are not Constructs
+# 🏛️ Companions are not Constructs
 
-Project Jennifer contains two adjacent but distinct character systems.
+Project Jennifer contains adjacent but distinct systems.
 
 ## Companion runtime
 
@@ -350,7 +405,7 @@ Core Logic
 → Validation + Memory Receipts
 ```
 
-Companions are player-facing intelligences whose memory, relationship and evolution are part of the gameplay system.
+Companions are player-facing intelligences whose memory, relationship and evolution are gameplay.
 
 ## Project Waifu Forge Construct runtime
 
@@ -362,23 +417,25 @@ Faction
 → Telemetry Duty
 ```
 
-Constructs are constitutional entities with service obligations and bounded authority. A companion does not inherit Construct authority merely because visual or narrative themes overlap.
+Constructs are constitutional entities with service obligations and bounded authority. A companion does not inherit Construct authority because visual or narrative themes overlap.
 
 ---
 
-# Asset provenance and governance
+# 🧪 Asset provenance law
 
-Project Jennifer's character visuals are developed through AI-assisted visual-system exploration and founder-directed iteration.
+Before a visual becomes a canonical repository asset:
 
-Before a visual is embedded as a repository asset:
+1. verify the binary payload;
+2. preserve source provenance;
+3. record dimensions/checksum where practical;
+4. positively identify the character/system role;
+5. create a stable filename/path;
+6. label source / canon-candidate / canon;
+7. do not infer powers from appearance alone;
+8. do not treat generated text inside an image as canonical data;
+9. do not turn concept art into a sale/gameplay promise without implementation.
 
-- preserve source provenance;
-- validate the binary payload;
-- record a stable filename;
-- separate source/canon/canon-candidate status;
-- do not infer powers from appearance alone;
-- do not treat generated text inside the image as canonical data;
-- do not silently promote concept art into a sale promise or gameplay guarantee.
+The current verified system assets and their hashes are recorded in [`ASSET_MANIFEST.md`](ASSET_MANIFEST.md).
 
 ---
 
@@ -392,6 +449,8 @@ Before a visual is embedded as a repository asset:
 
 > **A purchase receipt proves acquisition. Gameplay receipts prove evolution.**
 
-> **A companion's receipts should explain what it became.**
+> **A visual filename cannot override identity governance.**
 
-Project Jennifer governs the combination. The player chooses the path.
+> **Choice changes the companion; receipts prove what it became.**
+
+Project Jennifer governs the combination. **The player chooses the path.**
