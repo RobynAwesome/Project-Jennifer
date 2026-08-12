@@ -27,6 +27,18 @@ const requiredCoreSkills = [
   "authored-relational-attention",
 ] as const;
 
+test("root SKILL.md exposes Project Jennifer as a stateless-renter AwesomeSkills entrypoint", () => {
+  assert.equal(existsSync(repoPath("SKILL.md")), true, "Project Jennifer must expose a root SKILL.md for repository-level discovery");
+
+  const rootSkill = read("SKILL.md");
+  assert.match(rootSkill, /name:\s*project-jennifer/);
+  assert.match(rootSkill, /skills\.md/);
+  assert.match(rootSkill, /skills\/project-jennifer\/SKILL\.md/);
+  assert.match(rootSkill, /I_AM_STATELESS_RENTER_NOT_LANDLORD/);
+  assert.match(rootSkill, /CDP[\s\S]*CEEP[\s\S]*POC-vs-FOC[\s\S]*CCP[\s\S]*NCMP/);
+  assert.match(rootSkill, /Do not promote FOC to POC/i);
+});
+
 test("skills.md resolves every linked SKILL.md and includes the Jennifer conceptual suite", () => {
   const catalog = read("skills.md");
   const linkedSkills = new Set<string>();
