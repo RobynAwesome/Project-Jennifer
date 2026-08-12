@@ -50,16 +50,16 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 
 | Intent | Route |
 |---|---|
-| Expand possibilities, alternative architectures, concepts, or relationship-born possibilities | `../cdp-conceptual-divergence/SKILL.md` |
-| Decide which conceptual pattern survives evidence and should converge | `../ccp-conceptual-convergence/SKILL.md` |
+| Expand possibilities / alternative architectures / concepts | `../cdp-conceptual-divergence/SKILL.md` |
+| Evaluate a conceptual subject and create evaluation/evolution receipts | `../ceep-conceptual-evaluation/SKILL.md` |
+| Separate evidence-bearing POC from FOC risk | `../poc-foc-evaluation/SKILL.md` |
+| Decide which conceptual pattern survives and should converge | `../ccp-conceptual-convergence/SKILL.md` |
+| Govern a genuinely new agent-originated concept | `../ncmp-concept-intake/SKILL.md` |
 | Decide what deserves attention now | `../cag-communication-attention/SKILL.md` |
-| Retrieve evidence | `../rag-governed-retrieval/SKILL.md` |
+| Retrieve governed evidence | `../rag-governed-retrieval/SKILL.md` |
 | Use another model/provider/local runtime | `../jennifer-stateless-renter/SKILL.md` |
 | Consequential relationship-bearing inference | `../forge-rivm/SKILL.md` |
 | Express locally authored relational attention | `../authored-relational-attention/SKILL.md` |
-| Evaluate POC vs FOC | `../../packages/conceptual/src/pocvsfoc/` and `../../docs/protocols/poc-foc-feedback-loops.md` |
-| Evaluate conceptual proposals | `../../packages/conceptual/src/ceep/` |
-| Intake a new concept | `../../NCMP.md` and `../../packages/shared/src/ncmp.ts` |
 | Issue/evaluate memory receipts | `../../packages/memory/src/memory-receipt-engine.ts` |
 | Read/write governed context | `../../packages/memory/src/gsmb.ts` |
 | Validate candidate state/action | `../../packages/validation/` |
@@ -73,44 +73,44 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 ```text
 CDP
 → CEEP
-→ evidence / POC-vs-FOC
+→ POC-vs-FOC
 → CCP
-→ receipt
-→ governed memory / canon candidate
+→ canonical/evolution receipt
+→ NCMP when new agent-originated concepts require human recognition + registration
 ```
 
 ### CDP
 
-Conceptual Divergence Protocol expands the possibility space.
+Conceptual Divergence Protocol expands the possibility space: *what could this become?*
 
-Use it before convergence when the human is exploring *what something could become*.
-
-Current repository boundary: CDP is specified in the Convergence Law and has a portable skill workflow, but the audited repository does not currently expose a dedicated `packages/conceptual/src/cdp/` implementation module.
+Current boundary: canonical semantics + portable skill exist, but no dedicated `packages/conceptual/src/cdp/` implementation module is currently proven.
 
 ### CEEP
 
-Conceptual Evaluation Engine evaluates the candidates/subject and can produce evaluation evidence/receipts.
+Conceptual Evaluation Engine evaluates the candidate/subject and emits an `EvaluationReceipt` plus `FrameworkEvolutionReceipt`.
 
 ### POC-vs-FOC
 
-Separate evidence-bearing proof from appearance, unsupported claim, narrative, or conceptual promotion.
+Makes evidence strengths and FOC risks explicit before promotion.
 
 ### CCP
 
-Conceptual Convergence Protocol determines the canonical decision state from framework-evolution evidence. Current TypeScript code exists under `packages/conceptual/src/ccp/`.
+Conceptual Convergence Protocol consumes framework-evolution evidence and returns a canonical decision receipt. Current TypeScript exists under `packages/conceptual/src/ccp/`.
+
+### NCMP
+
+New Concept MMAO Protocol governs agent-originated novelty. Agents may propose; only the human architect may recognize an NCMP concept. Recognition, validation, and registration remain separate transitions.
 
 ## Repository-context discipline
 
 Do not load all of Project Jennifer automatically.
 
-Use this sequence:
-
 ```text
 1. read skills.md
 2. classify the task
-3. select one or more smallest relevant skills
-4. inspect their named source/implementation files
-5. retrieve additional repository evidence only when required
+3. select the smallest relevant specialist skill(s)
+4. inspect named source/implementation files
+5. retrieve more evidence only when required
 6. execute
 7. validate
 8. emit receipt / proof boundary
@@ -120,9 +120,7 @@ This is CAG applied to repository work: **more context is not automatically bett
 
 ## Source authority
 
-Before using a source, preserve its class and lane.
-
-Do not flatten:
+Before using a source, preserve its class and lane. Do not flatten:
 
 ```text
 PRIVATE_SOVEREIGN
@@ -152,11 +150,11 @@ deployed
 canonical
 ```
 
-A skill can be useful even before a dedicated engine exists. That does not authorize the renter to fabricate an engine receipt.
+A skill can be useful before a dedicated engine exists. That never authorizes a fabricated execution receipt.
 
 ## Execution output
 
-For a consequential task, return or preserve:
+For consequential work, preserve:
 
 ```text
 selected skill(s)
@@ -170,4 +168,4 @@ unproven remainder
 
 ## Success condition
 
-The umbrella skill succeeds when the renter can enter Project Jennifer from a single repo-level skill surface, select the correct specialist capability, preserve authority and proof boundaries, complete the requested work, and leave behind inspectable evidence instead of invented continuity.
+The umbrella skill succeeds when a renter can enter Project Jennifer from a single repo-level surface, select the correct specialist capability, preserve authority and proof boundaries, complete the requested work, and leave inspectable evidence instead of invented continuity.
