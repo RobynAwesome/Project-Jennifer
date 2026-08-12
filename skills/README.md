@@ -22,7 +22,10 @@ This preserves Project Jennifer's stateless-renter model: skill discovery is eas
 |---|---|---|
 | `project-jennifer` | repo-level skill router | Routes to current source; does not replace repository inspection. |
 | `cdp-conceptual-divergence` | conceptual divergence | Portable/specification-backed workflow; no dedicated `packages/conceptual/src/cdp/` engine currently proven. |
+| `ceep-conceptual-evaluation` | conceptual evaluation | Portable workflow backed by current CEEP TypeScript implementation. |
+| `poc-foc-evaluation` | evidence/risk evaluator | Portable workflow backed by current `POCvsFOCEvaluator`. |
 | `ccp-conceptual-convergence` | conceptual convergence | Portable workflow backed by current TypeScript CCP implementation. |
+| `ncmp-concept-intake` | new-concept governance | Portable workflow backed by current NCMP state machine; human recognition remains mandatory. |
 | `cag-communication-attention` | validator / attention governance | Skill + coded Python/runtime surfaces. |
 | `rag-governed-retrieval` | retriever | Skill + coded governed-RAG surfaces. |
 | `jennifer-stateless-renter` | renter execution contract | Skill + renter contracts/router. |
@@ -41,6 +44,8 @@ POC-vs-FOC — separate proof from unsupported promotion
 CCP — converge on evidence-bearing decision
         ↓
 canonical / evolution receipt
+        ↓
+NCMP when genuinely new agent-originated concepts need human recognition + governed registration
 ```
 
 Canonical shorthand from the Convergence Law:
@@ -56,10 +61,7 @@ CDP and CCP are intentionally complementary. Pure divergence becomes chaos; pure
 
 Not every implemented system has been duplicated into a separate portable skill package. The repo-level [`skills.md`](../skills.md) routes agents to current implementations for:
 
-- CEEP;
-- POC-vs-FOC evaluation;
 - framework registry/evolution receipts;
-- NCMP;
 - Memory Receipt Engine;
 - GSMB / Digital Hippocampus memory;
 - governance and authority engines;
@@ -97,6 +99,7 @@ current human instruction
 → governed RAG if knowledge is required
 → CEEP / POC-vs-FOC when conceptual evidence must be evaluated
 → CCP when convergence is requested / earned
+→ NCMP when a genuinely new agent-originated concept requires recognition / registration
 → exact renter selection / execution where needed
 → CAG post-inference
 → RIVM when consequentially relational
@@ -120,7 +123,8 @@ Adapters may translate delivery format for a provider, but they must preserve:
 - source-authority precedence;
 - privacy lane boundaries;
 - evidence provenance;
-- CDP/CCP proof-state boundaries;
+- CDP/CEEP/POC-vs-FOC/CCP proof-state boundaries;
+- NCMP human-recognition authority;
 - CAG relevance decisions;
 - RIVM hard-fail semantics when relational;
 - memory promotion gates;
