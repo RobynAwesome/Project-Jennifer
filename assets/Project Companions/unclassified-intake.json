@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "Project Jennifer",
+  "assetDomain": "Project Companions / founder HD intake",
+  "updatedAt": "2026-08-12",
+  "status": "UNCLASSIFIED_SOURCE_INTAKE",
+  "governance": {
+    "rule": "A real binary is not automatically canon. Opaque filenames must not be assigned to Kopa, Vanta, Nyra, SolveK, Lyrae, rarity, edition or form without positive identification.",
+    "nextGate": "Visually identify each source, then create stable semantic paths and identity/edition/form receipts before README, store or gameplay use.",
+    "issue": 25
+  },
+  "assets": [
+    {"path":"file_00000000163881f4b54f532559d6e902.png","gitBlobSha":"301c5168076d17bb665aa396456540c270741193","bytes":2165555,"status":"unclassified-source"},
+    {"path":"file_000000001d9c81f4875208e313244a1b.png","gitBlobSha":"1a2061998b54d4588d35c27aeb369a39a7bdacfb","bytes":2097925,"status":"unclassified-source"},
+    {"path":"file_000000001eb481f78bbe03c377dec91e.png","gitBlobSha":"d3e3004d5e45e74941f2c345d7ce272f44ac5887","bytes":2114287,"status":"unclassified-source"},
+    {"path":"file_000000004558820a9a6a998c08e74c60.png","gitBlobSha":"dd324b96e2a5b05e5f86ef8e44c2a84698967242","bytes":2520852,"status":"unclassified-source"},
+    {"path":"file_000000004de081f9b89ce87866d2919a.png","gitBlobSha":"123622585ba4c6268fca2ecb326f4facb68c7c37","bytes":2238022,"status":"unclassified-source"},
+    {"path":"file_00000000761082439e73c228b30aa1d5.png","gitBlobSha":"74db438f7a1ab07352a64d17c2beb031b0964578","bytes":2219851,"status":"unclassified-source"},
+    {"path":"file_00000000a8c481f491bf86efb3d2d1ae.png","gitBlobSha":"89e90a7ab7e478747ba90e542c4307ec32f49ba1","bytes":2125350,"status":"unclassified-source"},
+    {"path":"file_00000000b8308246837a4461dde95954.png","gitBlobSha":"e4664728b8ef5cd7ff50bea170baf5328b6d4f90","bytes":2089813,"status":"unclassified-source"},
+    {"path":"file_00000000cc7c81f6930287dc62a1e2b8.png","gitBlobSha":"e74b6773d59ea05c214fc04972d2a03ab8d4d599","bytes":2186303,"status":"unclassified-source"},
+    {"path":"file_00000000d8e48243a0e66b7cc32b669f.png","gitBlobSha":"eb3dfaeb950cdb021047ecb28b0015a1b4621aec","bytes":2162188,"status":"unclassified-source"},
+    {"path":"file_00000000dbec820cbebfb2f494a7bf4b.png","gitBlobSha":"714141d83c8a57a6a4223169f0b9ccaf4151faf3","bytes":2161916,"status":"unclassified-source"},
+    {"path":"file_00000000e8e48243ab7327c477ae11e8.png","gitBlobSha":"1fa119bf25459e919f7a8ef0810092f873abbe4c","bytes":2151481,"status":"unclassified-source"},
+    {"path":"file_00000000ebe4820ab5d6c745398f2368.png","gitBlobSha":"d7ce9731dc40ae4ebc62d48b9d1a975fd277f6c7","bytes":2693013,"status":"unclassified-source"},
+    {"path":"file_00000000ecbc81f4a66b24365537f17d.png","gitBlobSha":"e75d2fd26ce7422c0d53a96491e29bc783e3449e","bytes":2250455,"status":"unclassified-source"}
+  ],
+  "excludedFromCanonicalGallery": [
+    "browser/phone screenshots",
+    "legacy pointer payloads in quarantine",
+    "any asset whose identity/edition/form mapping is not positively verified"
+  ]
+}
