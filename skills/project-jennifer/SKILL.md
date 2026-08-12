@@ -1,7 +1,7 @@
 ---
 name: project-jennifer
 title: "Project Jennifer Governed Skill Router"
-version: "1.0.0"
+version: "1.1.0"
 status: "POC"
 class: "Repository Umbrella Skill"
 repository: "RobynAwesome/Project-Jennifer"
@@ -52,6 +52,7 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 |---|---|
 | Expand possibilities / alternative architectures / concepts | `../cdp-conceptual-divergence/SKILL.md` |
 | Evaluate a conceptual subject and create evaluation/evolution receipts | `../ceep-conceptual-evaluation/SKILL.md` |
+| Parse authoritative KPGS VOC POC branch and emergent FOC-G## groups | `../poc-foc-registry-parser/SKILL.md` |
 | Separate evidence-bearing POC from FOC risk | `../poc-foc-evaluation/SKILL.md` |
 | Decide which conceptual pattern survives and should converge | `../ccp-conceptual-convergence/SKILL.md` |
 | Govern a genuinely new agent-originated concept | `../ncmp-concept-intake/SKILL.md` |
@@ -92,6 +93,8 @@ Conceptual Evaluation Engine evaluates the candidate/subject and emits an `Evalu
 ### POC-vs-FOC
 
 Makes evidence strengths and FOC risks explicit before promotion.
+
+When KPGS immune-registry semantics themselves are required, parse `Kopano-Labs/Introduction-to-MCP/poc-vs-foc/` through `poc-foc-registry-parser` first. The resulting `FOC-G##` operational groups remain separate from Jennifer's semantic `FOCType` evaluation risks.
 
 ### CCP
 
