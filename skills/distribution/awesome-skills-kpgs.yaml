@@ -32,6 +32,11 @@ skills:
     deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/poc-foc-registry-parser
     purpose: parse Introduction-to-MCP VOC POC branch and emergent FOC-G## groups with provenance and receipts
     authority_origin: https://github.com/Kopano-Labs/Introduction-to-MCP
+  - name: poc-foc-runtime-gate
+    path: skills/poc-foc-runtime-gate/SKILL.md
+    deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/poc-foc-runtime-gate
+    purpose: evaluate consequential actions, preserve operational FOC-G## matches, issue Memory Receipts, and block HOLD/REJECT mutations
+    authority_origin: https://github.com/Kopano-Labs/Introduction-to-MCP
   - name: kpgs-deployment-parser
     path: skills/kpgs-deployment-parser/SKILL.md
     deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-deployment-parser
@@ -57,7 +62,8 @@ publication_receipt:
   source_commits:
     kpgs-authority: 5809bc58ae1d84c77fca8e468eb2d59675236aff
     kpgs-parser-protocol: 0c2d78ed3eda4aca273ff44e91666d6670cc4618
-    poc-foc-registry-parser: null
+    poc-foc-registry-parser: 3ec89234aa614069e72b5b2aab438a9624e93fbe
+    poc-foc-runtime-gate: null
     kpgs-deployment-parser: 3abef9b5728b63b705bce117e2ca072a786dd966
     kpgs-tool-script-runtime: fce1a26d9e460aea5fb2545951d1b7d2cb3fa1c1
     kpgs-apple-deployment-parser: 4d79ac293ef78d42b3ebe4ba5cbd690ecf687091
@@ -65,4 +71,4 @@ publication_receipt:
     kpgs-mmao-mao-renter: 59a233515e51e3fc8a866105cad48dbe385371d7
     kpgs-runtime-pack: f8bf9c1f65e33aa37eda1e91772ac93ba6a12abc
   website_submission_receipt: null
-  note: The GitHub artifacts are public and submission-ready. The AwesomeSkills website form itself has not been executed by this runtime. The POC/FOC registry parser source commit remains null until this branch is merged and a stable main-branch commit exists.
+  note: The GitHub artifacts are public and submission-ready. The AwesomeSkills website form itself has not been executed by this runtime. The runtime-gate source commit remains null until this branch is merged and a stable main-branch commit exists.
