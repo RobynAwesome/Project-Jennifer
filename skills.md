@@ -47,6 +47,7 @@ A renter may execute within granted authority. It may not convert remembered con
 | [`kpgs-runtime-pack`](skills/kpgs-runtime-pack/SKILL.md) | **PORTABLE / ROUTER** | You need KPGS authority, parser, model-routing, deployment or MAO/MMAO execution skills. | KPGS source + KMEC runtime |
 | [`kpgs-authority`](skills/kpgs-authority/SKILL.md) | **PORTABLE / GOVERNANCE** | Establish KPGS renter posture, authority boundaries and receipt expectations. | `Kopano-Labs/Introduction-to-MCP` |
 | [`kpgs-parser-protocol`](skills/kpgs-parser-protocol/SKILL.md) | **PORTABLE / CODED** | Parse heterogeneous provider docs, repo rules, skills, benchmarks and hardware evidence with provenance. | KMEC parser runtime |
+| [`poc-foc-registry-parser`](skills/poc-foc-registry-parser/SKILL.md) | **PORTABLE / CODED** | Parse the authoritative VOC POC branch and emergent FOC-G## immune registry before operational groups influence Jennifer evaluation or governance. | `Kopano-Labs/Introduction-to-MCP/poc-vs-foc/` + `packages/conceptual/src/pocvsfoc/` |
 | [`kpgs-deployment-parser`](skills/kpgs-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Normalize provider deployment truth into a KPGS `DeploymentRecipe`. | KMEC deployment parser contracts |
 | [`kpgs-tool-script-runtime`](skills/kpgs-tool-script-runtime/SKILL.md) | **PORTABLE / CODED** | Require `SKILL.md → script → bounded tool plan → executor → receipt` instead of raw model tool calls. | KMEC `tool_scripts.py` |
 | [`kpgs-apple-deployment-parser`](skills/kpgs-apple-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Parse Xcode/Xcode Cloud/App Store Connect/TestFlight/build-upload/notarization workflows without flattening them into cloud-service deployment. | KMEC Apple parser + Apple first-party docs |
@@ -130,6 +131,8 @@ CEEP evaluates a subject with a `SubjectEvaluator` and emits both an `Evaluation
 
 The current evaluator makes evidence strengths and FOC risks visible before conceptual promotion. It is a coded evaluator, not permission to call every non-zero score a proven production system.
 
+When a task depends on the KPGS immune-system registry itself, run `poc-foc-registry-parser` first so the source POC branch and `FOC-G##` groups remain provenance-bound and separate from Jennifer's semantic FOC risk categories.
+
 ### CCP
 
 **Question:** *What consistently works / survives the evidence?*
@@ -150,6 +153,13 @@ Explore possibilities
 → CEEP
 → POC-vs-FOC
 → CCP only when convergence is requested/earned
+
+Parse KPGS VOC / immune registry
+→ source authority
+→ poc-foc-registry-parser
+→ VOCRegistry + VOCParseReceipt
+→ poc-foc-evaluation only when conceptual scoring is needed
+→ CEEP / CCP only when promotion or convergence is requested
 
 Converge / canonicalize
 → source authority
