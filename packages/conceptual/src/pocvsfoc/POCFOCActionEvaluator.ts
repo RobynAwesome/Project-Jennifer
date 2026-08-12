@@ -2,7 +2,7 @@ import type { POCFOCActionEvaluation } from "@jennifer/shared";
 
 import type { SubjectEvaluationInput } from "../ceep/SubjectEvaluator.js";
 import { POCvsFOCEvaluator } from "./POCvsFOCEvaluator.js";
-import type { VOCRegistry } from "./VOCRegistry.js";
+import type { FOCGroupDefinition, VOCRegistry } from "./VOCRegistry.js";
 import { VOCRegistryParser } from "./VOCRegistryParser.js";
 
 export interface POCFOCActionEvaluatorPolicy {
@@ -41,7 +41,7 @@ export class POCFOCActionEvaluator {
 
   evaluate(input: POCFOCActionEvaluationInput): POCFOCActionEvaluation {
     const pocProfile = this.evaluator.evaluate(input);
-    const matched = new Map<string, (typeof this.registry.foc.groups)[number]>();
+    const matched = new Map<string, FOCGroupDefinition>();
 
     for (const signal of input.observedFOCSignals ?? []) {
       for (const group of this.parser.matchFOCGroups(signal, this.registry)) {
