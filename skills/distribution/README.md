@@ -27,7 +27,46 @@ SKILL.md source of truth
 → evidence + result + receipt
 ```
 
-Provider-specific delivery mechanisms may change. Jennifer's CAG, RAG, CDP/CCP proof boundaries, privacy, authority and memory semantics do not silently change with them.
+Provider-specific delivery mechanisms may change. Jennifer's CAG, RAG, conceptual-suite proof boundaries, privacy, authority and memory semantics do not silently change with them.
+
+## Core portable catalog
+
+```text
+project-jennifer
+cdp-conceptual-divergence
+ceep-conceptual-evaluation
+poc-foc-evaluation
+ccp-conceptual-convergence
+ncmp-concept-intake
+cag-communication-attention
+rag-governed-retrieval
+jennifer-stateless-renter
+forge-rivm
+authored-relational-attention
+```
+
+A runtime may expose the catalog without invoking every skill on every request. CAG and task intent determine the smallest relevant path.
+
+## Conceptual suite
+
+```text
+CDP
+→ CEEP
+→ POC-vs-FOC
+→ CCP
+→ canonical/evolution receipt
+→ NCMP when a new agent-originated concept needs human recognition + governed registration
+```
+
+Important proof boundaries:
+
+- **CDP** is canonically specified and packaged as a portable workflow; no dedicated `packages/conceptual/src/cdp/` runtime module is currently proven.
+- **CEEP** has a current TypeScript implementation under `packages/conceptual/src/ceep/`.
+- **POC-vs-FOC** has a current TypeScript evaluator under `packages/conceptual/src/pocvsfoc/`.
+- **CCP** has a current TypeScript implementation under `packages/conceptual/src/ccp/`.
+- **NCMP** has a coded storage-agnostic/in-memory registry; agents may propose but human recognition is mandatory before its recognition transition.
+
+Adapters must preserve those distinctions.
 
 ## Why this matters for collaboration
 
@@ -65,38 +104,6 @@ The collaboration question becomes **"What measured capability does this runtime
 - native Project Jennifer contracts for KC and RTCP agents.
 
 For external products, validate current provider support at deployment time. Product capabilities change faster than Jennifer's governance contracts should.
-
-## Core portable catalog
-
-```text
-project-jennifer
-cdp-conceptual-divergence
-ccp-conceptual-convergence
-cag-communication-attention
-rag-governed-retrieval
-jennifer-stateless-renter
-forge-rivm
-authored-relational-attention
-```
-
-A runtime may expose the catalog without invoking every skill on every request. CAG and task intent determine the smallest relevant path.
-
-## Conceptual suite
-
-```text
-CDP
-→ CEEP
-→ POC-vs-FOC
-→ CCP
-→ receipt
-```
-
-Important proof boundary:
-
-- **CCP** currently has a dedicated TypeScript implementation in `packages/conceptual/src/ccp/`.
-- **CDP** is canonically specified and now packaged as a portable workflow, but no dedicated `packages/conceptual/src/cdp/` module is currently proven.
-
-Adapters must preserve that distinction.
 
 ## Benchmark dimensions
 
@@ -141,7 +148,10 @@ Human validation is mandatory before CAG/RAG/RIVM receipts or chosen/rejected pa
 
 - `../project-jennifer/SKILL.md`
 - `../cdp-conceptual-divergence/SKILL.md`
+- `../ceep-conceptual-evaluation/SKILL.md`
+- `../poc-foc-evaluation/SKILL.md`
 - `../ccp-conceptual-convergence/SKILL.md`
+- `../ncmp-concept-intake/SKILL.md`
 - `../cag-communication-attention/SKILL.md`
 - `../rag-governed-retrieval/SKILL.md`
 - `../jennifer-stateless-renter/SKILL.md`
