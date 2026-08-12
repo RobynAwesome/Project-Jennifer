@@ -22,3 +22,11 @@ export type {
 } from "./relationship-engine.js";
 
 export { ForgeRoleEngine } from "./forge-role-engine.js";
+
+export { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
+export type {
+  GovernedRuntimeActionInput,
+  POCFOCRuntimeGatePolicy,
+  POCFOCRuntimeGateResult,
+  RuntimeGateDecision,
+} from "./poc-foc-runtime-gate.js";
