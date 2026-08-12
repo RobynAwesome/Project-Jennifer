@@ -27,8 +27,7 @@
     "@jennifer/hue": "workspace:*",
     "@jennifer/collective-ingress": "workspace:*",
     "@jennifer/crisis-connect": "workspace:*",
-    "@jennifer/npc": "workspace:*",
-    "@jennifer/conceptual": "workspace:*"
+    "@jennifer/npc": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.0"
