@@ -1,11 +1,7 @@
 import {
-  POCvsFOCEvaluator,
-  VOCRegistryParser,
-  type FOCGroupDefinition,
-  type FrameworkDefinition,
-  type POCProfile,
-  type VOCRegistry,
-} from "@jennifer/conceptual";
+  type POCFOCActionEvaluation,
+  type RuntimeGateDecision,
+} from "@jennifer/shared";
 import {
   MemoryReceiptEngine,
   type MemoryReceipt,
@@ -13,22 +9,12 @@ import {
   type ReceiptMemoryLane,
 } from "@jennifer/memory";
 
-export type RuntimeGateDecision = "ACCEPT" | "HOLD" | "REJECT";
-
-export interface POCFOCRuntimeGatePolicy {
-  minimumPOCScore: number;
-  rejectOnOperationalFOCMatch: boolean;
-}
-
 export interface GovernedRuntimeActionInput {
   actionId: string;
   subject: string;
   claim: string;
-  framework: FrameworkDefinition;
-  supportingReceipts: string[];
-  evaluationRules: string[];
+  evaluation: POCFOCActionEvaluation;
   evidenceRefs: string[];
-  observedFOCSignals?: string[];
   confidence: number;
   consequence?: string;
   provenance: Record<string, unknown>;
@@ -40,48 +26,31 @@ export interface POCFOCRuntimeGateResult<TOutput = unknown> {
   actionId: string;
   decision: RuntimeGateDecision;
   reasons: string[];
-  pocProfile: POCProfile;
-  matchedFOCGroups: FOCGroupDefinition[];
+  evaluation: POCFOCActionEvaluation;
   memoryReceipt: MemoryReceipt;
   mutationApplied: boolean;
   duplicate: boolean;
   output?: TOutput;
 }
 
-const DEFAULT_POLICY: POCFOCRuntimeGatePolicy = {
-  minimumPOCScore: 0.5,
-  rejectOnOperationalFOCMatch: true,
-};
-
 /**
- * Runtime membrane between a proposed action and consequential state mutation.
+ * Runtime membrane between a POC/FOC action evaluation and consequential
+ * Project Jennifer state mutation.
  *
- * The gate keeps three namespaces separate:
- * - Project Jennifer POC/FOC conceptual risk scoring;
- * - Introduction-to-MCP FOC-G## operational immune groups;
- * - Memory Receipt admission / continuity.
- *
- * A rejected or held action never executes the supplied mutation callback.
+ * Conceptual evaluation is deliberately performed outside this package so the
+ * runtime does not acquire ownership of KPGS/VOC semantics. The runtime only
+ * consumes the shared decision contract, verifies evidence admission, mints a
+ * Memory Receipt, and applies the mutation if every gate remains open.
  */
 export class POCFOCRuntimeGate {
-  private readonly parser = new VOCRegistryParser();
-  private readonly evaluator = new POCvsFOCEvaluator();
   private readonly receiptEngine: MemoryReceiptEngine;
-  private readonly policy: POCFOCRuntimeGatePolicy;
   private readonly priorResults = new Map<
     string,
     POCFOCRuntimeGateResult<unknown>
   >();
 
-  constructor(
-    private readonly registry: VOCRegistry,
-    options: {
-      policy?: Partial<POCFOCRuntimeGatePolicy>;
-      receiptEngine?: MemoryReceiptEngine;
-    } = {},
-  ) {
-    this.policy = { ...DEFAULT_POLICY, ...options.policy };
-    this.receiptEngine = options.receiptEngine ?? new MemoryReceiptEngine();
+  constructor(receiptEngine: MemoryReceiptEngine = new MemoryReceiptEngine()) {
+    this.receiptEngine = receiptEngine;
   }
 
   async execute<TOutput>(
@@ -99,31 +68,10 @@ export class POCFOCRuntimeGate {
       };
     }
 
-    const pocProfile = this.evaluator.evaluate({
-      subject: input.subject,
-      framework: input.framework,
-      supportingReceipts: input.supportingReceipts,
-      evaluationRules: input.evaluationRules,
-    });
+    const reasons = [...input.evaluation.reasons];
+    let decision = input.evaluation.decision;
 
-    const matchedFOCGroups = this.matchOperationalFOCGroups(
-      input.observedFOCSignals ?? [],
-    );
-    const reasons: string[] = [];
-
-    let decision: RuntimeGateDecision = "ACCEPT";
-
-    if (
-      this.policy.rejectOnOperationalFOCMatch &&
-      matchedFOCGroups.length > 0
-    ) {
-      decision = "REJECT";
-      reasons.push(
-        `Operational FOC match: ${matchedFOCGroups
-          .map((group) => `${group.groupId} ${group.designation}`)
-          .join(", ")}`,
-      );
-    } else {
+    if (decision === "ACCEPT") {
       if (input.evidenceRefs.length === 0) {
         decision = "HOLD";
         reasons.push("No evidence references supplied.");
@@ -136,16 +84,6 @@ export class POCFOCRuntimeGate {
         decision = "HOLD";
         reasons.push("Proposed action is not bound to verified evidence.");
       }
-      if (pocProfile.pocScore < this.policy.minimumPOCScore) {
-        decision = "HOLD";
-        reasons.push(
-          `POC score ${pocProfile.pocScore.toFixed(2)} is below runtime threshold ${this.policy.minimumPOCScore.toFixed(2)}.`,
-        );
-      }
-    }
-
-    if (reasons.length === 0) {
-      reasons.push("POC/FOC runtime checks passed.");
     }
 
     const memoryReceipt = this.receiptEngine.issue({
@@ -167,10 +105,13 @@ export class POCFOCRuntimeGate {
       provenance: {
         ...input.provenance,
         runtimeGate: "POCFOCRuntimeGate",
-        vocAuthority: this.registry.source.authorityOrigin,
-        vocSourceRef: this.registry.source.sourceRef,
-        operationalFOCGroups: matchedFOCGroups.map((group) => group.groupId),
-        pocScore: pocProfile.pocScore,
+        vocAuthority: input.evaluation.sourceAuthority,
+        vocSourceRef: input.evaluation.sourceRef,
+        operationalFOCGroups: input.evaluation.matchedFOCGroups.map(
+          (group) => group.groupId,
+        ),
+        pocScore: input.evaluation.pocScore,
+        conceptualDecision: input.evaluation.decision,
         runtimeDecision: decision,
       },
       temporal: {
@@ -201,8 +142,13 @@ export class POCFOCRuntimeGate {
       actionId,
       decision,
       reasons,
-      pocProfile,
-      matchedFOCGroups,
+      evaluation: {
+        ...input.evaluation,
+        reasons: [...input.evaluation.reasons],
+        matchedFOCGroups: input.evaluation.matchedFOCGroups.map((group) => ({
+          ...group,
+        })),
+      },
       memoryReceipt,
       mutationApplied,
       duplicate: false,
@@ -219,17 +165,5 @@ export class POCFOCRuntimeGate {
 
   listReceipts(): MemoryReceipt[] {
     return this.receiptEngine.list();
-  }
-
-  private matchOperationalFOCGroups(signals: string[]): FOCGroupDefinition[] {
-    const groups = new Map<string, FOCGroupDefinition>();
-
-    for (const signal of signals) {
-      for (const group of this.parser.matchFOCGroups(signal, this.registry)) {
-        groups.set(group.groupId, group);
-      }
-    }
-
-    return [...groups.values()];
   }
 }
