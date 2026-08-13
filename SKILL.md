@@ -18,6 +18,7 @@ repository: https://github.com/RobynAwesome/Project-Jennifer
 canonical-ecosystem-anchor: https://github.com/Kopano-Labs/Introduction-to-MCP
 skill-index: skills.md
 specialist-router: skills/project-jennifer/SKILL.md
+repository-implementation-router: skills/SKILL.md
 ---
 
 # Project Jennifer
@@ -41,6 +42,7 @@ current human instruction
 → SKILL.md
 → skills.md
 → skills/project-jennifer/SKILL.md
+→ skills/SKILL.md when the task enters a repository implementation lane
 → smallest relevant specialist SKILL.md
 → current implementation/source
 → source authority + privacy gates
@@ -91,6 +93,7 @@ parsed VOCRegistry
 
 Start at [`skills.md`](skills.md). Major portable routes include:
 
+- [`skills/SKILL.md`](skills/SKILL.md) — repository implementation router
 - [`skills/cdp-conceptual-divergence/SKILL.md`](skills/cdp-conceptual-divergence/SKILL.md)
 - [`skills/ceep-conceptual-evaluation/SKILL.md`](skills/ceep-conceptual-evaluation/SKILL.md)
 - [`skills/poc-foc-registry-parser/SKILL.md`](skills/poc-foc-registry-parser/SKILL.md)

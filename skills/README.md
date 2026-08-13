@@ -12,6 +12,10 @@ For a general Jennifer task, load:
 
 > **[`project-jennifer/SKILL.md`](project-jennifer/SKILL.md) — umbrella skill router**
 
+For repository implementation work, continue through:
+
+> **[`SKILL.md`](SKILL.md) — repository-native implementation router**
+
 Then load only the smallest specialist skill(s) needed for the current human instruction.
 
 This preserves Project Jennifer's stateless-renter model: skill discovery is easy, but memory, authority, canon, and proof are never silently inherited.
@@ -31,6 +35,23 @@ This preserves Project Jennifer's stateless-renter model: skill discovery is eas
 | `jennifer-stateless-renter` | renter execution contract | Skill + renter contracts/router. |
 | `forge-rivm` | relational inference membrane | Portable RIVM governance protocol; runtime wiring must be proved separately. |
 | `authored-relational-attention` | relational expression pattern | Portable relational expression/governance pattern. |
+
+## Repository-native implementation skills
+
+| Skill | Repository lane |
+|---|---|
+| `jennifer-authority-governance` | authority, governance, source classes, permissions, privacy and canon admission |
+| `jennifer-runtime-memory` | runtime continuity, relationships, GSMB, memory receipts and persistent consequence |
+| `jennifer-validation-poc-foc` | validation engines, guardrails, evidence gates and merge-state truth |
+| `jennifer-conceptual-convergence` | CCP, CEEP, framework evolution and conceptual receipts |
+| `jennifer-companions-npcs` | companions, progression, NPC runtime and character-state governance |
+| `jennifer-telemetry-storage` | telemetry, receipts, PostgreSQL/MongoDB/SQLite persistence and reconciliation |
+| `jennifer-ncmp-mmao` | NCMP, MMAO and multi-renter session/orchestration contracts |
+| `jennifer-game-web-api` | Next.js/Phaser web game, API routes and browser/runtime bridges |
+| `jennifer-assets-lore` | governed assets, manifests, lore, canon and source integrity |
+| `jennifer-ci-benchmarks` | CI, tests, evals and versioned renter benchmarks |
+| `jennifer-adoption-provider-onboarding` | provider/partner capability manifests, adapters and qualification |
+| `jennifer-human-crisis-ingress` | HUE, Collective Ingress and Crisis Connect human/collective context |
 
 ## Conceptual reasoning spine
 
@@ -59,7 +80,7 @@ CDP and CCP are intentionally complementary. Pure divergence becomes chaos; pure
 
 ## Other Jennifer capability surfaces
 
-Not every implemented system has been duplicated into a separate portable skill package. The repo-level [`skills.md`](../skills.md) routes agents to current implementations for:
+The repository-native skills route these capability families without replacing their current implementation truth. The repo-level [`skills.md`](../skills.md) preserves the exact proof state for:
 
 - framework registry/evolution receipts;
 - Memory Receipt Engine;

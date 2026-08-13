@@ -64,8 +64,20 @@ A renter may execute within granted authority. It may not convert remembered con
 | [`jennifer-stateless-renter`](skills/jennifer-stateless-renter/SKILL.md) | **PORTABLE / CODED** | Let an external/local runtime enter without inheriting memory or authority. | renter contracts/router |
 | [`forge-rivm`](skills/forge-rivm/SKILL.md) | **PORTABLE / PROTOCOL** | Govern consequential relationship-bearing inference. | RIVM skill/governance source |
 | [`authored-relational-attention`](skills/authored-relational-attention/SKILL.md) | **PORTABLE / PATTERN** | Preserve locally authored attention without ownership/coercion/ontology inflation. | skill |
+| [`jennifer-authority-governance`](skills/jennifer-authority-governance/SKILL.md) | **PORTABLE / ROUTER** | Work on authority, governance, source classes, permissions, privacy or canon admission. | `packages/authority/`, `packages/governance/`, source registry |
+| [`jennifer-runtime-memory`](skills/jennifer-runtime-memory/SKILL.md) | **PORTABLE / ROUTER** | Work on runtime continuity, relationships, GSMB, memory receipts or persistent consequence. | `packages/runtime/`, `packages/memory/` |
+| [`jennifer-validation-poc-foc`](skills/jennifer-validation-poc-foc/SKILL.md) | **PORTABLE / GOVERNANCE** | Validate architecture/runtime claims and preserve POC/FOC evidence boundaries. | `VALIDATION_POLICY.md`, validation code/tests |
+| [`jennifer-conceptual-convergence`](skills/jennifer-conceptual-convergence/SKILL.md) | **PORTABLE / ROUTER** | Apply CCP, CEEP, framework evolution or conceptual receipts. | `packages/conceptual/`, conceptual docs |
+| [`jennifer-companions-npcs`](skills/jennifer-companions-npcs/SKILL.md) | **PORTABLE / ROUTER** | Work on companion identity, progression, NPC behavior or character-state governance. | runtime/NPC packages, companion manifests |
+| [`jennifer-telemetry-storage`](skills/jennifer-telemetry-storage/SKILL.md) | **PORTABLE / ROUTER** | Work on telemetry, receipts, persistence, replay or reconciliation. | telemetry/memory/storage code and infra |
+| [`jennifer-ncmp-mmao`](skills/jennifer-ncmp-mmao/SKILL.md) | **PORTABLE / GOVERNANCE** | Govern NCMP, MMAO or multi-renter sessions and orchestration. | `NCMP.md`, `docs/mmao/`, NCMP contracts |
+| [`jennifer-game-web-api`](skills/jennifer-game-web-api/SKILL.md) | **PORTABLE / ROUTER** | Build or debug the Next.js/Phaser web game, API or browser/runtime bridges. | `apps/web/`, `apps/api/`, shared/runtime contracts |
+| [`jennifer-assets-lore`](skills/jennifer-assets-lore/SKILL.md) | **PORTABLE / GOVERNANCE** | Admit, audit or use assets, manifests, lore or canon sources. | `assets/`, lore docs, source registry |
+| [`jennifer-ci-benchmarks`](skills/jennifer-ci-benchmarks/SKILL.md) | **PORTABLE / ROUTER** | Work on CI, tests, evals, benchmarks or validation receipts. | workflows, tests and benchmarks |
+| [`jennifer-adoption-provider-onboarding`](skills/jennifer-adoption-provider-onboarding/SKILL.md) | **PORTABLE / ROUTER** | Qualify a provider or partner through manifests, adapters and measurable evidence. | distribution metadata, renter configs, benchmarks |
+| [`jennifer-human-crisis-ingress`](skills/jennifer-human-crisis-ingress/SKILL.md) | **PORTABLE / GOVERNANCE** | Apply HUE, Collective Ingress or Crisis Connect to human/collective signals. | HUE, collective-ingress and crisis-connect packages |
 
-### Implemented capability surfaces not yet duplicated into standalone skills
+### Current implementation proof surfaces behind repository-native skills
 
 | Capability | Current proof surface | Purpose |
 |---|---|---|
@@ -84,7 +96,7 @@ A renter may execute within granted authority. It may not convert remembered con
 | NPC Runtime | `packages/npc/` | Bounded NPC behavior/world interaction. |
 | Source Authority Registry | `governance/source-authority-registry.json` | Authority/privacy/canon/proof classification. |
 
-**Not separately packaged** does not mean **not implemented**. **Packaged as a skill** does not mean **wired into every runtime**.
+The repository-native skills route work to these surfaces. **Packaged as a skill** does not mean the capability is wired into every runtime, validated, deployed or canonical; inspect the current code and receipts.
 
 ---
 

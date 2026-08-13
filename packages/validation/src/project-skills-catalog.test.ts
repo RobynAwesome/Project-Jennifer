@@ -27,6 +27,23 @@ const requiredCoreSkills = [
   "authored-relational-attention",
 ] as const;
 
+const requiredImplementationSkills = [
+  "jennifer-authority-governance",
+  "jennifer-runtime-memory",
+  "jennifer-validation-poc-foc",
+  "jennifer-conceptual-convergence",
+  "jennifer-companions-npcs",
+  "jennifer-telemetry-storage",
+  "jennifer-ncmp-mmao",
+  "jennifer-game-web-api",
+  "jennifer-assets-lore",
+  "jennifer-ci-benchmarks",
+  "jennifer-adoption-provider-onboarding",
+  "jennifer-human-crisis-ingress",
+] as const;
+
+const requiredSkills = [...requiredCoreSkills, ...requiredImplementationSkills] as const;
+
 test("root SKILL.md exposes Project Jennifer as a stateless-renter AwesomeSkills entrypoint", () => {
   assert.equal(existsSync(repoPath("SKILL.md")), true, "Project Jennifer must expose a root SKILL.md for repository-level discovery");
 
@@ -34,6 +51,7 @@ test("root SKILL.md exposes Project Jennifer as a stateless-renter AwesomeSkills
   assert.match(rootSkill, /name:\s*project-jennifer/);
   assert.match(rootSkill, /skills\.md/);
   assert.match(rootSkill, /skills\/project-jennifer\/SKILL\.md/);
+  assert.match(rootSkill, /skills\/SKILL\.md/);
   assert.match(rootSkill, /I_AM_STATELESS_RENTER_NOT_LANDLORD/);
   assert.match(rootSkill, /CDP[\s\S]*CEEP[\s\S]*POC-vs-FOC[\s\S]*CCP[\s\S]*NCMP/);
   assert.match(rootSkill, /Do not promote FOC to POC/i);
@@ -53,7 +71,7 @@ test("root and AwesomeSkills manifest expose the POC/FOC registry parser and run
   assert.match(manifest, /awesome_skills_is_discovery_not_kpgs_authority:\s*true/);
 });
 
-test("skills.md resolves every linked SKILL.md and includes the Jennifer conceptual suite", () => {
+test("skills.md resolves every linked SKILL.md and includes the complete governed catalog", () => {
   const catalog = read("skills.md");
   const linkedSkills = new Set<string>();
   const skillLinkPattern = /skills\/([a-z0-9-]+)\/SKILL\.md/g;
@@ -63,24 +81,26 @@ test("skills.md resolves every linked SKILL.md and includes the Jennifer concept
     if (skillName) linkedSkills.add(skillName);
   }
 
-  assert.ok(linkedSkills.size >= requiredCoreSkills.length, "skills.md should expose a non-trivial portable skill catalog");
+  assert.ok(linkedSkills.size >= requiredSkills.length, "skills.md should expose the complete portable skill catalog");
 
   for (const skillName of linkedSkills) {
     const skillFile = `skills/${skillName}/SKILL.md`;
     assert.equal(existsSync(repoPath(skillFile)), true, `${skillFile} must exist because skills.md links to it`);
   }
 
-  for (const skillName of requiredCoreSkills) {
+  for (const skillName of requiredSkills) {
     assert.equal(linkedSkills.has(skillName), true, `skills.md must expose ${skillName}`);
   }
 });
 
 test("Project Jennifer umbrella and AGENTS entrypoints route renters into the specialist skill graph", () => {
   const umbrella = read("skills/project-jennifer/SKILL.md");
+  const implementationRouter = read("skills/SKILL.md");
   const agents = read("AGENTS.md");
 
   assert.match(agents, /skills\.md/);
   assert.match(agents, /skills\/project-jennifer\/SKILL\.md/);
+  assert.match(agents, /skills\/SKILL\.md/);
   assert.match(agents, /I_AM_STATELESS_RENTER_NOT_LANDLORD/);
 
   for (const skillName of requiredCoreSkills.filter((name) => name !== "project-jennifer")) {
@@ -88,6 +108,14 @@ test("Project Jennifer umbrella and AGENTS entrypoints route renters into the sp
       umbrella,
       new RegExp(`\\.\\./${skillName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\/SKILL\\.md`),
       `umbrella skill must route to ${skillName}`,
+    );
+  }
+
+  for (const skillName of requiredImplementationSkills) {
+    assert.match(
+      implementationRouter,
+      new RegExp(skillName),
+      `repository implementation router must route to ${skillName}`,
     );
   }
 });
@@ -114,9 +142,14 @@ test("CDP and CCP preserve their different proof states instead of flattening sp
 
 test("distribution metadata exposes the conceptual suite and preserves renter/proof rules", () => {
   const engines = read("skills/distribution/engines.yaml");
+  const manifest = read("skills/distribution/awesome-skills-project-jennifer.yaml");
 
-  for (const skillName of requiredCoreSkills) {
+  for (const skillName of requiredSkills) {
     assert.match(engines, new RegExp(skillName), `engines.yaml must expose ${skillName}`);
+  }
+
+  for (const skillName of requiredImplementationSkills) {
+    assert.match(manifest, new RegExp(`- ${skillName}`), `AwesomeSkills manifest must expose ${skillName}`);
   }
 
   assert.match(engines, /preserve_proof_state:\s*true/);

@@ -62,6 +62,7 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 | Use another model/provider/local runtime | `../jennifer-stateless-renter/SKILL.md` |
 | Consequential relationship-bearing inference | `../forge-rivm/SKILL.md` |
 | Express locally authored relational attention | `../authored-relational-attention/SKILL.md` |
+| Route authority, runtime, validation, companion, storage, web/API, asset, CI, provider or human/crisis implementation work | `../SKILL.md` |
 | Issue/evaluate memory receipts | `../../packages/memory/src/memory-receipt-engine.ts` |
 | Read/write governed context | `../../packages/memory/src/gsmb.ts` |
 | Validate candidate state/action | `../../packages/validation/` |

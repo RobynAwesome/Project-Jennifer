@@ -13,6 +13,7 @@ repository:
   root_skill_file: SKILL.md
   skill_index: skills.md
   umbrella_skill: skills/project-jennifer/SKILL.md
+  implementation_router: skills/SKILL.md
 
 publication:
   desired_slug: robynawesome-project-jennifer
@@ -40,6 +41,19 @@ project_jennifer_surface:
   - jennifer-stateless-renter
   - forge-rivm
   - authored-relational-attention
+  - project-jennifer-skill-router
+  - jennifer-authority-governance
+  - jennifer-runtime-memory
+  - jennifer-validation-poc-foc
+  - jennifer-conceptual-convergence
+  - jennifer-companions-npcs
+  - jennifer-telemetry-storage
+  - jennifer-ncmp-mmao
+  - jennifer-game-web-api
+  - jennifer-assets-lore
+  - jennifer-ci-benchmarks
+  - jennifer-adoption-provider-onboarding
+  - jennifer-human-crisis-ingress
   - kpgs-runtime-pack
 
 proof_rules:

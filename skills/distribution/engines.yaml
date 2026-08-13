@@ -3,9 +3,11 @@ project: Project Jennifer
 orchestration_engine: free-mode
 repo_skill_index: ../../skills.md
 umbrella_skill: ../project-jennifer/SKILL.md
+implementation_router: ../SKILL.md
 
 source_of_truth:
   - ../../skills.md
+  - ../SKILL.md
   - ../project-jennifer/SKILL.md
   - ../cdp-conceptual-divergence/SKILL.md
   - ../ceep-conceptual-evaluation/SKILL.md
@@ -17,9 +19,22 @@ source_of_truth:
   - ../jennifer-stateless-renter/SKILL.md
   - ../forge-rivm/SKILL.md
   - ../authored-relational-attention/SKILL.md
+  - ../jennifer-authority-governance/SKILL.md
+  - ../jennifer-runtime-memory/SKILL.md
+  - ../jennifer-validation-poc-foc/SKILL.md
+  - ../jennifer-conceptual-convergence/SKILL.md
+  - ../jennifer-companions-npcs/SKILL.md
+  - ../jennifer-telemetry-storage/SKILL.md
+  - ../jennifer-ncmp-mmao/SKILL.md
+  - ../jennifer-game-web-api/SKILL.md
+  - ../jennifer-assets-lore/SKILL.md
+  - ../jennifer-ci-benchmarks/SKILL.md
+  - ../jennifer-adoption-provider-onboarding/SKILL.md
+  - ../jennifer-human-crisis-ingress/SKILL.md
 
 available_skill_catalog:
   - project-jennifer
+  - project-jennifer-skill-router
   - cdp-conceptual-divergence
   - ceep-conceptual-evaluation
   - poc-foc-evaluation
@@ -30,6 +45,18 @@ available_skill_catalog:
   - jennifer-stateless-renter
   - forge-rivm
   - authored-relational-attention
+  - jennifer-authority-governance
+  - jennifer-runtime-memory
+  - jennifer-validation-poc-foc
+  - jennifer-conceptual-convergence
+  - jennifer-companions-npcs
+  - jennifer-telemetry-storage
+  - jennifer-ncmp-mmao
+  - jennifer-game-web-api
+  - jennifer-assets-lore
+  - jennifer-ci-benchmarks
+  - jennifer-adoption-provider-onboarding
+  - jennifer-human-crisis-ingress
 
 proof_boundaries:
   cdp-conceptual-divergence: specified_portable_workflow_no_dedicated_runtime_module_proven

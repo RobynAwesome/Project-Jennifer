@@ -14,10 +14,11 @@ For every Project Jennifer task:
 1. current human instruction
 2. skills.md
 3. skills/project-jennifer/SKILL.md
-4. smallest relevant specialist SKILL.md
-5. current implementation/source named by that skill
-6. governance/source-authority-registry.json when source authority matters
-7. current branch / PR / CI / runtime receipts before proof claims
+4. skills/SKILL.md when the task enters a repository implementation lane
+5. smallest relevant specialist SKILL.md
+6. current implementation/source named by that skill
+7. governance/source-authority-registry.json when source authority matters
+8. current branch / PR / CI / runtime receipts before proof claims
 ```
 
 If ecosystem context is required, consult `Kopano-Labs/Introduction-to-MCP` as the first ecosystem anchor, then return to Project Jennifer current repository evidence for implementation truth.
@@ -36,9 +37,21 @@ rag-governed-retrieval
 jennifer-stateless-renter
 forge-rivm
 authored-relational-attention
+jennifer-authority-governance
+jennifer-runtime-memory
+jennifer-validation-poc-foc
+jennifer-conceptual-convergence
+jennifer-companions-npcs
+jennifer-telemetry-storage
+jennifer-ncmp-mmao
+jennifer-game-web-api
+jennifer-assets-lore
+jennifer-ci-benchmarks
+jennifer-adoption-provider-onboarding
+jennifer-human-crisis-ingress
 ```
 
-See [`skills.md`](skills.md) for the complete capability map, including implemented Jennifer systems that do not yet have a standalone `SKILL.md` package.
+See [`skills.md`](skills.md) for the complete capability and proof-state map. Use [`skills/SKILL.md`](skills/SKILL.md) for the repository-native implementation lanes.
 
 ## Conceptual protocol order
 
@@ -87,6 +100,7 @@ Do not collapse those states.
 | Use another runtime/model/provider | `skills/jennifer-stateless-renter/SKILL.md` |
 | Govern consequential relational inference | `skills/forge-rivm/SKILL.md` |
 | Preserve authored relational attention | `skills/authored-relational-attention/SKILL.md` |
+| Enter a repository implementation domain | `skills/SKILL.md` |
 | Unknown / cross-system Jennifer task | `skills/project-jennifer/SKILL.md` |
 
 > **The skill tells the renter how to work. The repository tells the renter what exists. The receipt tells the renter what passed. The human decides the task.**

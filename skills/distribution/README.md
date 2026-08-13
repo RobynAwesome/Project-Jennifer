@@ -9,6 +9,7 @@ External agents no longer need to reverse-engineer the repository before selecti
 ```text
 skills.md
 → skills/project-jennifer/SKILL.md
+→ skills/SKILL.md when repository implementation routing is required
 → smallest relevant specialist skill(s)
 → current implementation/source
 → bounded execution
@@ -43,6 +44,19 @@ rag-governed-retrieval
 jennifer-stateless-renter
 forge-rivm
 authored-relational-attention
+project-jennifer-skill-router
+jennifer-authority-governance
+jennifer-runtime-memory
+jennifer-validation-poc-foc
+jennifer-conceptual-convergence
+jennifer-companions-npcs
+jennifer-telemetry-storage
+jennifer-ncmp-mmao
+jennifer-game-web-api
+jennifer-assets-lore
+jennifer-ci-benchmarks
+jennifer-adoption-provider-onboarding
+jennifer-human-crisis-ingress
 ```
 
 A runtime may expose the catalog without invoking every skill on every request. CAG and task intent determine the smallest relevant path.
@@ -146,6 +160,7 @@ Human validation is mandatory before CAG/RAG/RIVM receipts or chosen/rejected pa
 
 ## Source skills
 
+- `../SKILL.md`
 - `../project-jennifer/SKILL.md`
 - `../cdp-conceptual-divergence/SKILL.md`
 - `../ceep-conceptual-evaluation/SKILL.md`
@@ -157,6 +172,18 @@ Human validation is mandatory before CAG/RAG/RIVM receipts or chosen/rejected pa
 - `../jennifer-stateless-renter/SKILL.md`
 - `../forge-rivm/SKILL.md`
 - `../authored-relational-attention/SKILL.md`
+- `../jennifer-authority-governance/SKILL.md`
+- `../jennifer-runtime-memory/SKILL.md`
+- `../jennifer-validation-poc-foc/SKILL.md`
+- `../jennifer-conceptual-convergence/SKILL.md`
+- `../jennifer-companions-npcs/SKILL.md`
+- `../jennifer-telemetry-storage/SKILL.md`
+- `../jennifer-ncmp-mmao/SKILL.md`
+- `../jennifer-game-web-api/SKILL.md`
+- `../jennifer-assets-lore/SKILL.md`
+- `../jennifer-ci-benchmarks/SKILL.md`
+- `../jennifer-adoption-provider-onboarding/SKILL.md`
+- `../jennifer-human-crisis-ingress/SKILL.md`
 
 ## Provider onboarding checklist
 
