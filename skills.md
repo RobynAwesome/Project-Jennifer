@@ -54,7 +54,7 @@ A renter may execute within granted authority. It may not convert remembered con
 | [`kpgs-apple-deployment-parser`](skills/kpgs-apple-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Parse Xcode/Xcode Cloud/App Store Connect/TestFlight/build-upload/notarization workflows without flattening them into cloud-service deployment. | KMEC Apple parser + Apple first-party docs |
 | [`kpgs-model-hardware-router`](skills/kpgs-model-hardware-router/SKILL.md) | **PORTABLE / CODED** | Route exact models/runtimes by hard hardware constraints, demanded skills and measured benchmarks. | KMEC model router |
 | [`kpgs-mmao-mao-renter`](skills/kpgs-mmao-mao-renter/SKILL.md) | **PORTABLE / CODED** | Issue purpose-bound renter leases through non-linear MAO/MMAO workflows. | KMEC workflow graph + KPGS MMAO authority |
-| [`cdp-conceptual-divergence`](skills/cdp-conceptual-divergence/SKILL.md) | **PORTABLE / SPECIFIED** | Deliberately expand the possibility space before convergence. | Convergence Law |
+| [`cdp-conceptual-divergence`](skills/cdp-conceptual-divergence/SKILL.md) | **PORTABLE / CODED** | Parse governed context and deliberately expand the possibility space before convergence. | `packages/conceptual/src/cdp/` + Convergence Law |
 | [`ceep-conceptual-evaluation`](skills/ceep-conceptual-evaluation/SKILL.md) | **PORTABLE / CODED** | Evaluate a conceptual subject and emit evaluation/evolution receipts. | `packages/conceptual/src/ceep/` |
 | [`poc-foc-evaluation`](skills/poc-foc-evaluation/SKILL.md) | **PORTABLE / CODED** | Separate evidence-bearing proof from FOC risk before promotion. | `packages/conceptual/src/pocvsfoc/` |
 | [`ccp-conceptual-convergence`](skills/ccp-conceptual-convergence/SKILL.md) | **PORTABLE / CODED** | Decide which conceptual pattern survives evidence/evaluation. | `packages/conceptual/src/ccp/` |
@@ -82,6 +82,7 @@ A renter may execute within granted authority. It may not convert remembered con
 | Capability | Current proof surface | Purpose |
 |---|---|---|
 | Framework Registry + evolution receipts | `packages/conceptual/src/registry/` + `receipts/` | Framework identity, evolution and canonical receipt structures. |
+| CDP context parser + divergence runtime | `packages/conceptual/src/cdp/CDPContextParser.ts` + `packages/conceptual/src/cdp/ConceptualDivergenceRuntime.ts` | Provenance-bound context parsing, historical evidence separation and non-canonical possibility generation. |
 | Memory Receipt Engine | `packages/memory/src/memory-receipt-engine.ts` | Evidence-bearing memory state and receipt/risk handling. |
 | GSMB / Digital Hippocampus | `packages/memory/src/gsmb.ts` | Governed context/memory continuity. |
 | Governance Engine | `packages/governance/` | Policy and semantic governance before consequential execution. |
@@ -131,10 +132,13 @@ CDP expands the possibility space. Current proof state:
 ```text
 canonical semantics: YES
 portable SKILL.md: YES
-dedicated packages/conceptual/src/cdp engine: NOT CURRENTLY PROVEN
+dedicated packages/conceptual/src/cdp parser/runtime: CODED + TESTED
+runtime receipt dedicatedCdpEngineExecuted: true
 ```
 
-A renter may use the governed workflow but may not claim a dedicated Jennifer CDP runtime executed without a later repository receipt.
+The dedicated parser/runtime consumes only supplied or authorized context, preserves source provenance, and emits hypotheses without self-canonicalizing. Prior context-window personality or preference signals remain **historical evidence only** until current-human authority confirms them; a current human instruction outranks conflicting older preferences.
+
+A renter may claim dedicated Jennifer CDP runtime execution only when the returned CDP runtime receipt records `dedicatedCdpEngineExecuted: true`. That receipt still does not promote any hypothesis to canon.
 
 ### CEEP
 
