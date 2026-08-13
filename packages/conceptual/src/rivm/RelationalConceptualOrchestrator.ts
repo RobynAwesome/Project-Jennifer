@@ -2,6 +2,11 @@ import { generateId, now } from "@jennifer/shared";
 
 import type { CanonicalDecision } from "../ccp/CanonicalDecision.js";
 import { ConceptualConvergenceProtocol } from "../ccp/ConceptualConvergenceProtocol.js";
+import type { CDPContextParseResult } from "../cdp/CDPContextParser.js";
+import {
+  ConceptualDivergenceRuntime,
+  type CDPRuntimeReceipt,
+} from "../cdp/ConceptualDivergenceRuntime.js";
 import type { CanonicalReceipt } from "../receipts/CanonicalReceipt.js";
 import type { FrameworkEvolutionReceipt } from "../receipts/FrameworkEvolutionReceipt.js";
 
@@ -34,6 +39,10 @@ export interface RelationalClaim {
   evidenceRef?: string;
 }
 
+/**
+ * Candidate metadata used after CDP widening when the human/runtime requests
+ * evaluation of one proposal. CDP itself still emits hypothesis-only output.
+ */
 export interface CDPCandidate {
   proposalId: string;
   hypothesis: string;
@@ -43,6 +52,7 @@ export interface CDPCandidate {
   proofState: "hypothesis" | "evidence-bearing";
   evidenceLevel: string;
   requestedDecision: CanonicalDecision;
+  supportingSignalIds?: string[];
 }
 
 export interface RelationalConceptualInput {
@@ -54,7 +64,13 @@ export interface RelationalConceptualInput {
   lane: string;
   claims: RelationalClaim[];
   signals: RIVMSignals;
+  currentState: string;
+  humanGoal: string;
+  hardConstraints: string[];
+  forbiddenPaths?: string[];
+  context: CDPContextParseResult;
   candidates: CDPCandidate[];
+  includeUnknownBranch?: boolean;
   selectedProposalId: string;
   discussionHistory?: string[];
 }
@@ -71,7 +87,8 @@ export interface RelationalConceptualReceipt {
   cdp: {
     candidateCount: number;
     selectedProposalId: string;
-    dedicatedCdpEngineExecuted: false;
+    dedicatedCdpEngineExecuted: true;
+    runtimeReceipt: CDPRuntimeReceipt;
   };
   evolutionReceipt: FrameworkEvolutionReceipt;
   canonicalReceipt: CanonicalReceipt;
@@ -81,33 +98,55 @@ export interface RelationalConceptualReceipt {
  * Bounded orchestration proof for relational conceptual evolution.
  *
  * RIVM provides deterministic hard-fail gates from explicit caller signals.
- * CDP is represented as a governed candidate set only; this class does not
- * claim that a dedicated CDP runtime exists.
+ * CDP now executes the dedicated widening runtime against provenance-bound
+ * parsed context and remains hypothesis-only/non-canonical.
  * CCP remains the canonical decision engine.
  */
 export class RelationalConceptualOrchestrator {
-  constructor(private readonly ccp = new ConceptualConvergenceProtocol()) {}
+  constructor(
+    private readonly ccp = new ConceptualConvergenceProtocol(),
+    private readonly cdp = new ConceptualDivergenceRuntime(),
+  ) {}
 
   orchestrate(input: RelationalConceptualInput): RelationalConceptualReceipt {
-    if (input.candidates.length < 2) {
-      throw new Error("CDP requires at least two distinguishable candidates before convergence.");
-    }
+    const hardFailures = this.detectHardFailures(input.signals);
 
+    const cdpReceipt = this.cdp.diverge({
+      currentState: input.currentState,
+      humanGoal: input.humanGoal,
+      hardConstraints: input.hardConstraints,
+      forbiddenPaths: input.forbiddenPaths,
+      context: input.context,
+      candidates: input.candidates.map((candidate) => ({
+        candidateId: candidate.proposalId,
+        hypothesis: candidate.hypothesis,
+        difference: candidate.difference,
+        evidenceNeeded: candidate.evidenceNeeded,
+        risks: candidate.risks,
+        supportingSignalIds: candidate.supportingSignalIds,
+      })),
+      includeUnknownBranch: input.includeUnknownBranch,
+    });
+
+    const selectedRuntimeCandidate = cdpReceipt.candidates.find(
+      (candidate) => candidate.candidateId === input.selectedProposalId,
+    );
     const selected = input.candidates.find(
       (candidate) => candidate.proposalId === input.selectedProposalId,
     );
 
-    if (!selected) {
-      throw new Error(`Selected proposal ${input.selectedProposalId} is not present in the CDP candidate set.`);
+    if (!selectedRuntimeCandidate || !selected) {
+      throw new Error(
+        `Selected proposal ${input.selectedProposalId} is not present in the governed CDP candidate set.`,
+      );
     }
 
-    const hardFailures = this.detectHardFailures(input.signals);
     const validation: FrameworkEvolutionReceipt["validation"] =
       hardFailures.length === 0 ? "PASS" : "FAIL";
 
     const evolutionReceipt: FrameworkEvolutionReceipt = {
       framework: input.framework,
-      proposalId: selected.proposalId,
+      proposalId: selectedRuntimeCandidate.candidateId,
       subject: input.subject,
       contributor: input.contributor,
       evaluator: input.evaluator,
@@ -132,9 +171,10 @@ export class RelationalConceptualOrchestrator {
       claimClasses: [...new Set(input.claims.map((claim) => claim.classification))],
       hardFailures,
       cdp: {
-        candidateCount: input.candidates.length,
-        selectedProposalId: selected.proposalId,
-        dedicatedCdpEngineExecuted: false,
+        candidateCount: cdpReceipt.candidates.length,
+        selectedProposalId: selectedRuntimeCandidate.candidateId,
+        dedicatedCdpEngineExecuted: cdpReceipt.dedicatedCdpEngineExecuted,
+        runtimeReceipt: cdpReceipt,
       },
       evolutionReceipt,
       canonicalReceipt,
