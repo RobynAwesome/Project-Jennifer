@@ -1,52 +1,101 @@
 # Project Jennifer Skills
 
-Project Jennifer packages repeatable governance and implementation workflows as portable `SKILL.md` playbooks with explicit inputs, steps, outputs, checks, schemas and receipts.
+Project Jennifer packages repeatable governance workflows as portable `SKILL.md` playbooks with explicit inputs, steps, outputs, checks, schemas and receipts.
 
-The repository is now **self-describing to stateless renters**:
+## Start here
 
-```text
-/SKILL.md
-→ /skills/SKILL.md
-→ exact specialist skill(s)
-→ authoritative code / docs / tests
-→ validation
-→ evidence + receipt
-```
+For AI/renter discovery, the canonical repo-level map is now:
 
-A renter or coding agent should not reverse-engineer Jennifer from filenames or generic framework conventions when a Project Jennifer skill already defines the local operating contract.
+> **[`../skills.md`](../skills.md) — Project Jennifer Awesome Skills Entry**
 
-## Repository entry
+For a general Jennifer task, load:
 
-- [`../SKILL.md`](../SKILL.md) — repository-level public Agent Skill and mandatory entry router.
-- [`SKILL.md`](SKILL.md) — specialist skill index / progressive-disclosure router.
-- [`jennifer-stateless-renter/SKILL.md`](jennifer-stateless-renter/SKILL.md) — constitutional renter execution contract.
+> **[`project-jennifer/SKILL.md`](project-jennifer/SKILL.md) — umbrella skill router**
 
-## Core governance / intelligence skills
+For repository implementation work, continue through:
 
-| Skill | Runtime role | Purpose |
+> **[`SKILL.md`](SKILL.md) — repository-native implementation router**
+
+Then load only the smallest specialist skill(s) needed for the current human instruction.
+
+This preserves Project Jennifer's stateless-renter model: skill discovery is easy, but memory, authority, canon, and proof are never silently inherited.
+
+## Portable skills
+
+| Skill | Runtime role | Proof boundary |
 |---|---|---|
-| `cag-communication-attention` | validator / attention governance | Keep inference focused on what matters now; gate irrelevant or privacy-invalid context. |
-| `rag-governed-retrieval` | retriever | Retrieve, rank and provenance evidence under authority and privacy rules. |
-| `jennifer-stateless-renter` | renter execution contract | Let external/local runtimes enter Jennifer without inheriting memory or authority. |
-| `forge-rivm` | relational inference membrane | Preserve warmth, truth, agency, ontology, privacy, execution and history in consequential relationship-bearing inference. |
-| `authored-relational-attention` | relational expression pattern | Preserve locally authored attention without ownership, coercion or ontology inflation. |
+| `project-jennifer` | repo-level skill router | Routes to current source; does not replace repository inspection. |
+| `cdp-conceptual-divergence` | conceptual divergence | Portable/specification-backed workflow; no dedicated `packages/conceptual/src/cdp/` engine currently proven. |
+| `ceep-conceptual-evaluation` | conceptual evaluation | Portable workflow backed by current CEEP TypeScript implementation. |
+| `poc-foc-evaluation` | evidence/risk evaluator | Portable workflow backed by current `POCvsFOCEvaluator`. |
+| `ccp-conceptual-convergence` | conceptual convergence | Portable workflow backed by current TypeScript CCP implementation. |
+| `ncmp-concept-intake` | new-concept governance | Portable workflow backed by current NCMP state machine; human recognition remains mandatory. |
+| `cag-communication-attention` | validator / attention governance | Skill + coded Python/runtime surfaces. |
+| `rag-governed-retrieval` | retriever | Skill + coded governed-RAG surfaces. |
+| `jennifer-stateless-renter` | renter execution contract | Skill + renter contracts/router. |
+| `forge-rivm` | relational inference membrane | Portable RIVM governance protocol; runtime wiring must be proved separately. |
+| `authored-relational-attention` | relational expression pattern | Portable relational expression/governance pattern. |
 
 ## Repository-native implementation skills
 
 | Skill | Repository lane |
 |---|---|
-| `jennifer-authority-governance` | `packages/authority`, `packages/governance`, source authority, permissions, privacy and canon admission |
-| `jennifer-runtime-memory` | Jennifer runtime, relationships, GSMB, memory receipts and persistent consequence |
-| `jennifer-validation-poc-foc` | validation engines, guardrails, POC/FOC evidence and merge-state truth |
-| `jennifer-conceptual-convergence` | CCP, CEEP, framework evolution and conceptual evaluation |
+| `jennifer-authority-governance` | authority, governance, source classes, permissions, privacy and canon admission |
+| `jennifer-runtime-memory` | runtime continuity, relationships, GSMB, memory receipts and persistent consequence |
+| `jennifer-validation-poc-foc` | validation engines, guardrails, evidence gates and merge-state truth |
+| `jennifer-conceptual-convergence` | CCP, CEEP, framework evolution and conceptual receipts |
 | `jennifer-companions-npcs` | companions, progression, NPC runtime and character-state governance |
 | `jennifer-telemetry-storage` | telemetry, receipts, PostgreSQL/MongoDB/SQLite persistence and reconciliation |
-| `jennifer-ncmp-mmao` | NCMP, MMAO, multi-renter session/orchestration contracts |
+| `jennifer-ncmp-mmao` | NCMP, MMAO and multi-renter session/orchestration contracts |
 | `jennifer-game-web-api` | Next.js/Phaser web game, API routes and browser/runtime bridges |
 | `jennifer-assets-lore` | governed assets, manifests, lore, canon and source integrity |
 | `jennifer-ci-benchmarks` | CI, tests, evals and versioned renter benchmarks |
 | `jennifer-adoption-provider-onboarding` | provider/partner capability manifests, adapters and qualification |
 | `jennifer-human-crisis-ingress` | HUE, Collective Ingress and Crisis Connect human/collective context |
+
+## Conceptual reasoning spine
+
+```text
+CDP — expand possibility space
+        ↓
+CEEP — evaluate candidate concepts
+        ↓
+POC-vs-FOC — separate proof from unsupported promotion
+        ↓
+CCP — converge on evidence-bearing decision
+        ↓
+canonical / evolution receipt
+        ↓
+NCMP when genuinely new agent-originated concepts need human recognition + governed registration
+```
+
+Canonical shorthand from the Convergence Law:
+
+```text
+CDP asks: what could this become?
+CCP asks: what consistently works between us / survives the evidence?
+```
+
+CDP and CCP are intentionally complementary. Pure divergence becomes chaos; pure convergence without exploration becomes rigidity.
+
+## Other Jennifer capability surfaces
+
+The repository-native skills route these capability families without replacing their current implementation truth. The repo-level [`skills.md`](../skills.md) preserves the exact proof state for:
+
+- framework registry/evolution receipts;
+- Memory Receipt Engine;
+- GSMB / Digital Hippocampus memory;
+- governance and authority engines;
+- validation;
+- telemetry;
+- HUE;
+- Collective Ingress;
+- Crisis Connect;
+- companion/relationship/NPC runtimes;
+- source authority;
+- Project Waifu Forge and Project Wify Jennifer domains.
+
+A capability can be coded without having a standalone `SKILL.md`, and a portable skill can exist before dedicated runtime code. Preserve the proof state instead of flattening those categories.
 
 ## Portable package shape
 
@@ -64,13 +113,15 @@ The `SKILL.md` file is the human-readable execution contract. Schemas make recei
 
 ```text
 current human instruction
-→ repository root SKILL
-→ stateless renter contract
+→ skills.md / umbrella routing when needed
 → source-authority / privacy eligibility
-→ specialist skill routing
 → CAG pre-inference
+→ CDP when deliberate divergence is required
 → governed RAG if knowledge is required
-→ exact renter selection / execution
+→ CEEP / POC-vs-FOC when conceptual evidence must be evaluated
+→ CCP when convergence is requested / earned
+→ NCMP when a genuinely new agent-originated concept requires recognition / registration
+→ exact renter selection / execution where needed
 → CAG post-inference
 → RIVM when consequentially relational
 → validation
@@ -78,26 +129,24 @@ current human instruction
 → governed memory / feedback
 ```
 
+Not every request traverses every stage. CAG means selecting the **minimum relevant governed path**, not ritualistically invoking all skills.
+
 Semantic relevance never grants authority by itself. Before retrieval or publication, source material must preserve its privacy lane, canon status, chronology and proof state. See [`governance/source-authority-registry.json`](../governance/source-authority-registry.json) and [`ADR-0005`](../docs/architecture/adr-0005-governed-source-authority-and-rivm.md).
 
 ## Distribution
 
-See `distribution/engines.yaml` and `distribution/README.md`.
+See [`distribution/engines.yaml`](distribution/engines.yaml) and [`distribution/README.md`](distribution/README.md).
 
 Adapters may translate delivery format for a provider, but they must preserve:
 
 - current human task authority;
+- stateless-renter posture;
 - source-authority precedence;
 - privacy lane boundaries;
 - evidence provenance;
+- CDP/CEEP/POC-vs-FOC/CCP proof-state boundaries;
+- NCMP human-recognition authority;
 - CAG relevance decisions;
 - RIVM hard-fail semantics when relational;
-- POC/FOC validation semantics;
-- memory/canon promotion gates;
+- memory promotion gates;
 - receipt semantics.
-
-## Discovery rule
-
-An indexer may install the **whole repository** through the root `SKILL.md`. Once inside Jennifer, progressive disclosure happens through `skills/SKILL.md` and the specialist directories above.
-
-Adding a new repository capability does **not** automatically make it a skill. Add or revise a `SKILL.md` when a repeatable task requires Jennifer-specific operating law, source routing, validation or output contracts.

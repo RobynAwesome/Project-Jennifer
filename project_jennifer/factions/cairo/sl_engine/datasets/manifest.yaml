@@ -1,0 +1,71 @@
+version: 0.1.0
+engine: sl-engine
+entity: cairo
+faction: third-signal
+status: phase-0-truth-lock
+
+canonical_vectors:
+  - id: seduction
+    priority: 1
+    role: attraction-influence-approach-tension
+    source_title: The Art of Seduction
+    source_type: private_or_licensed_text
+    raw_corpus_in_public_repo: false
+    ingestion_status: not_ingested
+    requirement: "Use only a lawfully obtained copy whose intended use permits private model grounding. Store corpus outside the public repository."
+
+  - id: kama
+    priority: 2
+    role: intimacy-desire-reciprocity-relational-context
+    source_title: Kama Sutra
+    source_type: legally_usable_edition
+    raw_corpus_in_public_repo: false
+    ingestion_status: not_ingested
+    requirement: "Pin the exact edition/translation and its legal/provenance status before ingestion."
+
+  - id: rhythm
+    priority: 3
+    role: cadence-timing-pause-escalation-release
+    source_title: Project Jennifer Rhythm Corpus
+    source_type: project_owned_structured_dataset
+    raw_corpus_in_public_repo: true
+    ingestion_status: schema_defined_examples_pending
+    requirement: "Create original structured rhythm examples with provenance and versioning."
+
+canonical_gate:
+  type: three_of_three_consultation
+  allow_no_relevant_evidence: true
+  allow_skipped_vector: false
+  receipt_required: true
+
+storage:
+  public_repository:
+    allow:
+      - manifests
+      - schemas
+      - provenance_metadata
+      - project_owned_rhythm_examples
+      - hashes
+      - evaluation_receipts
+    deny:
+      - private_source_books
+      - credentials
+      - api_keys
+      - access_tokens
+  private_corpus_target: azure_private_storage
+  secrets_target: azure_key_vault
+
+model:
+  poc_candidate: microsoft-phi-4-mini-instruct
+  model_is_identity: false
+  retrieval_first: true
+  fine_tuning_status: not_started
+
+first_environment:
+  id: third-signal-chamber
+  scope:
+    players: 1
+    cairo_instances: 1
+    world_mutation: false
+    faction_control: false
+    receipt_logging: true

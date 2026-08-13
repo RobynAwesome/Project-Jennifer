@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-jennifer.local/schemas/cairo-sl-interaction-receipt.schema.json",
+  "title": "Cairo SL Engine Interaction Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receiptId",
+    "sessionId",
+    "entity",
+    "engine",
+    "canonicalGate",
+    "cdp",
+    "ccp",
+    "action",
+    "kpgs",
+    "createdAt"
+  ],
+  "properties": {
+    "receiptId": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "playerId": { "type": "string" },
+    "entity": { "const": "cairo" },
+    "engine": { "const": "sl-engine" },
+    "inputRef": { "type": "string" },
+    "canonicalGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seduction", "kama", "rhythm", "result"],
+      "properties": {
+        "seduction": { "$ref": "#/$defs/vectorResult" },
+        "kama": { "$ref": "#/$defs/vectorResult" },
+        "rhythm": { "$ref": "#/$defs/vectorResult" },
+        "result": { "enum": ["pass", "fail"] }
+      }
+    },
+    "cdp": {
+      "type": "object",
+      "required": ["candidateCount", "candidateRefs"],
+      "properties": {
+        "candidateCount": { "type": "integer", "minimum": 0 },
+        "candidateRefs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "ccp": {
+      "type": "object",
+      "required": ["selectedCandidateRef"],
+      "properties": {
+        "selectedCandidateRef": { "type": ["string", "null"] },
+        "reasonRef": { "type": "string" }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["verb"],
+      "properties": {
+        "verb": {
+          "enum": [
+            "SPEAK",
+            "QUESTION",
+            "WAIT",
+            "WITHDRAW",
+            "APPROACH",
+            "CHANGE_TOPIC",
+            "REVEAL",
+            "WITHHOLD",
+            "CHALLENGE",
+            "FLIRT",
+            "REFUSE",
+            "ESCALATE_TO_KPGS"
+          ]
+        },
+        "outputRef": { "type": "string" }
+      }
+    },
+    "kpgs": {
+      "type": "object",
+      "required": ["verdict"],
+      "properties": {
+        "verdict": { "enum": ["allow", "deny", "revise", "escalate"] },
+        "reasonRef": { "type": "string" }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "model": { "type": "string" },
+        "modelVersion": { "type": "string" },
+        "engineVersion": { "type": "string" }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "vectorResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["evidence", "no_relevant_evidence", "unavailable", "skipped"]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

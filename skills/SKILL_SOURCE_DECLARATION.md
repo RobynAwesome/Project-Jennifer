@@ -10,6 +10,10 @@
 | **Validation State** | Pending |
 | **Governance Classification** | Source-Declared + Repository-Derived (not model-reconstructed architecture) |
 
+## Ecosystem anchor resolution
+
+The owner-declared ecosystem anchor remains `Kopano-Labs/Introduction-to-MCP`. GitHub currently resolves that repository to `RobynAwesome/Introduction-to-MCP`, which is also the source URL exposed by the live AwesomeSkills entry. The redirect is recorded as repository evidence; it does not transfer governance authority to this skill membrane.
+
 ## Scope
 
 This declaration covers the repository-level skill membrane introduced on branch `agent/project-jennifer-repo-skills`:

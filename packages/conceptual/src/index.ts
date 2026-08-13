@@ -21,3 +21,19 @@ export { FrameworkRegistry } from "./registry/FrameworkRegistry.js";
 export type { FOCType, FOCRiskProfile } from "./pocvsfoc/FOCRiskProfile.js";
 export type { POCProfile } from "./pocvsfoc/POCProfile.js";
 export { POCvsFOCEvaluator } from "./pocvsfoc/POCvsFOCEvaluator.js";
+export {
+  POCFOCActionEvaluator,
+  type POCFOCActionEvaluationInput,
+  type POCFOCActionEvaluatorPolicy,
+} from "./pocvsfoc/POCFOCActionEvaluator.js";
+export type {
+  FOCBranchDefinition,
+  FOCGroupDefinition,
+  POCBranchDefinition,
+  VOCParseReceipt,
+  VOCParseResult,
+  VOCParserInput,
+  VOCRegistry,
+  VOCSourceReference,
+} from "./pocvsfoc/VOCRegistry.js";
+export { VOCRegistryParser } from "./pocvsfoc/VOCRegistryParser.js";

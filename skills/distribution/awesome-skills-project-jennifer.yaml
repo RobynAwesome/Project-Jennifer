@@ -1,0 +1,66 @@
+version: 1
+registry:
+  name: AwesomeSkills
+  canonical_site: https://www.awesomeskills.dev
+  submit_page: https://www.awesomeskills.dev/en/submit
+
+repository:
+  owner: RobynAwesome
+  name: Project-Jennifer
+  branch: main
+  visibility: public
+  source_url: https://github.com/RobynAwesome/Project-Jennifer
+  root_skill_file: SKILL.md
+  skill_index: skills.md
+  umbrella_skill: skills/project-jennifer/SKILL.md
+  implementation_router: skills/SKILL.md
+
+publication:
+  desired_slug: robynawesome-project-jennifer
+  status: repository-root-skill-ready
+  external_directory_url: null
+  website_submission_receipt: null
+  note: External publication is not canonical until the AwesomeSkills directory returns a live Project Jennifer entry. Repository readiness and third-party registry admission remain separate evidence states.
+
+known_registry_anchor:
+  source_repository: https://github.com/RobynAwesome/Introduction-to-MCP
+  live_directory_url: https://www.awesomeskills.dev/en/skill/robynawesome-introduction-to-mcp
+  role: ecosystem precedent / verified AwesomeSkills entry
+
+project_jennifer_surface:
+  - project-jennifer
+  - cdp-conceptual-divergence
+  - ceep-conceptual-evaluation
+  - poc-foc-registry-parser
+  - poc-foc-evaluation
+  - poc-foc-runtime-gate
+  - ccp-conceptual-convergence
+  - ncmp-concept-intake
+  - cag-communication-attention
+  - rag-governed-retrieval
+  - jennifer-stateless-renter
+  - forge-rivm
+  - authored-relational-attention
+  - project-jennifer-skill-router
+  - jennifer-authority-governance
+  - jennifer-runtime-memory
+  - jennifer-validation-poc-foc
+  - jennifer-conceptual-convergence
+  - jennifer-companions-npcs
+  - jennifer-telemetry-storage
+  - jennifer-ncmp-mmao
+  - jennifer-game-web-api
+  - jennifer-assets-lore
+  - jennifer-ci-benchmarks
+  - jennifer-adoption-provider-onboarding
+  - jennifer-human-crisis-ingress
+  - kpgs-runtime-pack
+
+proof_rules:
+  stateless_renter: I_AM_STATELESS_RENTER_NOT_LANDLORD
+  preserve_proof_state: true
+  memory_self_promotion: prohibited
+  human_task_authority_required: true
+  receipts_required_for_execution_claims: true
+  third_party_publication_requires_live_url: true
+  awesome_skills_is_discovery_not_kpgs_authority: true
