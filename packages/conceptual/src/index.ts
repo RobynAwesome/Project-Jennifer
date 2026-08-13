@@ -37,3 +37,14 @@ export type {
   VOCSourceReference,
 } from "./pocvsfoc/VOCRegistry.js";
 export { VOCRegistryParser } from "./pocvsfoc/VOCRegistryParser.js";
+
+export {
+  RelationalConceptualOrchestrator,
+  type CDPCandidate,
+  type RelationalClaim,
+  type RelationalConceptualInput,
+  type RelationalConceptualReceipt,
+  type RIVMClaimClass,
+  type RIVMHardFailure,
+  type RIVMSignals,
+} from "./rivm/RelationalConceptualOrchestrator.js";
