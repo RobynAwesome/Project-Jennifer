@@ -1,11 +1,11 @@
 ---
 name: project-jennifer
 title: "Project Jennifer Governed Skill Router"
-version: "1.2.0"
+version: "1.2.1"
 status: "POC"
 class: "Repository Umbrella Skill"
 repository: "RobynAwesome/Project-Jennifer"
-ecosystem_anchor: "Kopano-Labs/Introduction-to-MCP"
+ecosystem_anchor: "RobynAwesome/Introduction-to-MCP"
 entrypoint: "skills.md"
 execution_model: "Discover -> Classify -> Route -> Execute -> Validate -> Receipt"
 ---
@@ -27,7 +27,7 @@ current human instruction
         ↓
 GitHub Project Memory Registry / ecosystem context when available
         ↓
-Kopano-Labs/Introduction-to-MCP when ecosystem doctrine is relevant
+RobynAwesome/Introduction-to-MCP when ecosystem doctrine is relevant
         ↓
 Project Jennifer current repository state
         ↓
@@ -107,7 +107,7 @@ Conceptual Evaluation Engine evaluates the candidate/subject and emits an `Evalu
 
 Makes evidence strengths and FOC risks explicit before promotion.
 
-When KPGS immune-registry semantics themselves are required, parse `Kopano-Labs/Introduction-to-MCP/poc-vs-foc/` through `poc-foc-registry-parser` first. The resulting `FOC-G##` operational groups remain separate from Jennifer's semantic `FOCType` evaluation risks.
+When KPGS immune-registry semantics themselves are required, parse `RobynAwesome/Introduction-to-MCP/poc-vs-foc/` through `poc-foc-registry-parser` first. The resulting `FOC-G##` operational groups remain separate from Jennifer's semantic `FOCType` evaluation risks.
 
 ### Runtime POC/FOC gate
 
