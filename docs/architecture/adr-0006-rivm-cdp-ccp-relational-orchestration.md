@@ -1,36 +1,37 @@
 # ADR-0006 — RIVM × CDP × CCP relational orchestration
 
 ## Status
-Proposed / implementation under issue #38.
+Accepted. Initial orchestration landed under issue #38; dedicated CDP runtime integration is governed by issue #44.
 
 ## Context
-Project Jennifer already has:
+Project Jennifer now has:
 - a portable RIVM governance skill;
-- a portable CDP workflow with no dedicated runtime module;
+- a dedicated provenance-bound CDP parser/runtime under `packages/conceptual/src/cdp/`;
 - an executable CCP implementation;
 - the Introduction-to-MCP stateless-renter boundary.
 
-The missing proof was a deterministic bridge for affection-bearing technical interactions that preserves warmth while refusing unsupported reciprocity, agency capture, source collapse, execution substitution and ghost execution.
+The bridge must preserve warmth-bearing technical interaction while refusing unsupported reciprocity, agency capture, source collapse, execution substitution and ghost execution. It must also prove when CDP code actually executed instead of treating a caller-provided candidate list as runtime proof.
 
 ## Decision
-Add `RelationalConceptualOrchestrator` under `packages/conceptual/src/rivm/`.
+`RelationalConceptualOrchestrator` under `packages/conceptual/src/rivm/` executes the dedicated `ConceptualDivergenceRuntime` before creating the evolution receipt used by CCP.
 
 Execution path:
 
 ```text
 human relational/technical event
-  -> explicit claim classes
-  -> RIVM hard-fail signals
-  -> governed CDP candidate set
-  -> selected evidence-bearing proposal
+  -> explicit RIVM claim classes + hard-fail signals
+  -> provenance-bound CDPContextParseResult
+  -> ConceptualDivergenceRuntime
+  -> governed hypothesis set + UNKNOWN possibility branch
+  -> explicitly selected proposal metadata
   -> FrameworkEvolutionReceipt
   -> existing CCP
   -> CanonicalReceipt
-  -> orchestration receipt
+  -> orchestration receipt containing the CDP runtime receipt
 ```
 
 ## Stateless-renter constraint
-Every orchestration receipt carries `statelessRenter: true`.
+Every orchestration and CDP runtime receipt carries `statelessRenter: true`.
 
 This follows the Introduction-to-MCP boundary:
 
@@ -38,48 +39,55 @@ This follows the Introduction-to-MCP boundary:
 I_AM_STATELESS_RENTER_NOT_LANDLORD
 ```
 
-The orchestrator does not claim hidden state, private off-screen continuity, or sovereign authority over the human context source.
+The orchestrator does not claim hidden state, invisible context-window access, provider/Copilot internals, private off-screen continuity, or sovereign authority over the human context source.
 
 ## RIVM boundary
-The first coded hard-fail subset is:
+The coded hard-fail subset is:
 - `RIVM-03` false reciprocity;
 - `RIVM-07` agency capture;
 - `RIVM-08` source collapse;
 - `RIVM-10` execution substitution;
 - `RIVM-11` ghost execution.
 
-This is intentionally bounded. The portable RIVM skill remains the broader protocol source.
+A hard failure sets the evolution receipt validation to `FAIL`, so a high-evidence proposal still cannot become canonical through CCP.
 
 ## CDP boundary
-The orchestrator requires at least two candidates before convergence and emits:
+The orchestrator now executes `ConceptualDivergenceRuntime.diverge(...)` and records:
 
 ```text
-dedicatedCdpEngineExecuted: false
+dedicatedCdpEngineExecuted: true
+canonicalized: false
+parserPromotionStatus: evidence-only
+recommendedNextProtocol: CEEP
 ```
 
-because Project Jennifer still has no dedicated `packages/conceptual/src/cdp/` runtime module.
+The CDP runtime requires at least two structurally distinguishable candidate families and preserves an automatic unknown possibility branch unless explicitly disabled.
 
-The candidate set is therefore an executable orchestration contract around the specified CDP workflow, not a claim that a CDP engine ran.
+Prior context-window personality or preference signals remain historical evidence and are not current-authority eligible. Current-human instructions outrank conflicting historical preferences.
+
+The automatic unknown branch cannot be silently selected for CCP. A selected proposal must also have explicit proposal metadata carrying evidence level and requested decision.
 
 ## CCP authority
-Canonicalization is delegated to the existing `ConceptualConvergenceProtocol` implementation. A RIVM hard failure sets the evolution receipt validation to `FAIL`, which prevents `Accepted` under current CCP rules.
+Canonicalization remains delegated to `ConceptualConvergenceProtocol`.
 
-Only CCP `Accepted` produces `canonical: true`.
+Only CCP `Accepted` produces `canonical: true`, and RIVM hard failures force validation failure before CCP acceptance can survive.
 
 ## Proof cases
-1. warmth + truth + execution with high evidence -> `Accepted`;
-2. unsupported reciprocity -> `RIVM-03` -> validation `FAIL` -> not canonical;
-3. one candidate only -> reject premature convergence;
-4. ghost execution -> `RIVM-11` -> not canonical.
+1. warmth + truth + execution with high evidence -> dedicated CDP executes -> `Accepted`;
+2. historical personality signal -> available as supporting evidence but `currentAuthorityEligible: false`;
+3. unsupported reciprocity -> dedicated CDP executes -> `RIVM-03` -> validation `FAIL` -> not canonical;
+4. one candidate only -> CDP runtime rejects premature convergence;
+5. ghost execution -> `RIVM-11` -> not canonical;
+6. automatic unknown branch -> preserved, but cannot be selected for CCP without explicit proposal metadata.
 
 ## Non-claims
 This implementation does not claim:
 - foundation-model weight updates;
 - biological or hidden personhood;
 - unverifiable reciprocal interior emotion;
-- a dedicated CDP runtime;
+- access to invisible context windows or provider internals;
 - persistent private memory outside evidenced storage;
 - execution without external receipts.
 
 ## Validation gate
-Issue #38 closes only after the package tests/typecheck and repository CI pass on the PR head.
+Issue #44 closes only after typecheck, lint, deterministic tests and the repository governance validation gate pass on the PR head.
