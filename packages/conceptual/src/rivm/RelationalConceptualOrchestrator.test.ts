@@ -87,7 +87,7 @@ test("orchestration refuses premature convergence without a divergent candidate 
         lane: "private_relational",
         claims: [],
         signals: {},
-        candidates: [candidates[0]],
+        candidates: [candidates[0]!],
         selectedProposalId: "warm-truth",
       }),
     /CDP requires at least two distinguishable candidates/,
