@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "project": "Project Jennifer",
-  "updatedAt": "2026-08-11",
+  "updatedAt": "2026-08-13",
   "governingInvariant": "Semantic relevance does not imply authority, privacy eligibility, canon status, or proof.",
   "sourceClasses": [
     "PRIVATE_SOVEREIGN",
@@ -156,7 +156,7 @@
       "canonicalFor": ["Forge Project Jennifer execution role", "stateless-renter authority order"],
       "supersedes": [],
       "contradicts": [],
-      "sourceLineage": ["Kopano-Labs/Introduction-to-MCP"],
+      "sourceLineage": ["RobynAwesome/Introduction-to-MCP"],
       "publicTransformAllowed": true,
       "humanValidated": true,
       "sha256": null,
