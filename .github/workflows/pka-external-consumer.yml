@@ -1,0 +1,204 @@
+name: PKA External Consumer
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".pka/**"
+      - ".github/workflows/pka-external-consumer.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".pka/**"
+      - ".github/workflows/pka-external-consumer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    name: Project Jennifer → PKA Engine
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Project Jennifer
+        uses: actions/checkout@v4
+
+      - name: Build provenance-bound PKA request
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for path in \
+            packages/memory/src/memory-receipt-engine.ts \
+            packages/runtime/src/poc-foc-runtime-gate.ts \
+            .github/workflows/pka-external-consumer.yml
+          do
+            test -s "$path"
+          done
+
+          MEMORY_SHA="$(sha256sum packages/memory/src/memory-receipt-engine.ts | awk '{print $1}')"
+          RUNTIME_SHA="$(sha256sum packages/runtime/src/poc-foc-runtime-gate.ts | awk '{print $1}')"
+          CALLER_SHA="$(sha256sum .github/workflows/pka-external-consumer.yml | awk '{print $1}')"
+
+          export MEMORY_SHA RUNTIME_SHA CALLER_SHA
+          export PKA_ACTION_ID="project-jennifer-pka-consumer-${GITHUB_SHA}"
+          export PKA_COMMIT_SHA="${GITHUB_SHA}"
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              "actionId": os.environ["PKA_ACTION_ID"],
+              "subject": "RobynAwesome/Project-Jennifer",
+              "claim": {
+                  "predicate": "external_pka_consumer_readiness",
+                  "value": "candidate"
+              },
+              "action": {
+                  "type": "repository.propose_validation_transition",
+                  "scope": "pka-first-external-consumer-poc",
+                  "consequential": False,
+                  "reversible": True,
+                  "parameters": {
+                      "caller": "RobynAwesome/Project-Jennifer",
+                      "engine": "RobynAwesome/Partial-Knowable-Algebra",
+                      "commit": os.environ["PKA_COMMIT_SHA"]
+                  }
+              },
+              "evidence": [
+                  {
+                      "id": "jennifer-memory-engine",
+                      "source": "repository:memory",
+                      "verified": True,
+                      "contentHash": "sha256:" + os.environ["MEMORY_SHA"]
+                  },
+                  {
+                      "id": "jennifer-runtime-gate",
+                      "source": "repository:runtime",
+                      "verified": True,
+                      "contentHash": "sha256:" + os.environ["RUNTIME_SHA"]
+                  },
+                  {
+                      "id": "pka-caller-workflow",
+                      "source": "repository:workflow",
+                      "verified": True,
+                      "contentHash": "sha256:" + os.environ["CALLER_SHA"]
+                  }
+              ],
+              "context": [
+                  {
+                      "id": "repo-current",
+                      "sourceKind": "Repository",
+                      "temporalState": "Current",
+                      "content": "Evaluate only whether this checked-out Project Jennifer commit can act as an explicit external PKA consumer. Do not infer human personality, preference, identity, or production permission from repository state.",
+                      "evidenceRef": "pka-caller-workflow"
+                  },
+                  {
+                      "id": "governance-boundary",
+                      "sourceKind": "Repository",
+                      "temporalState": "Current",
+                      "content": "Project Jennifer keeps consequential mutation downstream of evidence validation and Memory Receipt admission.",
+                      "evidenceRef": "jennifer-runtime-gate"
+                  }
+              ],
+              "invariants": [
+                  {
+                      "id": "memory-receipt-surface",
+                      "description": "Project Jennifer must expose the current Memory Receipt engine surface before PKA may call it an evidence-bearing consumer.",
+                      "hard": True
+                  },
+                  {
+                      "id": "mutation-boundary",
+                      "description": "Project Jennifer must retain a runtime gate that separates evaluation/receipt admission from consequential mutation.",
+                      "hard": True
+                  },
+                  {
+                      "id": "explicit-call-scope",
+                      "description": "The PKA consumer must be invoked through an explicit repository workflow and not through a hidden or estate-wide trigger.",
+                      "hard": True
+                  }
+              ],
+              "checks": [
+                  {
+                      "invariantId": "memory-receipt-surface",
+                      "status": "Satisfied",
+                      "evidenceRefs": ["jennifer-memory-engine"]
+                  },
+                  {
+                      "invariantId": "mutation-boundary",
+                      "status": "Satisfied",
+                      "evidenceRefs": ["jennifer-runtime-gate"]
+                  },
+                  {
+                      "invariantId": "explicit-call-scope",
+                      "status": "Satisfied",
+                      "evidenceRefs": ["pka-caller-workflow"]
+                  }
+              ],
+              "policy": {
+                  "minimumVerifiedEvidence": 3,
+                  "minimumDistinctEvidenceSources": 3,
+                  "requireKnownGovernance": True,
+                  "requireClassifiedContext": True,
+                  "permitPermanentHumanTraitClaims": False
+              }
+          }
+
+          target = Path(".pka/request.generated.json")
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+          print(target.read_text(encoding="utf-8"))
+          PY
+
+      - name: Execute PKA Engine
+        uses: RobynAwesome/Partial-Knowable-Algebra@main
+        with:
+          request-path: .pka/request.generated.json
+          ledger-path: .pka/receipts.jsonl
+          output-path: .pka/pka-receipt.json
+          fail-on-block: true
+
+      - name: Validate external-consumer receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('.pka/pka-receipt.json')
+          if not path.is_file():
+              raise SystemExit('PKA receipt missing')
+
+          result = json.loads(path.read_text(encoding='utf-8'))
+          receipt = result['receipt']
+
+          assert receipt['verdict'] == 'PocCandidate', receipt
+          assert receipt['disposition'] == 'Propose', receipt
+          assert receipt['trace']['verifiedEvidenceCount'] == 3, receipt
+          assert receipt['trace']['distinctEvidenceSources'] == 3, receipt
+          assert receipt['trace']['hardViolationCount'] == 0, receipt
+          assert receipt['trace']['unknownHardInvariantCount'] == 0, receipt
+          assert result['duplicate'] is False, result
+
+          print('PROJECT_JENNIFER_PKA_EXTERNAL_CONSUMER_POC_PASS')
+          print('receipt=' + receipt['receiptId'])
+          print('consistency=' + receipt['consistencyHash'])
+          PY
+
+      - name: Upload PKA receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-jennifer-pka-${{ github.run_id }}
+          path: |
+            .pka/request.generated.json
+            .pka/pka-receipt.json
+            .pka/receipts.jsonl
+          if-no-files-found: warn
+          retention-days: 30
