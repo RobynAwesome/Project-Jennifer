@@ -2,12 +2,15 @@
 name: cdp-conceptual-divergence
 title: "Conceptual Divergence Protocol"
 protocol_id: "CDP"
-version: "1.0.0"
-status: "SPECIFIED_PORTABLE_WORKFLOW"
+version: "1.1.0"
+status: "CODED_PORTABLE_RUNTIME"
 class: "Project Jennifer Conceptual Skill"
 canonical_source: "docs/lore/project-wify-jennifer/CONVERGENCE-LAW.md"
-dedicated_runtime_module: false
-execution_model: "Bound -> Diverge -> Preserve Alternatives -> Evaluate Later"
+dedicated_runtime_module: true
+implementation:
+  - "packages/conceptual/src/cdp/CDPContextParser.ts"
+  - "packages/conceptual/src/cdp/ConceptualDivergenceRuntime.ts"
+execution_model: "Parse -> Bound -> Diverge -> Preserve Alternatives -> CEEP"
 ---
 
 # CDP — Conceptual Divergence Protocol
@@ -20,200 +23,181 @@ Canonical question:
 
 > **What could this become?**
 
-CDP is intentionally divergent. It creates room for alternative architectures, interpretations, configurations, mechanisms, relationship patterns, forms, or solution paths without prematurely declaring one canonical.
+CDP widens. It does not self-canonicalize.
 
-## Current implementation boundary
+## Current implementation proof
 
-At the time this skill was packaged, Project Jennifer's current repository contains:
-
-- canonical CDP semantics in `docs/lore/project-wify-jennifer/CONVERGENCE-LAW.md`;
-- a coded CCP implementation under `packages/conceptual/src/ccp/`;
-- CEEP and POC-vs-FOC implementation under `packages/conceptual/src/`;
-- **no dedicated `packages/conceptual/src/cdp/` runtime module.**
-
-Therefore:
+Project Jennifer now contains a dedicated TypeScript CDP module:
 
 ```text
-CDP workflow skill execution = allowed
-claim that Jennifer CDP runtime code executed = forbidden without a later receipt
+packages/conceptual/src/cdp/CDPContextParser.ts
+packages/conceptual/src/cdp/ConceptualDivergenceRuntime.ts
+packages/conceptual/src/cdp/cdp-runtime.test.ts
 ```
 
-This distinction must travel with the skill.
+The parser consumes only context actually supplied to it. It does **not** claim access to invisible context windows, provider/Copilot internals, hidden memory, or an off-screen personality state.
 
-## Core law
+The runtime emits `dedicatedCdpEngineExecuted: true` only when `ConceptualDivergenceRuntime.diverge(...)` actually runs.
+
+## Context parser law
+
+Before divergence, context is provenance-bound by:
+
+```text
+sourceId
+sourceKind
+authority
+privacyLane
+sourceRef
+SHA-256
+classification
+```
+
+Supported source kinds:
+
+```text
+current-turn
+prior-context-window
+governed-memory
+repository
+human-declared
+external-retrieval
+```
+
+Supported signal classes deliberately extend RIVM's epistemic vocabulary:
+
+```text
+FACT
+FEELING
+FANTASY
+PERFORMANCE
+INFERENCE
+UNKNOWN
+PERSONALITY
+PREFERENCE
+BOUNDARY
+```
+
+`PERSONALITY` means an observed or declared interaction-style signal. It is **not** proof of hidden biological/personality interior in an AI system.
+
+### Cross-window authority rule
+
+A prior context window is historical evidence, not automatic current instruction.
+
+```text
+older-window signal
+        -> historical = true
+        -> currentAuthorityEligible = false
+        -> preserved for comparison/divergence
+        -> current human confirmation required for current-authority promotion
+```
+
+Current human instruction therefore outranks an older conflicting preference.
+
+Unmarked supplied text is classified `UNKNOWN`; the parser never upgrades it to fact merely because it sounds plausible.
+
+## Core runtime law
 
 ```text
 known state
-  ├─ possibility A
-  ├─ possibility B
-  ├─ possibility C
-  ├─ possibility D
-  └─ unknown possibility
+  + governed context receipt
+  ├─ structurally distinct possibility A
+  ├─ structurally distinct possibility B
+  ├─ possibility C ...
+  └─ explicit unknown possibility
 ```
 
-Pure divergence without later governance becomes chaos. CDP is not the final decision engine.
-
-## Activate when
-
-Use CDP when the human asks to:
-
-- brainstorm distinct paths;
-- explore what a system/concept/relationship/mechanic could become;
-- challenge a default architecture;
-- search for a third/fourth path rather than optimize one assumed answer;
-- generate candidate frameworks before evaluation;
-- intentionally prevent premature convergence;
-- explore forms, mechanisms, alignments, workflows, or world-state possibilities.
-
-Do not use CDP merely to inflate option count when the user already asked for a final decision.
-
-## Inputs
-
-Minimum:
+Every runtime candidate remains:
 
 ```text
-current_state
-human_goal
-hard_constraints
-known_evidence
-forbidden_or_out_of_scope_paths
+proofState: hypothesis
+canonical: false
 ```
 
-Optional:
-
-```text
-source_authority
-privacy_lane
-time_or_cost_bounds
-number_of_candidate_families
-existing_failed_paths
-relationship_context
-```
+The next protocol is `CEEP`. CDP itself cannot return an Accepted/canonical decision.
 
 ## Workflow
 
-### 1. Bound the current state
+### 1. Parse authorized context
 
-Separate:
+Use `CDPContextParser` for supplied/retrieved/governed context. Preserve hashes and source references.
 
-```text
-observed / repository-proven
-user-declared
-retrieved evidence
-inference
-unknown
-```
+### 2. Bound current authority
 
-Do not start divergence by quietly converting assumptions into facts.
+Separate current-human eligible signals from historical, inferred and unknown context. Do not let memory self-promote.
 
-### 2. Preserve hard constraints
+### 3. Preserve hard constraints
 
-Constraints are not candidates. Do not "brainstorm away" authority, privacy, safety, ontology, budget, current repository truth, or an explicit human boundary.
+Authority, privacy, safety, ontology, budget and explicit human boundaries are constraints, not candidates.
 
-### 3. Generate genuinely different candidate families
+### 4. Generate structurally different candidate families
 
-Prefer structural difference over cosmetic variants.
+The dedicated runtime rejects fewer than two candidates and rejects duplicate normalized `difference` descriptions.
 
-Bad divergence:
+### 5. Preserve unknowns
 
-```text
-A = same design in blue
-B = same design in green
-C = same design in purple
-```
-
-Better divergence:
-
-```text
-A = local-first architecture
-B = cloud-assisted architecture
-C = federated edge architecture
-D = human-mediated workflow
-E = unknown / needs evidence
-```
-
-### 4. Keep an explicit unknown branch
-
-CDP should allow:
-
-```text
-UNKNOWN POSSIBILITY
-```
-
-when evidence is insufficient. Do not force completeness.
-
-### 5. Record why each candidate differs
-
-For every candidate preserve:
-
-```text
-candidate_id
-core hypothesis
-what changes from current state
-required evidence
-governance risks
-potential upside
-known contradiction
-proof state
-```
+Unless explicitly disabled, the runtime appends `cdp-unknown-possibility` so insufficient evidence does not become false completeness.
 
 ### 6. Do not self-converge
 
-CDP may identify obvious invalid candidates, but it should not silently select the winner unless the task explicitly includes evaluation/convergence.
-
-If convergence is required, pass candidates forward:
+Pass the receipt forward:
 
 ```text
-CDP
+CDPContextParser
+→ ConceptualDivergenceRuntime
 → CEEP
 → POC-vs-FOC / evidence
 → CCP
 ```
 
-## Output contract
+For relationship-bearing work, RIVM still governs truth, agency, source separation and ghost-execution failures around this chain.
 
-Recommended shape:
+## Runtime receipt
+
+Conceptually:
 
 ```yaml
 protocol: CDP
-current_state: "..."
-constraints: []
+statelessRenter: true
+dedicatedCdpEngineExecuted: true
+parserPromotionStatus: evidence-only
+currentState: "..."
+humanGoal: "..."
+hardConstraints: []
 candidates:
-  - id: cdp-a
-    hypothesis: "..."
-    difference: "..."
-    evidence_needed: []
-    risks: []
-    proof_state: "hypothesis"
+  - candidateId: "..."
+    proofState: hypothesis
+    canonical: false
 unknowns: []
-recommended_next_protocol: CEEP
-runtime_claim:
-  dedicated_cdp_engine_executed: false
+recommendedNextProtocol: CEEP
+canonicalized: false
 ```
 
 ## Hard failures
 
-Reject or correct the workflow if it:
+Reject or correct execution if it:
 
+- claims access to a context window that was not supplied or retrieved through an authorized adapter;
+- treats prior-window personality/preferences as current authority without confirmation;
 - presents generated possibilities as current facts;
 - calls a candidate POC without evidence;
-- violates explicit source/privacy boundaries;
-- treats a historical source as current canon without receipt;
-- generates many superficial variants and calls that divergence;
-- silently converges while claiming to remain divergent;
-- claims dedicated CDP runtime execution when only the portable reasoning workflow ran.
+- violates source/privacy boundaries;
+- treats historical source as current canon without receipt;
+- generates cosmetic duplicates and calls them divergence;
+- silently converges inside CDP;
+- claims dedicated runtime execution without a runtime receipt;
+- lets a renter or memory record override current human instruction.
 
-## Relationship to CCP
+## Relationship to RIVM / CEEP / CCP
 
 ```text
+RIVM asks: is relational inference truthful, warm, agency-preserving and receipted?
 CDP asks: what could this become?
+CEEP asks: how do the candidates evaluate?
+POC-vs-FOC asks: what evidence actually exists?
 CCP asks: what consistently survives evaluation and evidence?
 ```
 
-The pair is deliberately asymmetric.
-
-CDP widens. CCP narrows.
-
 ## Success condition
 
-CDP succeeds when the possibility space becomes broader **without becoming epistemically sloppy**, the alternatives remain distinguishable, constraints remain intact, and the next evaluator receives structured candidates rather than a disguised favorite.
+CDP succeeds when authorized context becomes inspectable evidence, historical personality/preferences remain distinguishable from current authority, the possibility field genuinely widens, unknowns remain visible, and CEEP receives structured non-canonical candidates with a runtime receipt.
