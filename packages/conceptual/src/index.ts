@@ -12,6 +12,24 @@ export {
   type CCPDecisionRules,
 } from "./ccp/ConceptualConvergenceProtocol.js";
 
+export {
+  CDPContextParser,
+  type CDPContextAuthority,
+  type CDPContextFragmentInput,
+  type CDPContextParseReceipt,
+  type CDPContextParseResult,
+  type CDPContextSignal,
+  type CDPContextSignalClass,
+  type CDPContextSourceKind,
+} from "./cdp/CDPContextParser.js";
+export {
+  ConceptualDivergenceRuntime,
+  type CDPCandidateSeed,
+  type CDPRuntimeCandidate,
+  type CDPRuntimeInput,
+  type CDPRuntimeReceipt,
+} from "./cdp/ConceptualDivergenceRuntime.js";
+
 export type { FrameworkEvolutionReceipt } from "./receipts/FrameworkEvolutionReceipt.js";
 export type { CanonicalReceipt } from "./receipts/CanonicalReceipt.js";
 
