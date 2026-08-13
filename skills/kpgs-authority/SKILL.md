@@ -5,8 +5,8 @@ license: MIT
 compatibility: Portable Agent Skills SKILL.md package; requires access to the repository or authoritative KPGS source material being governed.
 metadata:
   author: Kholofelo Robyn Rababalela / Kopano Labs
-  version: "1.0.0"
-  authority-origin: Kopano-Labs/Introduction-to-MCP
+  version: "1.0.1"
+  authority-origin: RobynAwesome/Introduction-to-MCP
   authority-root: Schematics/21-KOPANO-PHU GOVERNACE SYSTEMS/MAIN-BRAIN
   portable: true
   tags: governance, kpgs, stateless-renter, authority, receipts
@@ -22,7 +22,7 @@ The renter is an execution actor. It is not the landlord, not the automatic sour
 
 ## Canonical KPGS sources
 
-When the `Kopano-Labs/Introduction-to-MCP` repository is available, prefer the smallest source set required for the task and preserve these authority anchors:
+When the `RobynAwesome/Introduction-to-MCP` repository is available, prefer the smallest source set required for the task and preserve these authority anchors:
 
 1. `Schematics/21-KOPANO-PHU GOVERNACE SYSTEMS/MAIN-BRAIN/KPGS_GOVERNANCE_CORE.json`
 2. `Schematics/21-KOPANO-PHU GOVERNACE SYSTEMS/MAIN-BRAIN/STATELESS_RENTER_ENTRYWAY.json`
@@ -51,22 +51,13 @@ CLASSIFY
 
 ### 1. Classify before interpret
 
-Determine:
-
-- ecosystem / domain;
-- subject;
-- current human objective;
-- authority scope;
-- evidence class;
-- mutable vs immutable state;
-- active workflow node;
-- privacy/context lane.
+Determine ecosystem/domain, subject, current human objective, authority scope, evidence class, mutable vs immutable state, active workflow node, and privacy/context lane.
 
 Do not turn a single event into a general personality, architecture, or constitutional claim without evidence that supports that promotion.
 
 ### 2. Identify renter status
 
-The canonical renter-entry implementation declares the acknowledgement literal:
+The canonical renter-entry implementation declares:
 
 ```text
 I_AM_STATELESS_RENTER_NOT_LANDLORD
@@ -75,8 +66,6 @@ I_AM_STATELESS_RENTER_NOT_LANDLORD
 If the active KPGS runtime exposes a newer renter-entry contract, follow the runtime's exact contract and receipt it rather than inventing a competing acknowledgement.
 
 ### 3. Preserve KPGS protocol order
-
-The KPGS Protocols Protocol defines ordered protocol phases. Do not flatten an ordered governance gate into arbitrary execution:
 
 ```text
 Phase 1 — Prompting Protocols
@@ -95,8 +84,6 @@ MEMORY PROJECTION != CONSTITUTIONAL TRUTH
 RETRIEVED != AUTHORITATIVE OUTSIDE SOURCE SCOPE
 TRUE != RELEVANT RIGHT NOW
 ```
-
-A renter may make mistakes inside granted authority. Do not cosmetically hide those mistakes. Preserve changed artifacts, consequences, repair path, and receipts.
 
 ## Skill routing
 
@@ -139,4 +126,4 @@ If proof is missing, return `hold` and name the missing evidence. Never fabricat
 - Do not cross private/relational context into unrelated public/work/research lanes without explicit authorization.
 - Do not claim a model/runtime capability from brand reputation when exact runtime evidence is required.
 - Do not replace owner-declared authority with community documentation.
-- Do preserve conflicts as evidence until they are resolved.
+- Preserve conflicts as evidence until they are resolved.
