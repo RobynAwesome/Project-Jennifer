@@ -8,7 +8,7 @@ const engine = new ForgeRoleEngine();
 test("exposes the stateless-renter Project Jennifer role contract", () => {
   const contract = engine.getContract();
 
-  assert.equal(contract.contextRoot, "Kopano-Labs/Introduction-to-MCP");
+  assert.equal(contract.contextRoot, "RobynAwesome/Introduction-to-MCP");
   assert.equal(contract.invariant, "I_AM_STATELESS_RENTER_NOT_LANDLORD");
   assert.ok(contract.operatingModes.includes("forensic-sociologist"));
   assert.ok(contract.operatingModes.includes("model-developer"));
