@@ -11,6 +11,12 @@ export {
   ConceptualConvergenceProtocol,
   type CCPDecisionRules,
 } from "./ccp/ConceptualConvergenceProtocol.js";
+export {
+  CCPPkaAdmissionParser,
+  type CCPPkaAdmissionInput,
+  type CCPPkaAdmissionRequest,
+  type CCPPkaAdmissionResult,
+} from "./ccp/CCPPkaAdmissionParser.js";
 
 export {
   CDPContextParser,

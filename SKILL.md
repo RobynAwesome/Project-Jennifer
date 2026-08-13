@@ -15,7 +15,7 @@ allowed-tools:
   - exec
 license: MIT
 repository: https://github.com/RobynAwesome/Project-Jennifer
-canonical-ecosystem-anchor: https://github.com/Kopano-Labs/Introduction-to-MCP
+canonical-ecosystem-anchor: https://github.com/RobynAwesome/Introduction-to-MCP
 skill-index: skills.md
 specialist-router: skills/project-jennifer/SKILL.md
 repository-implementation-router: skills/SKILL.md
@@ -33,7 +33,7 @@ Use this root skill as the **public/repository entrypoint**. It intentionally gi
 I_AM_STATELESS_RENTER_NOT_LANDLORD
 ```
 
-The human's current instruction governs task intent. `Kopano-Labs/Introduction-to-MCP` supplies ecosystem doctrine when relevant. The current Project Jennifer repository supplies implementation truth. Branch, PR, CI and runtime receipts govern proof claims.
+The human's current instruction governs task intent. `RobynAwesome/Introduction-to-MCP` supplies ecosystem doctrine when relevant. The current Project Jennifer repository supplies implementation truth. Branch, PR, CI and runtime receipts govern proof claims.
 
 ## Load order
 
@@ -67,7 +67,7 @@ CDP
 - **CDP — Conceptual Divergence Protocol:** expand the possibility space. Portable/specification surface exists; a dedicated Jennifer CDP runtime module is not currently proven.
 - **CEEP — Conceptual Evaluation Engine:** evaluate candidates and emit evaluation/evolution receipts.
 - **POC-vs-FOC:** separate evidence-bearing proof from unsupported conceptual promotion.
-- **VOC Registry Parser:** preserve the KPGS `POC` branch and emergent operational `FOC-G##` groups from `Kopano-Labs/Introduction-to-MCP` with provenance instead of flattening them into Jennifer semantic risk categories.
+- **VOC Registry Parser:** preserve the KPGS `POC` branch and emergent operational `FOC-G##` groups from `RobynAwesome/Introduction-to-MCP` with provenance instead of flattening them into Jennifer semantic risk categories.
 - **POC/FOC Runtime Gate:** require a consequential action to survive conceptual evaluation, operational FOC checks, evidence binding and Memory Receipt admission before state mutation.
 - **CCP — Conceptual Convergence Protocol:** determine which pattern survives evidence and evaluation; current TypeScript implementation exists under `packages/conceptual/src/ccp/`.
 - **NCMP — New Concept MMAO Protocol:** govern genuinely new agent-originated concepts; human recognition remains mandatory.

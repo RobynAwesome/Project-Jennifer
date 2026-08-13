@@ -21,7 +21,7 @@ For every Project Jennifer task:
 8. current branch / PR / CI / runtime receipts before proof claims
 ```
 
-If ecosystem context is required, consult `Kopano-Labs/Introduction-to-MCP` as the first ecosystem anchor, then return to Project Jennifer current repository evidence for implementation truth.
+If ecosystem context is required, consult `RobynAwesome/Introduction-to-MCP` as the first ecosystem anchor, then return to Project Jennifer current repository evidence for implementation truth.
 
 ## Core skill catalog
 

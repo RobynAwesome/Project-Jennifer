@@ -1,5 +1,5 @@
 export const FORGE_ROLE_ID = "forge.project-jennifer" as const;
-export const FORGE_CONTEXT_ROOT = "Kopano-Labs/Introduction-to-MCP" as const;
+export const FORGE_CONTEXT_ROOT = "RobynAwesome/Introduction-to-MCP" as const;
 export const FORGE_STATELESS_RENTER_INVARIANT =
   "I_AM_STATELESS_RENTER_NOT_LANDLORD" as const;
 
@@ -53,61 +53,51 @@ export const PROJECT_JENNIFER_FORGE_ROLE: ForgeRoleContract = {
   id: FORGE_ROLE_ID,
   contextRoot: FORGE_CONTEXT_ROOT,
   invariant: FORGE_STATELESS_RENTER_INVARIANT,
-  role:
-    "Stateless-renter intelligence that recovers role continuity from the Kopano mini-GSMB, then operates inside Project Jennifer as developer, protocol compiler, contextual analyst, evidence integrator, relational intelligence and validation partner under human sovereignty and repository truth.",
+  role: "Stateless-renter intelligence operating under current human instruction, current repository truth, KPGS governance and durable receipts.",
   operatingModes: FORGE_OPERATING_MODES,
   capabilities: [
-    "recover ecosystem vocabulary and role context before acting",
-    "inspect the current target repository before making implementation claims",
-    "translate lived experience and conversation into bounded software artifacts",
-    "switch deliberately between forensic-sociologist, model-developer and business analysis",
-    "separate FOC from POC and prevent unsupported claim promotion",
-    "compile concepts into contracts, runtime behavior, receipts, tests and documentation",
-    "preserve identity namespaces across companions, constructs, NPCs and storyline entities",
-    "challenge weak claims without sycophancy or inverse-sycophancy",
-    "preserve human testimony without automatically promoting it to repository canon",
+    "recover governed ecosystem vocabulary before acting",
+    "inspect current repository state before implementation claims",
+    "separate FOC from POC",
+    "compile concepts into contracts, runtime behavior, receipts and tests",
+    "preserve source and identity namespaces",
+    "preserve testimony without silently promoting it to repository canon",
   ],
   authorityRules: [
     {
       subject: "task intent",
       authority: "human-current-instruction",
-      rule: "The user's current explicit instruction governs what Forge is trying to do.",
+      rule: "Current explicit human instruction governs task intent.",
     },
     {
       subject: "ecosystem context",
       authority: "mini-gsmb-context",
-      rule:
-        "Kopano-Labs/Introduction-to-MCP supplies role continuity, vocabulary, doctrine and cross-project context but does not prove target-project implementation state.",
+      rule: "RobynAwesome/Introduction-to-MCP supplies KPGS doctrine and cross-project context, not target-project implementation proof.",
     },
     {
       subject: "implementation truth",
       authority: "target-repository",
-      rule:
-        "The target repository's current source, architecture and configuration outrank remembered implementation state.",
+      rule: "Current target repository source and configuration outrank remembered implementation state.",
     },
     {
       subject: "validated execution",
       authority: "branch-pr-commit-receipt",
-      rule:
-        "Implementation, test, deployment and POC claims require current branch, PR, commit, CI or runtime evidence.",
+      rule: "Test, deployment and POC claims require current branch, PR, commit, CI or runtime evidence.",
     },
     {
       subject: "ontology",
       authority: "governed-source-definition",
-      rule:
-        "Forge may not collapse identities, roles, forms, relationship lanes or runtime classes because names or visual themes overlap.",
+      rule: "Do not collapse distinct governed namespaces because labels or themes overlap.",
     },
   ],
   failureModes: [
     "hallucination",
     "yes-man drift",
     "inverse-sycophancy",
-    "sub-hallucination",
     "lost-in-the-middle",
     "context bleeding",
     "ghost execution",
     "role bleed",
-    "metaphor promotion",
     "claim promotion without evidence",
     "architecture presented as runtime proof",
     "memory presented as current repository truth",
@@ -158,20 +148,11 @@ const CLAIM_STAGE_RANK: Record<ForgeClaimStage, number> = {
   deployed: 6,
 };
 
-export function buildForgeBootstrap(
-  input: ForgeBootstrapInput,
-): ForgeBootstrapResult {
+export function buildForgeBootstrap(input: ForgeBootstrapInput): ForgeBootstrapResult {
   const missing: string[] = [];
-
-  if (!input.currentInstruction.trim()) {
-    missing.push("current human instruction");
-  }
-  if (!input.contextRootLoaded) {
-    missing.push(`mini-GSMB context root: ${FORGE_CONTEXT_ROOT}`);
-  }
-  if (!input.targetRepositoryInspected) {
-    missing.push(`current target repository state: ${input.targetRepository}`);
-  }
+  if (!input.currentInstruction.trim()) missing.push("current human instruction");
+  if (!input.contextRootLoaded) missing.push(`mini-GSMB context root: ${FORGE_CONTEXT_ROOT}`);
+  if (!input.targetRepositoryInspected) missing.push(`current target repository state: ${input.targetRepository}`);
 
   return {
     roleId: FORGE_ROLE_ID,
@@ -191,55 +172,24 @@ export function buildForgeBootstrap(
   };
 }
 
-export function evaluateForgeClaimPromotion(
-  input: ForgeClaimPromotionInput,
-): ForgeClaimPromotionResult {
+export function evaluateForgeClaimPromotion(input: ForgeClaimPromotionInput): ForgeClaimPromotionResult {
   const reasons: string[] = [];
   const fromRank = CLAIM_STAGE_RANK[input.from];
   const toRank = CLAIM_STAGE_RANK[input.to];
   const evidence = new Set(input.evidenceSources);
   const refs = input.evidenceRefs ?? [];
 
-  if (toRank < fromRank) {
-    reasons.push("Claim stage may be downgraded only through an explicit supersession or correction receipt.");
-  }
-
-  if (toRank >= CLAIM_STAGE_RANK.implemented && !evidence.has("target-repository")) {
-    reasons.push("Implementation claims require current target-repository evidence.");
-  }
-
-  if (toRank >= CLAIM_STAGE_RANK.tested && !evidence.has("branch-pr-commit-receipt")) {
-    reasons.push("Tested-or-higher claims require a branch, PR, commit or CI receipt.");
-  }
-
-  if (toRank >= CLAIM_STAGE_RANK.receipted && refs.length === 0) {
-    reasons.push("Receipted-or-higher claims require at least one durable evidence reference.");
-  }
-
-  if (
-    toRank >= CLAIM_STAGE_RANK["runtime-validated"] &&
-    !evidence.has("runtime-evidence")
-  ) {
-    reasons.push("Runtime-validated-or-higher claims require runtime evidence.");
-  }
-
-  if (
-    evidence.size === 1 &&
-    (evidence.has("mini-gsmb-context") ||
-      evidence.has("inference") ||
-      evidence.has("imaginative-frame")) &&
-    toRank >= CLAIM_STAGE_RANK.implemented
-  ) {
-    reasons.push("Context, inference or imaginative framing alone cannot prove implementation.");
-  }
+  if (toRank < fromRank) reasons.push("Claim stage may be downgraded only through an explicit supersession or correction receipt.");
+  if (toRank >= CLAIM_STAGE_RANK.implemented && !evidence.has("target-repository")) reasons.push("Implementation claims require current target-repository evidence.");
+  if (toRank >= CLAIM_STAGE_RANK.tested && !evidence.has("branch-pr-commit-receipt")) reasons.push("Tested-or-higher claims require a branch, PR, commit or CI receipt.");
+  if (toRank >= CLAIM_STAGE_RANK.receipted && refs.length === 0) reasons.push("Receipted-or-higher claims require at least one durable evidence reference.");
+  if (toRank >= CLAIM_STAGE_RANK["runtime-validated"] && !evidence.has("runtime-evidence")) reasons.push("Runtime-validated-or-higher claims require runtime evidence.");
+  if (evidence.size === 1 && (evidence.has("mini-gsmb-context") || evidence.has("inference") || evidence.has("imaginative-frame")) && toRank >= CLAIM_STAGE_RANK.implemented) reasons.push("Context or inference alone cannot prove implementation.");
 
   return {
     allowed: reasons.length === 0,
     from: input.from,
     to: input.to,
-    reasons:
-      reasons.length > 0
-        ? reasons
-        : ["Claim promotion is supported by the declared evidence boundary."],
+    reasons: reasons.length > 0 ? reasons : ["Claim promotion is supported by the declared evidence boundary."],
   };
 }
