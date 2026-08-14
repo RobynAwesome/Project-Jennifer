@@ -4,6 +4,10 @@ registry:
   canonical_site: https://www.awesomeskills.dev
   submission_status: public-github-ready-not-form-submitted
   requirement_note: Public GitHub repository with a SKILL.md; deep links to skill folders are supported by the registry submission flow.
+  additional_discovery_surfaces:
+    - site: https://skills.palebluedot.live
+      query: RobynAwesome
+      status: discovery-target-not-claimed-indexed
 
 repository:
   owner: RobynAwesome
@@ -27,6 +31,14 @@ skills:
     path: skills/kpgs-parser-protocol/SKILL.md
     deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-parser-protocol
     purpose: provenance-preserving parsing
+  - name: kpgs-ci-proof-gate
+    path: skills/kpgs-ci-proof-gate/SKILL.md
+    deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-ci-proof-gate
+    purpose: exact-SHA CI proof-state classification and FOC promotion prevention
+  - name: kpgs-engine-qualification
+    path: skills/kpgs-engine-qualification/SKILL.md
+    deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/kpgs-engine-qualification
+    purpose: qualify or quarantine exact engine/runtime capability lanes before routing
   - name: poc-foc-registry-parser
     path: skills/poc-foc-registry-parser/SKILL.md
     deep_link: https://github.com/RobynAwesome/Project-Jennifer/tree/main/skills/poc-foc-registry-parser
@@ -62,6 +74,8 @@ publication_receipt:
   source_commits:
     kpgs-authority: 5809bc58ae1d84c77fca8e468eb2d59675236aff
     kpgs-parser-protocol: 0c2d78ed3eda4aca273ff44e91666d6670cc4618
+    kpgs-ci-proof-gate: ac553d1f3df766ae241a7d7298ad901694696d21
+    kpgs-engine-qualification: dc650828ad1b45cdd6c12bb9cd528b490631b725
     poc-foc-registry-parser: 3ec89234aa614069e72b5b2aab438a9624e93fbe
     poc-foc-runtime-gate: null
     kpgs-deployment-parser: 3abef9b5728b63b705bce117e2ca072a786dd966
@@ -69,6 +83,6 @@ publication_receipt:
     kpgs-apple-deployment-parser: 4d79ac293ef78d42b3ebe4ba5cbd690ecf687091
     kpgs-model-hardware-router: 3ce443a8d0abd008b9ac3c7af34cb895be97a8a5
     kpgs-mmao-mao-renter: 59a233515e51e3fc8a866105cad48dbe385371d7
-    kpgs-runtime-pack: f8bf9c1f65e33aa37eda1e91772ac93ba6a12abc
+    kpgs-runtime-pack: 53043f769d589f4219a7efc3bb1f551bd7bc9da3
   website_submission_receipt: null
-  note: The GitHub artifacts are public and submission-ready. The AwesomeSkills website form itself has not been executed by this runtime. The runtime-gate source commit remains null until this branch is merged and a stable main-branch commit exists.
+  note: Public GitHub artifacts are discovery-ready. No claim is made that AwesomeSkills or PaleBlueDot has indexed them until an external registry receipt is observed.
