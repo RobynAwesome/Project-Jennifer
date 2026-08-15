@@ -9,3 +9,4 @@ export * from "./relationships.js";
 export * from "./ncmp.js";
 export * from "./pern-foundation.js";
 export * from "./forge-role.js";
+export * from "./zodiac.js";
