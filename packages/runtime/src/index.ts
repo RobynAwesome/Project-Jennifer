@@ -30,6 +30,18 @@ export type {
   ZodiacSymbolicContext,
 } from "./zodiac-context-engine.js";
 
+export {
+  HUMAN_CONTEXT_PRIORITY,
+  HumanContextPacketEngine,
+  HumanContextPacketError,
+} from "./human-context-packet-engine.js";
+export type {
+  HumanContextAuthorityLayer,
+  HumanContextPacket,
+  HumanContextPacketInput,
+  HumanContextPacketReceipt,
+} from "./human-context-packet-engine.js";
+
 export { ForgeRoleEngine } from "./forge-role-engine.js";
 
 export { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
