@@ -21,6 +21,15 @@ export type {
   RelationshipCommandResult,
 } from "./relationship-engine.js";
 
+export { ZodiacContextEngine } from "./zodiac-context-engine.js";
+export type {
+  ZodiacContextInput,
+  ZodiacContextReceipt,
+  ZodiacContextResult,
+  ZodiacContextStatus,
+  ZodiacSymbolicContext,
+} from "./zodiac-context-engine.js";
+
 export { ForgeRoleEngine } from "./forge-role-engine.js";
 
 export { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
