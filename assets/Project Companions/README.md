@@ -23,11 +23,11 @@ Project Jennifer should create meaningful ownership, evolution and choice — no
 
 ---
 
-## Asset-integrity state — second pass, 2026-08-12
+## Asset-integrity state — closed repair, 2026-08-16
 
-The first audit correctly found missing legacy paths and malformed `.webp` pointer payloads. A second pass found that **valid founder-supplied PNG source binaries were already in the repository under opaque numeric names**.
+The original audit found missing legacy paths and malformed `.webp` pointer payloads. The repair has now separated that binary-integrity problem from character-identity governance.
 
-Three Digital Hippocampus / companion-selection sources are now normalized under stable paths:
+Three Digital Hippocampus / companion-selection sources are normalized under stable paths:
 
 ```text
 source/digital-hippocampus-substrate-001.png
@@ -53,54 +53,44 @@ source/digital-hippocampus-companion-selection-embodied-historical-001.png
   <img src="source/digital-hippocampus-companion-selection-embodied-historical-001.png" alt="Digital Hippocampus historical embodied companion selection" width="96%" />
 </p>
 
-The third image is deliberately shown **at full breathing width**, not squeezed into a collage. It demonstrates that the same companion mechanisms can be represented through embodied/human forms while preserving the deeper logic underneath.
-
-Its visible historical `Eira` label remains historical lineage. Current executable identity remains `Fira` unless a governed identity receipt changes it.
+The third image is deliberately shown **at full breathing width**, not squeezed into a collage. Its visible historical `Eira` label remains historical lineage. Current executable identity remains `Fira` unless a governed identity receipt changes it.
 
 Their dimensions, SHA-256 fingerprints and prior repository paths are recorded in [`source-manifest.json`](source-manifest.json).
 
 ### Pointer payloads are quarantined
 
-Verified local-path pointer payloads are no longer stored as apparently renderable `.webp` files. They now live under:
+Verified local-path pointer payloads are no longer stored as apparently renderable `.webp` files. They live under:
 
 ```text
 quarantine/legacy-path-pointer/
 ```
 
-with `.pointer.txt` names.
+with `.pointer.txt` names. That preserves failure evidence without allowing text pointers to masquerade as image art.
 
-That preserves the failure evidence without allowing a text pointer to masquerade as image art.
+### Founder HD gallery — binary repair complete
 
-### Founder HD intake is now inventoried without hallucinated character mapping
+The remaining **14 real high-resolution PNG payloads** are machine-validated in [`unclassified-intake.json`](unclassified-intake.json): PNG signature, IHDR/dimensions, IDAT inflate, IEND, byte count and SHA-256 are receipt-pinned and enforced by CI.
 
-The folder also contains **14 real high-resolution PNG payloads** still carrying opaque generated filenames. They are now recorded in [`unclassified-intake.json`](unclassified-intake.json) with Git blob SHA, byte size and `unclassified-source` state.
-
-That inventory intentionally does **not** guess whether an opaque file is Kopa, Vanta, Nyra, SolveK, Lyrae, a rarity visual, a light/dark form or something else.
+They are now rendered individually at large size in the public [`FOUNDER_HD_GALLERY.md`](FOUNDER_HD_GALLERY.md), rather than being hidden behind broken paths or a compressed collage.
 
 ```text
 REAL BINARY
     ↓
-UNCLASSIFIED SOURCE RECEIPT
+MACHINE VALIDATION + SHA-256
     ↓
-POSITIVE VISUAL / FOUNDER IDENTIFICATION
+PUBLIC INDIVIDUAL HD GALLERY
+    ↓
+POSITIVE IDENTITY RECEIPT (WHEN AVAILABLE)
     ↓
 IDENTITY + EDITION + FORM CLASSIFICATION
     ↓
-STABLE SEMANTIC PATH
-    ↓
-PUBLIC README / STORE / GAME USE
+STABLE CANON PATH / STORE / GAME USE
 ```
 
-This is the bridge between “the files exist” and “the game knows what they are.”
+**Issue #25's binary-integrity/public-render defect is complete.** The gallery intentionally does **not** guess whether any opaque source is Kopa, Vanta, Nyra, SolveK, Lyrae, a rarity visual, or a form. Positive identity mapping is a separate canon-governance event; it is not allowed to keep binary repair open in a way that pressures the system to fabricate identity.
 
-### Issue #25 remains open
-
-This intake repair does **not** prove that every founder-approved HD Limited Edition asset named by Issue #25 has been restored. The exact Vanta, Nyra, SolveK, Lyrae, Kopa and rarity acceptance set still needs binary-by-binary identity mapping and public-render validation before that issue can close.
-
-The visual target remains: **high-resolution individual character art, not squeezed thumbnail collages.**
-
-➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md).  
-➡️ See [`unclassified-intake.json`](unclassified-intake.json) for the current founder HD intake queue.
+➡️ See [`FOUNDER_HD_GALLERY.md`](FOUNDER_HD_GALLERY.md) for all fourteen validated HD sources.  
+➡️ See [`docs/audits/2026-08-11-companion-asset-integrity.md`](../../docs/audits/2026-08-11-companion-asset-integrity.md) for the forensic history.
 
 ### Stable namespace
 
@@ -108,12 +98,13 @@ The visual target remains: **high-resolution individual character art, not squee
 assets/Project Companions/
   README.md
   source-manifest.json
-  unclassified-intake.json   # real HD binaries awaiting positive identity mapping
+  unclassified-intake.json   # validated HD binaries awaiting positive identity promotion
+  FOUNDER_HD_GALLERY.md      # public individual HD render receipt
   source/                    # governed design/source binaries
   quarantine/                # invalid/non-renderable forensic payloads
-  rarity/                    # common / epic / rare / legendary system visuals
-  limited-edition/           # authored purchasable / collector editions
-  forms/                     # identity-preserving body/form states
+  rarity/                    # canon assets after positive rarity receipt
+  limited-edition/           # canon collector assets after positive identity/edition receipt
+  forms/                     # canon body/form states after positive identity/form receipt
 ```
 
 A filename never overrides the governed character/edition receipt.
@@ -141,16 +132,7 @@ Rarity describes the progression/value state of a companion instance.
 COMMON → EPIC → RARE → LEGENDARY
 ```
 
-Rarity can be influenced by governed gameplay history, including:
-
-- quests survived;
-- transformations;
-- difficult choices;
-- relationship history;
-- unlocked skills;
-- failures and recoveries;
-- world-state consequences;
-- special achievements or validated events.
+Rarity can be influenced by governed gameplay history, including quests survived, transformations, difficult choices, relationship history, unlocked skills, failures and recoveries, world-state consequences, and validated achievements.
 
 > **Rarity can come from history, not only scarcity.**
 
@@ -167,17 +149,7 @@ LIMITED EDITION
 
 **Limited Edition** is the authored/purchasable collector lane represented by the detailed named-character and Kopa edition direction.
 
-A Limited Edition may provide:
-
-- authored visual identity;
-- distinctive animation or presentation;
-- special lore;
-- special quest access;
-- unique voice/style direction;
-- collector scarcity;
-- edition-specific cosmetics or bounded affinities.
-
-It must **not silently mean automatic combat superiority**.
+A Limited Edition may provide authored visual identity, distinctive animation/presentation, special lore, bounded quest access, unique voice/style direction, collector scarcity, or edition-specific cosmetics/affinities. It must **not silently mean automatic combat superiority**.
 
 ```text
 LIMITED EDITION ≠ LEGENDARY
@@ -219,16 +191,7 @@ Do not merge lore, powers, memories or identity merely because the display name 
 
 Form is an embodiment state, not a new identity by default.
 
-Possible states include:
-
-- dark body frame;
-- light body frame;
-- juvenile;
-- teenage;
-- mature;
-- guardian / armored evolution;
-- shadow / corrupted evolution;
-- environment- or quest-specific forms.
+Possible states include dark body frame, light body frame, juvenile, teenage, mature, guardian/armored evolution, shadow/corrupted evolution, and environment- or quest-specific forms.
 
 ```text
 Identity = WHO it is
@@ -267,14 +230,7 @@ Future mechanisms can extend the matrix without multiplying character bodies unn
 
 Alignment describes the current governed behavioral direction; it is **not an immutable morality stamp**.
 
-Initial vocabulary:
-
-- Guardian
-- Neutral
-- Rival
-- Shadow
-- Corrupted
-- Redeemed
+Initial vocabulary: Guardian, Neutral, Rival, Shadow, Corrupted, Redeemed.
 
 A companion can change alignment through receipts, quests, relationships and state transitions. A hero can fail. A rival can protect the player. A dangerous mechanism can be used responsibly.
 
@@ -284,14 +240,7 @@ Alignment is independent from edition and rarity.
 
 # 5. Relationship lane
 
-Relationship lanes define how the player and companion are currently allowed to operate together:
-
-- co-builder;
-- mentor;
-- guardian;
-- rival-ally;
-- platonic;
-- romantic.
+Relationship lanes define how the player and companion are currently allowed to operate together: co-builder, mentor, guardian, rival-ally, platonic, romantic.
 
 Relationship lane remains governed separately from identity, edition, rarity and visual form.
 
@@ -299,19 +248,7 @@ Relationship lane remains governed separately from identity, edition, rarity and
 
 # 6. Skill loadout
 
-Skills determine concrete gameplay utility. Examples include:
-
-- memory recall;
-- contradiction detection;
-- receipt validation;
-- telemetry scan;
-- navigation;
-- persuasion;
-- deception detection;
-- shield / defense;
-- combat support;
-- restoration;
-- contextual inference.
+Skills determine concrete gameplay utility. Examples include memory recall, contradiction detection, receipt validation, telemetry scan, navigation, persuasion, deception detection, shield/defense, combat support, restoration and contextual inference.
 
 A companion's visual design may suggest capabilities without hard-coding them.
 
@@ -338,20 +275,7 @@ Names or labels rendered inside exploratory concept art are **not authoritative 
 
 # Receipt-earned evolution
 
-The receipt chain answers **why this copy matters**.
-
-Receipts can prove:
-
-- acquisition;
-- quest history;
-- transformations;
-- rarity promotion;
-- boundaries;
-- relationship transitions;
-- learned skills;
-- failures;
-- redemptions;
-- world-state consequences.
+The receipt chain answers **why this copy matters**. Receipts can prove acquisition, quest history, transformations, rarity promotion, boundaries, relationship transitions, learned skills, failures, redemptions and world-state consequences.
 
 Two visually identical Standard companions can therefore diverge because their histories diverged.
 
@@ -453,7 +377,7 @@ Before a visual is embedded as a repository asset:
 
 - preserve source provenance;
 - validate the binary payload;
-- record a stable filename;
+- record a stable source path or immutable receipt;
 - record dimensions/checksum where provenance matters;
 - separate source/canon/canon-candidate status;
 - preserve historical labels rather than silently rewriting them;
@@ -477,6 +401,8 @@ Source authority is governed by [`governance/source-authority-registry.json`](..
 
 > **A companion's receipts should explain what it became.**
 
-> **Opaque filenames are intake evidence, not identity.**
+> **Binary integrity may close independently from identity promotion.**
+
+> **Opaque filenames are source receipts, not identity.**
 
 Project Jennifer governs the combination. The player chooses the path.

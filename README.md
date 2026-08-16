@@ -280,17 +280,18 @@ Gameplay receipts prove **what that companion became afterward**.
 
 The future store and token / crypto-mining experiments can use edition and rarity as separate economic primitives. Exact token issuance, mining yield, exchange value and financial mechanics remain future governed implementation gates — not promises hidden inside concept art.
 
-### Visual asset integrity gate
+### Visual asset integrity gate — repaired
 
-The 2026-08-11 second-pass audit found two different asset states that must not be collapsed:
+The companion asset repair now separates binary truth from identity truth:
 
-- **valid founder-supplied PNG sources now exist and have been normalized** for the Digital Hippocampus / companion-selection lineage;
-- several legacy Limited Edition `.webp` entries were verified as local-path pointer payloads rather than images and have been moved into a forensic `quarantine/legacy-path-pointer/` namespace with `.pointer.txt` extensions.
+- valid founder-supplied PNG sources are binary-validated, dimensions/checksums are receipt-pinned and enforced by CI;
+- legacy `.webp` local-path pointer payloads are quarantined as `.pointer.txt` forensic evidence;
+- all fourteen validated founder HD sources now render **individually at large size** in the public gallery;
+- no opaque source is guessed into Vanta / Nyra / SolveK / Lyrae / Kopa / rarity / form canon.
 
-Those pointer payloads are no longer allowed to masquerade as renderable character art. **Issue #25 remains open** because the exact founder-approved HD Limited Edition binaries named in its acceptance receipt still require verified intake before the root README can display them.
+**Issue #25's asset-integrity/public-render defect is complete.** Positive identity promotion is a separate governed canon event and must wait for a real identity receipt rather than keeping binary repair artificially open.
 
-The visual target remains: **large individual Limited Edition portraits, never squeezed thumbnail collages.**
-
+➡️ **[Open the Founder HD Companion Gallery](assets/Project%20Companions/FOUNDER_HD_GALLERY.md)**  
 ➡️ **[Read the companion asset integrity audit](docs/audits/2026-08-11-companion-asset-integrity.md)**
 
 ---
@@ -461,9 +462,9 @@ Project Jennifer is in active Proof-of-Concept development. The repository delib
 | State | What it means here |
 |---|---|
 | **Implemented / coded POC** | web/API/game runtime surfaces, companion selection, governance and validation contracts, governed relationship events/receipts, Memory Receipt Engine, Free Mode/CAG/RAG/renter scaffolds, SQLite edge continuity and benchmark/test assets |
-| **Coded on the current governance branch; validation pending** | public `forge-rivm` skill, machine-readable source-authority registry, governed Waifu Forge / Digital Hippocampus source manifests, semantic asset paths and pointer-payload quarantine |
+| **Validated asset/source POC** | public `forge-rivm` skill, machine-readable source-authority registry, governed Waifu Forge / Digital Hippocampus source manifests, semantic source paths, pointer-payload quarantine, founder HD binary receipts and public individual HD gallery |
 | **Designed / story direction** | governance city, expanded quests, Project Waifu Forge arcs, Project Wify Jennifer Genesis/Convergence/True One lore, richer companion evolution, character forms, broader world and cinematic presentation |
-| **Next implementation gates** | exact HD Limited Edition asset intake for Issue #25, production PostgreSQL and MongoDB adapters, full asset-backed scenes, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
+| **Next implementation gates** | positive identity promotion for HD sources when evidence exists, production PostgreSQL and MongoDB adapters, full asset-backed scenes, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
 | **Future governed experiments** | token/crypto-mining economy, larger marketplace systems, richer multi-agent/world simulation and mechanics that still require implementation and validation receipts |
 
 The latest governance work contains tests and CI workflow definitions whose newest run status must be observed before claiming a fresh validation **PASS**. Project Jennifer treats **“code exists”** and **“proof passed”** as different statements.
@@ -513,6 +514,7 @@ The root README explains **why the machinery matters**. The implementation belon
 | source-authority architecture decision | **[ADR-0005](docs/architecture/adr-0005-governed-source-authority-and-rivm.md)** |
 | companions, relationship lanes and Constructs | **[Companion Architecture](docs/architecture/companion-system.md)** |
 | rarity, editions, forms and character rules | **[Project Companions](assets/Project%20Companions/README.md)** |
+| validated founder HD companion sources | **[Founder HD Gallery](assets/Project%20Companions/FOUNDER_HD_GALLERY.md)** |
 | memory receipts and evidence-bearing memory | **[Memory Receipt Engine](docs/architecture/memory-receipt-risk-matrix.md)** |
 | relational inference governance | **[Forge RIVM](skills/forge-rivm/SKILL.md)** |
 | MERN + PERN persistence direction | **[PERN Roadmap](PERN_ROADMAP.md)** |
