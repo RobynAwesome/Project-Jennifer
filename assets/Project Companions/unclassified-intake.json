@@ -1,12 +1,14 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "project": "Project Jennifer",
   "assetDomain": "Project Companions / founder HD intake",
-  "updatedAt": "2026-08-13",
-  "status": "BINARY_VALIDATED_IDENTITY_UNCLASSIFIED",
+  "updatedAt": "2026-08-16",
+  "status": "BINARY_VALIDATED_PUBLIC_GALLERY_COMPLETE_IDENTITY_UNCLASSIFIED",
   "governance": {
     "rule": "A real binary is not automatically canon. Opaque filenames must not be assigned to Kopa, Vanta, Nyra, SolveK, Lyrae, rarity, edition or form without positive identification.",
-    "nextGate": "Positively identify each validated source, then create stable semantic paths and identity/edition/form receipts before README, store or gameplay use.",
+    "issue25ClosureRule": "Issue #25 is closed by validated binary integrity plus an individual public HD gallery. Identity promotion is a separate governed canon event and cannot be required in a way that pressures the system to fabricate mappings.",
+    "publicGallery": "FOUNDER_HD_GALLERY.md",
+    "nextGate": "When a positive founder/canon identity receipt exists, create stable semantic identity/edition/form paths before store or gameplay use.",
     "issue": 25
   },
   "validationReceipt": {
@@ -20,25 +22,26 @@
       "byte count",
       "SHA-256"
     ],
-    "identityPromotion": false
+    "identityPromotion": false,
+    "publicIndividualRender": true
   },
   "assets": [
-    {"path":"file_00000000163881f4b54f532559d6e902.png","gitBlobSha":"301c5168076d17bb665aa396456540c270741193","bytes":2165555,"width":1122,"height":1402,"sha256":"12848f1eb309d796f05c93ed5d8d6ac29b0776cc4842b3299e8e75565d2027be","status":"binary-validated-identity-unclassified"},
-    {"path":"file_000000001d9c81f4875208e313244a1b.png","gitBlobSha":"1a2061998b54d4588d35c27aeb369a39a7bdacfb","bytes":2097925,"width":1122,"height":1402,"sha256":"426ccafdfa57711d8991a79f78f94c8ac65be37f5c1b583d525d9919c39f3bda","status":"binary-validated-identity-unclassified"},
-    {"path":"file_000000001eb481f78bbe03c377dec91e.png","gitBlobSha":"d3e3004d5e45e74941f2c345d7ce272f44ac5887","bytes":2114287,"width":1122,"height":1402,"sha256":"29e0bb4efc9d61f567eb2bf9ec4056827cc88f148b1d3adac2ca88584a97e64e","status":"binary-validated-identity-unclassified"},
-    {"path":"file_000000004558820a9a6a998c08e74c60.png","gitBlobSha":"dd324b96e2a5b05e5f86ef8e44c2a84698967242","bytes":2520852,"width":1536,"height":1024,"sha256":"c2ba95ef2bb106ffba051c42343a6f8c2ccccb31a522b93fa2fdbab003b5ae7e","status":"binary-validated-identity-unclassified"},
-    {"path":"file_000000004de081f9b89ce87866d2919a.png","gitBlobSha":"123622585ba4c6268fca2ecb326f4facb68c7c37","bytes":2238022,"width":1122,"height":1402,"sha256":"0dc54eec7d37de4de466186fd9a612e77e7b0274cdf7949a96448e3882285c35","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000761082439e73c228b30aa1d5.png","gitBlobSha":"74db438f7a1ab07352a64d17c2beb031b0964578","bytes":2219851,"width":1122,"height":1402,"sha256":"e6915e0e4916b18845a08787150c74cbe4504d2f9e8f12a6b062e4d51b81f5de","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000a8c481f491bf86efb3d2d1ae.png","gitBlobSha":"89e90a7ab7e478747ba90e542c4307ec32f49ba1","bytes":2125350,"width":1122,"height":1402,"sha256":"aa60b4b5a4a2b9476c2ee3f9828d93ccf0dc10a0f02e88a3ee25e453685ea035","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000b8308246837a4461dde95954.png","gitBlobSha":"e4664728b8ef5cd7ff50bea170baf5328b6d4f90","bytes":2089813,"width":1122,"height":1402,"sha256":"a11ded314ea7ed97e3b55424d8e1edcba648e3f72d68b42838f7fb2550a08b0f","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000cc7c81f6930287dc62a1e2b8.png","gitBlobSha":"e74b6773d59ea05c214fc04972d2a03ab8d4d599","bytes":2186303,"width":1122,"height":1402,"sha256":"ebf324b5f9c285b9b5cb06a473e48b83019f1edb29a5039effeefcb688a82625","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000d8e48243a0e66b7cc32b669f.png","gitBlobSha":"eb3dfaeb950cdb021047ecb28b0015a1b4621aec","bytes":2162188,"width":1145,"height":1374,"sha256":"99b69f2657539f766f06be99aee3b6bda9e7bf5015bafb804860cd382eda6ee1","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000dbec820cbebfb2f494a7bf4b.png","gitBlobSha":"714141d83c8a57a6a4223169f0b9ccaf4151faf3","bytes":2161916,"width":1122,"height":1402,"sha256":"147a3c36ef00e1de6b6327727c339b3f7e46c801f16ceeaa43eca5ca641131ee","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000e8e48243ab7327c477ae11e8.png","gitBlobSha":"1fa119bf25459e919f7a8ef0810092f873abbe4c","bytes":2151481,"width":1122,"height":1402,"sha256":"8bf783bd31c2a8f53dbfe032c4020cf2bfd005c5247ca84a0eb08a3d85c0beba","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000ebe4820ab5d6c745398f2368.png","gitBlobSha":"d7ce9731dc40ae4ebc62d48b9d1a975fd277f6c7","bytes":2693013,"width":1122,"height":1402,"sha256":"8db3865e60acfeb1c052159f41fc14c07b56657dd0778f1900ab3dcd9f14254b","status":"binary-validated-identity-unclassified"},
-    {"path":"file_00000000ecbc81f4a66b24365537f17d.png","gitBlobSha":"e75d2fd26ce7422c0d53a96491e29bc783e3449e","bytes":2250455,"width":1145,"height":1374,"sha256":"581cc8ee44fe6b1f4ef15ff4879170d21061b38bc1436b8c98e9ca7d28dcca5c","status":"binary-validated-identity-unclassified"}
+    {"path":"file_00000000163881f4b54f532559d6e902.png","gitBlobSha":"301c5168076d17bb665aa396456540c270741193","bytes":2165555,"width":1122,"height":1402,"sha256":"12848f1eb309d796f05c93ed5d8d6ac29b0776cc4842b3299e8e75565d2027be","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_000000001d9c81f4875208e313244a1b.png","gitBlobSha":"1a2061998b54d4588d35c27aeb369a39a7bdacfb","bytes":2097925,"width":1122,"height":1402,"sha256":"426ccafdfa57711d8991a79f78f94c8ac65be37f5c1b583d525d9919c39f3bda","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_000000001eb481f78bbe03c377dec91e.png","gitBlobSha":"d3e3004d5e45e74941f2c345d7ce272f44ac5887","bytes":2114287,"width":1122,"height":1402,"sha256":"29e0bb4efc9d61f567eb2bf9ec4056827cc88f148b1d3adac2ca88584a97e64e","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_000000004558820a9a6a998c08e74c60.png","gitBlobSha":"dd324b96e2a5b05e5f86ef8e44c2a84698967242","bytes":2520852,"width":1536,"height":1024,"sha256":"c2ba95ef2bb106ffba051c42343a6f8c2ccccb31a522b93fa2fdbab003b5ae7e","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_000000004de081f9b89ce87866d2919a.png","gitBlobSha":"123622585ba4c6268fca2ecb326f4facb68c7c37","bytes":2238022,"width":1122,"height":1402,"sha256":"0dc54eec7d37de4de466186fd9a612e77e7b0274cdf7949a96448e3882285c35","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000761082439e73c228b30aa1d5.png","gitBlobSha":"74db438f7a1ab07352a64d17c2beb031b0964578","bytes":2219851,"width":1122,"height":1402,"sha256":"e6915e0e4916b18845a08787150c74cbe4504d2f9e8f12a6b062e4d51b81f5de","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000a8c481f491bf86efb3d2d1ae.png","gitBlobSha":"89e90a7ab7e478747ba90e542c4307ec32f49ba1","bytes":2125350,"width":1122,"height":1402,"sha256":"aa60b4b5a4a2b9476c2ee3f9828d93ccf0dc10a0f02e88a3ee25e453685ea035","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000b8308246837a4461dde95954.png","gitBlobSha":"e4664728b8ef5cd7ff50bea170baf5328b6d4f90","bytes":2089813,"width":1122,"height":1402,"sha256":"a11ded314ea7ed97e3b55424d8e1edcba648e3f72d68b42838f7fb2550a08b0f","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000cc7c81f6930287dc62a1e2b8.png","gitBlobSha":"e74b6773d59ea05c214fc04972d2a03ab8d4d599","bytes":2186303,"width":1122,"height":1402,"sha256":"ebf324b5f9c285b9b5cb06a473e48b83019f1edb29a5039effeefcb688a82625","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000d8e48243a0e66b7cc32b669f.png","gitBlobSha":"eb3dfaeb950cdb021047ecb28b0015a1b4621aec","bytes":2162188,"width":1145,"height":1374,"sha256":"99b69f2657539f766f06be99aee3b6bda9e7bf5015bafb804860cd382eda6ee1","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000dbec820cbebfb2f494a7bf4b.png","gitBlobSha":"714141d83c8a57a6a4223169f0b9ccaf4151faf3","bytes":2161916,"width":1122,"height":1402,"sha256":"147a3c36ef00e1de6b6327727c339b3f7e46c801f16ceeaa43eca5ca641131ee","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000e8e48243ab7327c477ae11e8.png","gitBlobSha":"1fa119bf25459e919f7a8ef0810092f873abbe4c","bytes":2151481,"width":1122,"height":1402,"sha256":"8bf783bd31c2a8f53dbfe032c4020cf2bfd005c5247ca84a0eb08a3d85c0beba","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000ebe4820ab5d6c745398f2368.png","gitBlobSha":"d7ce9731dc40ae4ebc62d48b9d1a975fd277f6c7","bytes":2693013,"width":1122,"height":1402,"sha256":"8db3865e60acfeb1c052159f41fc14c07b56657dd0778f1900ab3dcd9f14254b","status":"binary-validated-public-gallery-identity-unclassified"},
+    {"path":"file_00000000ecbc81f4a66b24365537f17d.png","gitBlobSha":"e75d2fd26ce7422c0d53a96491e29bc783e3449e","bytes":2250455,"width":1145,"height":1374,"sha256":"581cc8ee44fe6b1f4ef15ff4879170d21061b38bc1436b8c98e9ca7d28dcca5c","status":"binary-validated-public-gallery-identity-unclassified"}
   ],
-  "excludedFromCanonicalGallery": [
+  "excludedFromIdentityPromotion": [
     "browser/phone screenshots",
     "legacy pointer payloads in quarantine",
     "any asset whose identity/edition/form mapping is not positively verified"
