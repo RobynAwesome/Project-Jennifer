@@ -2,13 +2,13 @@
 
 Project Jennifer uses a deliberate **MERN adaptive core + PERN relational validation spine**:
 
-- **MongoDB** — adaptive relationship projections
+- **MongoDB** — adaptive, rebuildable relationship projections
 - **Express** — `apps/api`
 - **React** — `apps/web` through Next.js
 - **Node.js** — repository and API runtime
 - **PostgreSQL** — durable relational truth, receipts, constraints, idempotency, and validation history
 
-The PostgreSQL layer is introduced incrementally so persistence cannot bypass Project Jennifer governance, validation, memory, or telemetry rules.
+The persistence layers are introduced incrementally so storage cannot bypass Project Jennifer governance, validation, memory, or telemetry rules.
 
 ## Phase 1 — Foundation Contract ✅
 
@@ -31,9 +31,9 @@ Implemented:
 - `docs/architecture/adr-0003-mern-pern-relationship-spine.md`
 - the relationship engine and deterministic in-memory authority/projection tests in `packages/runtime`
 
-This establishes PostgreSQL as the governed relational spine while MongoDB carries adaptive projections.
+PostgreSQL owns governed relational truth. MongoDB carries only adaptive projections that must be disposable and rebuildable from PostgreSQL evidence.
 
-## Phase 3 — Driver, Repository Adapter, and Memory Receipt Ark 🚧
+## Phase 3 — Driver, Repository Adapter, Memory Receipt Ark, and Relationship Persistence 🚧
 
 ### Repository-contract proof ✅
 
@@ -58,46 +58,59 @@ This establishes PostgreSQL as the governed relational spine while MongoDB carri
 
 ### API relationship-authority activation gate ✅
 
-The governed relationship domain now crosses the real application boundary without promoting PostgreSQL globally before the remaining proof gates are complete:
-
 - `apps/api` owns the concrete `pg` driver; runtime/domain packages remain vendor-driver-free.
 - `JENNIFER_PERSISTENCE_MODE=in-memory|postgres` makes authority selection explicit.
 - production refuses to start when persistence mode is omitted.
 - PostgreSQL mode validates configuration, checks connectivity, executes checksum-pinned migrations, and fails startup instead of silently falling back to memory.
 - `PostgresRelationshipAuthorityStore` transaction-binds relationship state, authoritative event, validation receipt, quest decision when present, and outbox evidence.
 - a PostgreSQL advisory lock closes cross-process idempotency races before authoritative writes begin.
-- the canonical `/api/runtime/relationships` router is dependency-injected from the persistence composition root.
+- `/api/runtime/relationships` is dependency-injected from the persistence composition root.
 - `/health` reports configured authority, durability, migration count, and live database reachability.
-- connect/query/transaction/startup/shutdown/failure events emit governed telemetry without recording SQL bodies.
-- graceful `SIGINT` / `SIGTERM` closes the HTTP server and PostgreSQL pool.
 - `.github/workflows/postgres-api-authority-proof.yml` proves the application boundary against PostgreSQL 16.
 - `tools/prove-postgres-api-authority.mjs` proves concurrent HTTP idempotency, one authoritative database event, process restart recovery, replay suppression, dead-database startup failure, and explicit production mode selection.
 
-### API outage/recovery + single-authority proof gate 🚧
+### API outage/recovery + single-authority proof gate ✅
 
-This gate is implementation-complete on its feature branch and MUST pass its live PostgreSQL proof before merge:
+Accepted through PR #60:
 
 - PostgreSQL idle-pool errors have an explicit listener, preventing database disappearance from becoming an unhandled process-terminating event.
 - `/health` records `ready → unavailable → ready` transitions without restarting Jennifer.
 - transition telemetry emits `persistence.database-unavailable` and `persistence.database-recovered` only when readiness state changes.
-- the superseded relationship handlers and private in-memory `RelationshipEngine` have been removed from `apps/api/src/routes/runtime.ts`.
-- `apps/api/src/routes/relationships.ts` is therefore the single source-level relationship HTTP authority surface.
-- `tools/prove-postgres-api-recovery.mjs` starts the compiled API, creates authoritative state, physically stops the PostgreSQL service container, proves the same API process stays alive and reports HTTP 503, proves relationship reads fail rather than fall back to memory, restarts PostgreSQL, proves the same process becomes ready again, verifies transition telemetry, reloads the original relationship, and proves replay remains suppressed after recovery.
-- the recovery proof is executed inside `.github/workflows/postgres-api-authority-proof.yml` using the real PostgreSQL 16 service container ID.
+- superseded relationship handlers and the private in-memory `RelationshipEngine` were removed from `apps/api/src/routes/runtime.ts`.
+- `apps/api/src/routes/relationships.ts` is the single source-level relationship HTTP authority surface.
+- `tools/prove-postgres-api-recovery.mjs` physically stops and restarts the PostgreSQL 16 service, proves the same Jennifer process degrades and recovers, proves no memory fallback, verifies transition telemetry, reloads the original relationship, and preserves replay suppression.
 
-The branch must not merge unless normal CI, governance validation, the runtime PostgreSQL proof, and the API authority/recovery proof are green. Once merged, this gate is considered accepted.
+### PostgreSQL → MongoDB adaptive projection rebuild gate 🚧
+
+Implementation-complete on its feature branch; this gate is **not accepted until its live PostgreSQL 16 + MongoDB 7 proof is green**.
+
+- `JENNIFER_PROJECTION_MODE=in-memory|mongodb` makes adaptive projection selection explicit and separate from authority selection.
+- MongoDB projection mode is rejected unless PostgreSQL is the selected authority.
+- `apps/api` owns the concrete `mongodb` driver; runtime/domain packages retain structural projection contracts.
+- configured MongoDB participates in API readiness and governed shutdown.
+- `MongoRelationshipProjectionStore` derives `projectionVersion` from the authoritative relationship version, not delivery-attempt count.
+- projection timestamps derive from authoritative relationship timestamps so retry and rebuild converge deterministically.
+- MongoDB writes use monotonic optimistic compare-and-swap semantics: newer versions may replace older versions, stale deliveries cannot regress state, same version/same event is a no-op, and same version/different event is a contradiction.
+- MongoDB `_id` never crosses the relationship projection domain boundary.
+- `PostgresRelationshipProjectionEvidenceStore` reads relationship IDs from PostgreSQL outbox history without changing `published_at` receipts.
+- `RelationshipProjectionRebuilder` reconstructs each adaptive projection from its latest PostgreSQL authoritative snapshot and latest authoritative event.
+- `POST /api/runtime/relationships/projections/rebuild` is available only when MongoDB projection mode is selected; POC in-memory mode returns an explicit unsupported response.
+- `tools/prove-mongodb-projection-rebuild.mjs` proves normal projection, crash-window outbox replay idempotency, Mongo projection wipe without authority loss, full rebuild from PostgreSQL outbox evidence, repeated rebuild idempotency, and preserved authoritative replay suppression.
+- `.github/workflows/mongodb-projection-rebuild-proof.yml` runs that proof against real PostgreSQL 16 and MongoDB 7 services.
+
+The branch must not merge unless normal CI, governance validation, existing PostgreSQL authority/resilience gates, and the MongoDB projection rebuild proof are green.
 
 ### Remaining before PostgreSQL becomes globally `active`
 
-1. Bind the rebuildable relationship projection path to governed MongoDB rather than process-local memory and prove projection rebuild from the PostgreSQL outbox.
-2. Prove React reads governed persisted data through the API rather than fixture/process-local state.
+1. Prove React reads governed persisted relationship data and rebuilt Mongo projection state through the API rather than fixture/process-local state.
+2. Promote the relationship persistence slice only after the React read-through acceptance receipt is green.
 3. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
 
-No domain may write directly to PostgreSQL. Every write must pass through a domain-owned repository or adapter contract.
+No domain may write directly to PostgreSQL. MongoDB may not become relationship authority. Every authoritative write must pass through a domain-owned PostgreSQL repository/adapter contract, and MongoDB relationship data must remain rebuildable from PostgreSQL evidence.
 
 ## Phase 4 — NCMP and Waifu Forge Persistence
 
-Persist the next bounded domains only after the Phase 3 database activation gate is proven:
+Persist the next bounded domains only after the Phase 3 relationship persistence gate is proven:
 
 1. NCMP concept candidates and transition receipts
 2. Project Waifu Forge asset-manifest records
@@ -125,9 +138,10 @@ The PERN spine is considered operational only after:
 - API typechecks and boots with the concrete database adapter
 - a consequential receipted action survives a real process restart
 - the running API degrades and recovers across a live PostgreSQL outage
-- React reads real governed data
+- MongoDB adaptive projections can be wiped and rebuilt from PostgreSQL evidence
+- React reads real governed persisted data
 - offline or database-failure behaviour is explicit
-- no direct ungoverned database writes exist
+- no direct ungoverned authoritative database writes exist
 
 ## Code Locations
 
@@ -136,17 +150,23 @@ The PERN spine is considered operational only after:
 - `packages/runtime/src/postgres-runtime-gate-ledger.ts`
 - `packages/runtime/src/postgres-migration-runner.ts`
 - `packages/runtime/src/postgres-relationship-authority-store.ts`
+- `packages/runtime/src/mongo-relationship-projection-store.ts`
+- `packages/runtime/src/relationship-projection-rebuilder.ts`
 - `apps/api/src/persistence.ts`
+- `apps/api/src/mongo-projection.ts`
 - `apps/api/src/routes/relationships.ts`
 - `apps/api/src/routes/runtime.ts`
 - `apps/api/src/server.ts`
 - `infra/postgres/migrations/0001_relationship_spine.sql`
 - `infra/postgres/migrations/0002_memory_receipt_ark.sql`
+- `infra/mongodb/0001_relationship_projections.js`
 - `tools/prove-postgres-runtime-gate.mjs`
 - `tools/prove-postgres-api-authority.mjs`
 - `tools/prove-postgres-api-recovery.mjs`
+- `tools/prove-mongodb-projection-rebuild.mjs`
 - `.github/workflows/postgres-live-proof.yml`
 - `.github/workflows/postgres-api-authority-proof.yml`
+- `.github/workflows/mongodb-projection-rebuild-proof.yml`
 - `docs/architecture/adr-0003-mern-pern-relationship-spine.md`
 - `docs/architecture/adr-0007-durable-memory-receipt-ark.md`
 - `docker-compose.persistence.yml`
