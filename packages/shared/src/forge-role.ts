@@ -124,11 +124,18 @@ export interface ForgeBootstrapResult {
   receiptRefs: readonly string[];
 }
 
+export interface ForgeCorrectionReceiptInput {
+  receiptRef: string;
+  reason: string;
+  supersedesRefs?: readonly string[];
+}
+
 export interface ForgeClaimPromotionInput {
   from: ForgeClaimStage;
   to: ForgeClaimStage;
   evidenceSources: readonly ForgeSourceClass[];
   evidenceRefs?: readonly string[];
+  correctionReceipt?: ForgeCorrectionReceiptInput;
 }
 
 export interface ForgeClaimPromotionResult {
@@ -150,13 +157,27 @@ const CLAIM_STAGE_RANK: Record<ForgeClaimStage, number> = {
 
 export function buildForgeBootstrap(input: ForgeBootstrapInput): ForgeBootstrapResult {
   const missing: string[] = [];
-  if (!input.currentInstruction.trim()) missing.push("current human instruction");
-  if (!input.contextRootLoaded) missing.push(`mini-GSMB context root: ${FORGE_CONTEXT_ROOT}`);
-  if (!input.targetRepositoryInspected) missing.push(`current target repository state: ${input.targetRepository}`);
+  const targetRepository = input.targetRepository.trim();
+  const currentInstruction = input.currentInstruction.trim();
+  const receiptRefs = (input.receiptRefs ?? []).map((ref) => ref.trim());
+
+  if (!targetRepository) missing.push("target repository");
+  if (!currentInstruction) missing.push("current human instruction");
+  if (!input.contextRootLoaded) {
+    missing.push(`mini-GSMB context root: ${FORGE_CONTEXT_ROOT}`);
+  }
+  if (!input.targetRepositoryInspected) {
+    missing.push(
+      `current target repository state: ${targetRepository || "<unspecified>"}`,
+    );
+  }
+  if (receiptRefs.some((ref) => !ref)) {
+    missing.push("all supplied receipt references must be non-blank");
+  }
 
   return {
     roleId: FORGE_ROLE_ID,
-    targetRepository: input.targetRepository,
+    targetRepository,
     ready: missing.length === 0,
     contextRoot: FORGE_CONTEXT_ROOT,
     invariant: FORGE_STATELESS_RENTER_INVARIANT,
@@ -167,29 +188,109 @@ export function buildForgeBootstrap(input: ForgeBootstrapInput): ForgeBootstrapR
       "human-current-instruction",
     ],
     missing,
-    currentInstruction: input.currentInstruction,
-    receiptRefs: [...(input.receiptRefs ?? [])],
+    currentInstruction,
+    receiptRefs,
   };
 }
 
-export function evaluateForgeClaimPromotion(input: ForgeClaimPromotionInput): ForgeClaimPromotionResult {
+export function evaluateForgeClaimPromotion(
+  input: ForgeClaimPromotionInput,
+): ForgeClaimPromotionResult {
   const reasons: string[] = [];
   const fromRank = CLAIM_STAGE_RANK[input.from];
   const toRank = CLAIM_STAGE_RANK[input.to];
   const evidence = new Set(input.evidenceSources);
-  const refs = input.evidenceRefs ?? [];
+  const refs = (input.evidenceRefs ?? []).map((ref) => ref.trim());
+  const correction = input.correctionReceipt;
 
-  if (toRank < fromRank) reasons.push("Claim stage may be downgraded only through an explicit supersession or correction receipt.");
-  if (toRank >= CLAIM_STAGE_RANK.implemented && !evidence.has("target-repository")) reasons.push("Implementation claims require current target-repository evidence.");
-  if (toRank >= CLAIM_STAGE_RANK.tested && !evidence.has("branch-pr-commit-receipt")) reasons.push("Tested-or-higher claims require a branch, PR, commit or CI receipt.");
-  if (toRank >= CLAIM_STAGE_RANK.receipted && refs.length === 0) reasons.push("Receipted-or-higher claims require at least one durable evidence reference.");
-  if (toRank >= CLAIM_STAGE_RANK["runtime-validated"] && !evidence.has("runtime-evidence")) reasons.push("Runtime-validated-or-higher claims require runtime evidence.");
-  if (evidence.size === 1 && (evidence.has("mini-gsmb-context") || evidence.has("inference") || evidence.has("imaginative-frame")) && toRank >= CLAIM_STAGE_RANK.implemented) reasons.push("Context or inference alone cannot prove implementation.");
+  if (refs.some((ref) => !ref)) {
+    reasons.push("Evidence references must be non-blank.");
+  }
+
+  if (toRank < fromRank) {
+    if (!correction) {
+      reasons.push(
+        "Claim stage may be downgraded only through an explicit supersession or correction receipt.",
+      );
+    } else {
+      const correctionRef = correction.receiptRef.trim();
+      const correctionReason = correction.reason.trim();
+      const supersedesRefs = (correction.supersedesRefs ?? []).map((ref) =>
+        ref.trim(),
+      );
+
+      if (!correctionRef) {
+        reasons.push("Correction receipt reference must be non-blank.");
+      }
+      if (!correctionReason) {
+        reasons.push("Correction receipt reason must be non-blank.");
+      }
+      if (supersedesRefs.some((ref) => !ref)) {
+        reasons.push("Superseded receipt references must be non-blank.");
+      }
+      if (!evidence.has("branch-pr-commit-receipt")) {
+        reasons.push(
+          "Claim downgrade requires durable branch, PR, commit or receipt evidence.",
+        );
+      }
+      if (correctionRef && !refs.includes(correctionRef)) {
+        reasons.push(
+          "Correction receipt reference must also be present in evidenceRefs.",
+        );
+      }
+    }
+  }
+
+  if (
+    toRank >= CLAIM_STAGE_RANK.implemented &&
+    !evidence.has("target-repository")
+  ) {
+    reasons.push(
+      "Implementation claims require current target-repository evidence.",
+    );
+  }
+  if (
+    toRank >= CLAIM_STAGE_RANK.tested &&
+    !evidence.has("branch-pr-commit-receipt")
+  ) {
+    reasons.push(
+      "Tested-or-higher claims require a branch, PR, commit or CI receipt.",
+    );
+  }
+  if (toRank >= CLAIM_STAGE_RANK.receipted && refs.length === 0) {
+    reasons.push(
+      "Receipted-or-higher claims require at least one durable evidence reference.",
+    );
+  }
+  if (
+    toRank >= CLAIM_STAGE_RANK["runtime-validated"] &&
+    !evidence.has("runtime-evidence")
+  ) {
+    reasons.push(
+      "Runtime-validated-or-higher claims require runtime evidence.",
+    );
+  }
+  if (
+    evidence.size === 1 &&
+    (evidence.has("mini-gsmb-context") ||
+      evidence.has("inference") ||
+      evidence.has("imaginative-frame")) &&
+    toRank >= CLAIM_STAGE_RANK.implemented
+  ) {
+    reasons.push("Context or inference alone cannot prove implementation.");
+  }
 
   return {
     allowed: reasons.length === 0,
     from: input.from,
     to: input.to,
-    reasons: reasons.length > 0 ? reasons : ["Claim promotion is supported by the declared evidence boundary."],
+    reasons:
+      reasons.length > 0
+        ? reasons
+        : [
+            toRank < fromRank
+              ? "Claim downgrade is supported by an explicit correction/supersession receipt and the declared evidence boundary."
+              : "Claim promotion is supported by the declared evidence boundary.",
+          ],
   };
 }
