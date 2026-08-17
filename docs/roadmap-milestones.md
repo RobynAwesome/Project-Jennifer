@@ -35,12 +35,12 @@
 - [x] Receipt idempotent admission, authority conflicts and failed reconciliation attempts
 - [x] Add exact-runtime `RenterExecutionAdapter` + registry seam
 - [x] Define the provider/model Engine Qualification Gate
-- [ ] Observe a completed CI run and repair any failing tests before claiming validation PASS
-- [ ] Persist a machine-readable validation receipt from the CI result
+- [x] Observe completed CI runs and repair failing tests before claiming validation PASS
+- [ ] Persist a machine-readable validation receipt from a completed CI result
 
 ## Next implementation milestones
-- [ ] Add production PostgreSQL retrieval/authority adapter behind `RetrievalSource` / `GovernedAuthorityStore`
-- [ ] Add production MongoDB adaptive-context retrieval/projection adapter behind `RetrievalSource` / `AdaptiveContextStore`
+- [x] Add production-capable PostgreSQL retrieval/authority adapter behind `RetrievalSource` / `GovernedAuthorityStore`
+- [x] Add production-capable MongoDB adaptive-context retrieval/projection adapter behind `RetrievalSource` / `AdaptiveContextStore`, preserving `GSMB_MONGODB_ADAPTIVE_CONTEXT` authority tier 2
 - [ ] Connect SQLite pending records to real PostgreSQL admission/conflict reconciliation
 - [ ] Finalize the first exact-runtime engine worksheets with the owner
 - [ ] Add exact-runtime manifests + benchmark receipts for the first chosen external renters
@@ -52,6 +52,30 @@
 - [ ] Subscribe engine lifecycle events into durable telemetry sinks
 - [ ] Document plugin authoring conventions and versioning rules
 - [ ] Add chosen/rejected preference export with human-validation receipts
+
+## Persistence proof boundary
+
+Current adapter proof state is deliberately split by rail:
+
+```text
+PostgreSQL
+= production-capable governed-authority/retrieval adapter merged to main
+
+MongoDB
+= production-capable adaptive-context/retrieval adapter on the current branch
+  + live MongoDB 7 / PyMongo integration proof observed in CI
+
+SQLite
+= real local pending/replay store already coded and tested
+
+Still unproven end-to-end
+= one live reconciliation run that starts in SQLite,
+  admits/compares against real PostgreSQL,
+  projects into real MongoDB,
+  then proves restart/replay semantics across all three rails
+```
+
+The MongoDB live proof explicitly verifies mutable replacement rather than immutable authority. Its text-retrieval proof uses unique non-overlapping tokens because MongoDB `$text` search is tokenized/stemmed; the receipt does not falsely claim exact-phrase or strict-AND semantics.
 
 ## Engine deep-dive order
 
@@ -71,19 +95,23 @@ See `docs/architecture/engine-qualification-gate.md`.
 
 ## Validation note
 
-The repository now contains a GitHub Actions workflow that is intended to execute the committed Python governance suite on GitHub-hosted runners. A local container clone attempt still cannot resolve `github.com`, so local execution is not claimed. The connected GitHub status surface has not yet exposed a completed workflow result for these latest commits.
+The repository now has observed GitHub Actions receipts across the normal CI and Python governance surfaces, plus live database proof workflows. Validation claims remain commit-scoped: a prior passing run is not automatically a receipt for a later head.
 
-Until a completed run is observed:
+For the MongoDB adapter slice, the live MongoDB 7 workflow caught and preserved two real correction loops before passing:
+
+1. an obsolete/nonexistent Mongo authority-tier assumption was corrected to the repository's current `GSMB_MONGODB_ADAPTIVE_CONTEXT = 2` contract;
+2. an over-strong assumption about MongoDB `$text` search was replaced with a unique-token replacement proof that matches the engine's real tokenized search semantics.
 
 ```text
-CODED      = YES
-COMMITTED  = YES
-TESTS      = PRESENT
-CI WORKFLOW= PRESENT
-TEST PASS  = NOT YET CLAIMED
+CODED               = YES
+COMMITTED           = YES
+UNIT TESTS          = PRESENT
+LIVE MONGODB PROOF  = OBSERVED PASS ON PRE-ROADMAP-UPDATE HEAD
+FINAL HEAD CI       = MUST PASS BEFORE PR PROMOTION
+HOSTED PRODUCTION   = NOT CLAIMED
 ```
 
-Do not convert an unobserved CI run into a passing validation claim.
+Do not convert an adapter/live-service CI proof into a hosted-production or deployment claim.
 
 ## Operating principle
 Build the next phase in **thin vertical slices** so each milestone proves contracts, event flow, reproducibility and renter substitutability before broader implementation is added.
