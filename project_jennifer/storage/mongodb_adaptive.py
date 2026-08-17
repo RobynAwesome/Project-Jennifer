@@ -73,7 +73,7 @@ class MongoAdaptiveContextAdapter:
     """
 
     source_id = "mongodb-adaptive-context"
-    authority_tier = AuthorityTier.MONGODB_ADAPTIVE_CONTEXT
+    authority_tier = AuthorityTier.GSMB_MONGODB_ADAPTIVE_CONTEXT
     authority_scope = "project-jennifer-adaptive-context"
     source_lane = RelationalLane.OTHER
 
