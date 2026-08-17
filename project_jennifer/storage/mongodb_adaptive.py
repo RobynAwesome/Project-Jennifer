@@ -124,11 +124,14 @@ class MongoAdaptiveContextAdapter:
             name="adaptive_context_lane_updated",
             partialFilterExpression={"retrieval_enabled": True},
         )
+        # The text index spans the collection. Eligibility is still governed by
+        # retrieval_enabled at query time. Keeping the text index non-partial
+        # avoids coupling the portable adapter to server-specific text/partial
+        # index restrictions.
         self._collection.create_index(
             [("subject", "text"), ("content", "text")],
             name="adaptive_context_text",
             weights={"subject": 5, "content": 1},
-            partialFilterExpression={"retrieval_enabled": True},
         )
 
     def read_projection(self, record_id: str) -> StorageRecord | None:
