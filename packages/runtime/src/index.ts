@@ -27,6 +27,18 @@ export {
   RelationshipAuthorityDuplicateError,
 } from "./postgres-relationship-authority-store.js";
 
+export { MongoRelationshipProjectionStore } from "./mongo-relationship-projection-store.js";
+export type { MongoRelationshipProjectionDocumentPort } from "./mongo-relationship-projection-store.js";
+
+export {
+  PostgresRelationshipProjectionEvidenceStore,
+  RelationshipProjectionRebuilder,
+} from "./relationship-projection-rebuilder.js";
+export type {
+  IRelationshipProjectionEvidenceStore,
+  RelationshipProjectionRebuildResult,
+} from "./relationship-projection-rebuilder.js";
+
 export { ZodiacContextEngine } from "./zodiac-context-engine.js";
 export type {
   ZodiacContextInput,
