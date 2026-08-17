@@ -1,0 +1,60 @@
+name: MongoDB Live Proof
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "project_jennifer/storage/mongodb_adaptive.py"
+      - "project_jennifer/storage/__init__.py"
+      - "project_jennifer/contracts/**"
+      - "project_jennifer/retrieval/**"
+      - "infra/mongodb/**"
+      - "tools/prove-mongodb-adaptive-adapter.py"
+      - ".github/workflows/mongodb-live-proof.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "project_jennifer/storage/mongodb_adaptive.py"
+      - "project_jennifer/storage/__init__.py"
+      - "project_jennifer/contracts/**"
+      - "project_jennifer/retrieval/**"
+      - "infra/mongodb/**"
+      - "tools/prove-mongodb-adaptive-adapter.py"
+      - ".github/workflows/mongodb-live-proof.yml"
+
+env:
+  PYTHON_VERSION: "3.12"
+  MONGODB_URI: "mongodb://127.0.0.1:27017"
+  MONGODB_DATABASE: "project_jennifer_ci"
+
+jobs:
+  live-mongodb-proof:
+    name: MongoDB 7 adaptive projection + retrieval proof
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ ping: 1 }).ok'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install isolated MongoDB proof driver
+        run: python -m pip install "pymongo>=4.10,<5"
+
+      - name: Prove adaptive writes, replacement, retrieval, and fresh-client replay
+        run: python tools/prove-mongodb-adaptive-adapter.py
