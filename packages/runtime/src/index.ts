@@ -21,6 +21,12 @@ export type {
   RelationshipCommandResult,
 } from "./relationship-engine.js";
 
+export {
+  IdempotencyGuardedRelationshipAuthorityStore,
+  PostgresRelationshipAuthorityStore,
+  RelationshipAuthorityDuplicateError,
+} from "./postgres-relationship-authority-store.js";
+
 export { ZodiacContextEngine } from "./zodiac-context-engine.js";
 export type {
   ZodiacContextInput,
