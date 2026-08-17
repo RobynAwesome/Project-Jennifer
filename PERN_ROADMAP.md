@@ -35,7 +35,7 @@ This establishes PostgreSQL as the governed relational spine while MongoDB carri
 
 ## Phase 3 — Driver, Repository Adapter, and Memory Receipt Ark 🚧
 
-### Completed at repository-contract level
+### Repository-contract proof ✅
 
 - `IRuntimeGateLedger` domain-owned persistence contract
 - `InMemoryRuntimeGateLedger` deterministic validation adapter
@@ -48,25 +48,38 @@ This establishes PostgreSQL as the governed relational spine while MongoDB carri
 - prepared/crash-window tests proving uncertainty becomes `HOLD`, not automatic replay
 - `docs/architecture/adr-0007-durable-memory-receipt-ark.md`
 
-### Live PostgreSQL proof gate
-
-The repository now contains a bounded live-database proof lane without promoting PostgreSQL to application-runtime authority prematurely:
+### Live PostgreSQL proof gate ✅
 
 - `PostgresMigrationRunner` sorts migrations, serializes execution with a PostgreSQL advisory lock, and pins every applied migration by checksum.
 - checksum drift fails closed instead of silently mutating an existing schema.
 - repository migrations retain their standalone `BEGIN`/`COMMIT` wrappers while the runner unwraps only that outer boundary and commits the migration body with its migration receipt atomically.
-- `.github/workflows/postgres-live-proof.yml` starts PostgreSQL 16 and uses a pinned isolated `pg` driver only for the proof lane.
+- `.github/workflows/postgres-live-proof.yml` starts PostgreSQL 16 and proves the runtime repository against a real database.
 - `tools/prove-postgres-runtime-gate.mjs` proves fresh migration, deterministic second-run no-op, concurrent action reservation, persisted `applied` state, real pool recreation, replay suppression, and checksum-drift rejection.
 
-This lane proves the repository adapter and migration contract against a real PostgreSQL process. It does **not** yet make PostgreSQL the default application runtime and does **not** claim exactly-once semantics for arbitrary external side effects.
+### API relationship-authority activation gate 🚧
 
-### Remaining before PostgreSQL becomes `active`
+The next bounded activation slice moves the governed relationship domain through the real application boundary without promoting PostgreSQL globally before the remaining proof gates are complete:
 
-1. Bind the governed PostgreSQL driver/pool at the `apps/api` application/infrastructure boundary instead of only the isolated proof lane.
-2. Add connection pool health checks and telemetry for connect, query, transaction, failure, and retry events.
-3. Transaction-bind authoritative domain mutations to their idempotency/event/receipt/outbox writes where exactly-once state semantics are required.
-4. Validate explicit database-failure, timeout, and recovery behaviour through the application boundary.
-5. Prove API startup and shutdown with PostgreSQL enabled and ensure the in-memory adapter cannot be selected accidentally in an active durable deployment.
+- `apps/api` owns the concrete `pg` driver; runtime/domain packages remain vendor-driver-free.
+- `JENNIFER_PERSISTENCE_MODE=in-memory|postgres` makes authority selection explicit.
+- production refuses to start when persistence mode is omitted.
+- PostgreSQL mode validates configuration, checks connectivity, executes checksum-pinned migrations, and fails startup instead of silently falling back to memory.
+- `PostgresRelationshipAuthorityStore` transaction-binds relationship state, authoritative event, validation receipt, quest decision when present, and outbox evidence.
+- a PostgreSQL advisory lock closes cross-process idempotency races before authoritative writes begin.
+- the canonical `/api/runtime/relationships` router is mounted ahead of the legacy runtime router and retries only the persisted winner after an idempotency race.
+- `/health` reports configured authority, durability, migration count, and live database reachability.
+- connect/query/transaction/startup/shutdown/failure events emit governed telemetry without recording SQL bodies.
+- graceful `SIGINT` / `SIGTERM` closes the HTTP server and PostgreSQL pool.
+- `.github/workflows/postgres-api-authority-proof.yml` proves the application boundary against PostgreSQL 16.
+- `tools/prove-postgres-api-authority.mjs` proves concurrent HTTP idempotency, one authoritative database event, process restart recovery, replay suppression, dead-database startup failure, and explicit production mode selection.
+
+### Remaining before PostgreSQL becomes globally `active`
+
+1. Prove live database outage and recovery while the API process remains running, including readiness transition and recovery telemetry.
+2. Remove the superseded relationship handlers from the legacy runtime router after canonical-router parity is accepted, so there is one source-level relationship HTTP surface as well as one runtime surface.
+3. Bind the rebuildable relationship projection path to governed MongoDB rather than process-local memory and prove projection rebuild from the PostgreSQL outbox.
+4. Prove React reads governed persisted data through the API rather than fixture/process-local state.
+5. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
 
 No domain may write directly to PostgreSQL. Every write must pass through a domain-owned repository or adapter contract.
 
@@ -109,10 +122,16 @@ The PERN spine is considered operational only after:
 - `packages/runtime/src/runtime-gate-ledger.ts`
 - `packages/runtime/src/postgres-runtime-gate-ledger.ts`
 - `packages/runtime/src/postgres-migration-runner.ts`
+- `packages/runtime/src/postgres-relationship-authority-store.ts`
+- `apps/api/src/persistence.ts`
+- `apps/api/src/routes/relationships.ts`
+- `apps/api/src/server.ts`
 - `infra/postgres/migrations/0001_relationship_spine.sql`
 - `infra/postgres/migrations/0002_memory_receipt_ark.sql`
 - `tools/prove-postgres-runtime-gate.mjs`
+- `tools/prove-postgres-api-authority.mjs`
 - `.github/workflows/postgres-live-proof.yml`
+- `.github/workflows/postgres-api-authority-proof.yml`
 - `docs/architecture/adr-0003-mern-pern-relationship-spine.md`
 - `docs/architecture/adr-0007-durable-memory-receipt-ark.md`
 - `docker-compose.persistence.yml`
