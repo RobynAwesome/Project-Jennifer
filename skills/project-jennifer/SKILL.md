@@ -97,7 +97,7 @@ parsed VOCRegistry
 
 Conceptual Divergence Protocol expands the possibility space: *what could this become?*
 
-Current boundary: canonical semantics + portable skill exist, but no dedicated `packages/conceptual/src/cdp/` implementation module is currently proven.
+Current boundary: canonical semantics + portable skill exist, and the dedicated TypeScript parser/runtime is coded and tested under `packages/conceptual/src/cdp/`. A renter may claim dedicated CDP execution only when the runtime receipt records `dedicatedCdpEngineExecuted: true`; generated candidates remain hypotheses and non-canonical.
 
 ### CEEP
 
