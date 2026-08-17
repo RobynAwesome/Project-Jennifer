@@ -88,6 +88,7 @@ export async function initializePersistence(input: {
       new PostgresRelationshipAuthorityStore(observed),
       new InMemoryRelationshipProjectionStore(),
     );
+    let databaseState: "ready" | "unavailable" = "ready";
 
     await emitLifecycle(input.telemetry, "persistence.ready", {
       mode,
@@ -103,6 +104,13 @@ export async function initializePersistence(input: {
       async health() {
         try {
           await observed.query("SELECT 1 AS jennifer_postgres_health");
+          if (databaseState === "unavailable") {
+            databaseState = "ready";
+            await emitLifecycle(input.telemetry, "persistence.database-recovered", {
+              mode,
+              database: "ready",
+            });
+          }
           return {
             mode,
             authority: "postgresql",
@@ -111,13 +119,22 @@ export async function initializePersistence(input: {
             migrationCount: results.length,
           };
         } catch (error) {
+          const message = errorMessage(error);
+          if (databaseState === "ready") {
+            databaseState = "unavailable";
+            await emitLifecycle(input.telemetry, "persistence.database-unavailable", {
+              mode,
+              database: "unavailable",
+              error: message,
+            });
+          }
           return {
             mode,
             authority: "postgresql",
             durable: true,
             database: "unavailable",
             migrationCount: results.length,
-            error: errorMessage(error),
+            error: message,
           };
         }
       },
