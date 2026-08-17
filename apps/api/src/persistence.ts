@@ -223,7 +223,14 @@ class ObservedPostgresPool implements PostgresPoolPort {
   constructor(
     private readonly pool: Pool,
     private readonly telemetry: TelemetryCollector,
-  ) {}
+  ) {
+    this.pool.on("error", (error) => {
+      void emitDatabaseTelemetry(this.telemetry, "pool-error", {
+        success: false,
+        error: errorMessage(error),
+      }).catch(() => undefined);
+    });
+  }
 
   async query<TRow = Record<string, unknown>>(
     text: string,
@@ -357,7 +364,7 @@ function classifyStatement(sql: string): string {
 
 async function emitDatabaseTelemetry(
   telemetry: TelemetryCollector,
-  operation: "connect" | "query" | "transaction",
+  operation: "connect" | "query" | "transaction" | "pool-error",
   payload: Record<string, unknown>,
 ): Promise<void> {
   await telemetry.emit("system.event", "postgresql", {
