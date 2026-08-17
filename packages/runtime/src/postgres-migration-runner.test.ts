@@ -50,7 +50,7 @@ class FakePostgresClient implements PostgresClientPort {
       const checksum = this.pool.applied.get(migrationId);
       if (checksum === undefined) return { rows: [], rowCount: 0 };
       return {
-        rows: [{ checksum } as TRow],
+        rows: [{ checksum } as unknown as TRow],
         rowCount: 1,
       };
     }
