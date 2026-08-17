@@ -17,10 +17,24 @@ repository:
 
 publication:
   desired_slug: robynawesome-project-jennifer
-  status: repository-root-skill-ready
+  status: human-turnstile-required
   external_directory_url: null
   website_submission_receipt: null
-  note: External publication is not canonical until the AwesomeSkills directory returns a live Project Jennifer entry. Repository readiness and third-party registry admission remain separate evidence states.
+  repository_requirement_check: pass
+  automated_submission_attempt:
+    workflow_run_id: 31645361076
+    workflow_name: AwesomeSkills Submit Once
+    attempted_at: 2026-08-12T22:04:35Z
+    submit_page_http: 200
+    repository_url_filled: true
+    optional_newsletter: not-required
+    cloudflare_turnstile_frame_detected: true
+    cloudflare_turnstile_token_length: 0
+    submit_button_enabled: false
+    result: HUMAN_TURNSTILE_REQUIRED
+    bypass_attempted: false
+  note: >-
+    Project Jennifer satisfies the repository-side AwesomeSkills requirements and exposes a root SKILL.md. The live submission form accepted the repository URL but kept Submit Skill disabled because Cloudflare Turnstile did not issue a human-verification token in the automated runner. No bypass was attempted. External publication remains non-canonical until a human completes the Turnstile gate and a live Project Jennifer directory URL is observed.
 
 known_registry_anchor:
   source_repository: https://github.com/RobynAwesome/Introduction-to-MCP
@@ -63,4 +77,5 @@ proof_rules:
   human_task_authority_required: true
   receipts_required_for_execution_claims: true
   third_party_publication_requires_live_url: true
+  human_verification_must_not_be_bypassed: true
   awesome_skills_is_discovery_not_kpgs_authority: true
