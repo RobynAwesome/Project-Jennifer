@@ -90,6 +90,7 @@ try {
     projectionVersion: 2,
     projectionPresent: true,
   });
+  assert.match(versionTwoHtml, /render-authority-not-fixtures/);
   assert.notEqual(
     versionOneHtml,
     versionTwoHtml,
@@ -240,16 +241,25 @@ function startApi() {
 }
 
 function startWeb() {
-  const child = spawn("pnpm", ["--filter", "@jennifer/web", "start"], {
-    cwd: process.cwd(),
-    env: {
-      ...process.env,
-      NODE_ENV: "production",
-      PORT: String(webPort),
-      JENNIFER_API_URL: apiBaseUrl,
+  const child = spawn(
+    process.execPath,
+    [
+      "apps/web/node_modules/next/dist/bin/next",
+      "start",
+      "apps/web",
+      "-p",
+      String(webPort),
+    ],
+    {
+      cwd: process.cwd(),
+      env: {
+        ...process.env,
+        NODE_ENV: "production",
+        JENNIFER_API_URL: apiBaseUrl,
+      },
+      stdio: ["ignore", "pipe", "pipe"],
     },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  );
   capture(child, "web");
   return child;
 }
@@ -312,7 +322,10 @@ function assertPersistedEvidence(
   { relationshipId, version, projectionVersion, projectionPresent },
 ) {
   assert.match(html, /data-jennifer-readthrough="persisted"/);
-  assert.match(html, new RegExp(`data-relationship-id="${escapeRegExp(relationshipId)}"`));
+  assert.match(
+    html,
+    new RegExp(`data-relationship-id="${escapeRegExp(relationshipId)}"`),
+  );
   assert.match(html, new RegExp(`data-relationship-version="${version}"`));
   assert.match(html, /data-authority="postgresql"/);
   assert.match(html, /data-authority-database="ready"/);
@@ -320,27 +333,58 @@ function assertPersistedEvidence(
   assert.match(html, /data-projection-database="ready"/);
   assert.match(
     html,
-    new RegExp(`data-projection-version="${escapeRegExp(String(projectionVersion))}"`),
+    new RegExp(
+      `data-projection-version="${escapeRegExp(String(projectionVersion))}"`,
+    ),
   );
   assert.match(
     html,
-    new RegExp(`data-projection-present="${projectionPresent ? "true" : "false"}"`),
+    new RegExp(
+      `data-projection-present="${projectionPresent ? "true" : "false"}"`,
+    ),
   );
   assert.match(html, /data-api-status="ok"/);
 }
 
 async function stopApi(child) {
-  if (!child || child.exitCode !== null) return;
-  child.kill("SIGTERM");
-  const [code, signal] = await once(child, "exit");
-  assert.equal(signal, null, `Jennifer API should govern SIGTERM, got ${signal}`);
-  assert.equal(code, 0, "Jennifer API should close persistence cleanly");
+  const exit = await terminateChild(child, "Jennifer API", 5_000);
+  if (!exit) return;
+  assert.equal(exit.forced, false, "Jennifer API should govern SIGTERM before timeout");
+  assert.equal(exit.signal, null, `Jennifer API should govern SIGTERM, got ${exit.signal}`);
+  assert.equal(exit.code, 0, "Jennifer API should close persistence cleanly");
 }
 
 async function stopWeb(child) {
-  if (!child || child.exitCode !== null) return;
+  await terminateChild(child, "Next.js web", 5_000);
+}
+
+async function terminateChild(child, label, timeoutMs) {
+  if (!child || child.exitCode !== null) return undefined;
+
   child.kill("SIGTERM");
-  await once(child, "exit");
+  const graceful = await Promise.race([
+    waitForChildExit(child).then(([code, signal]) => ({
+      code,
+      signal,
+      forced: false,
+    })),
+    delay(timeoutMs).then(() => undefined),
+  ]);
+  if (graceful) return graceful;
+
+  if (child.exitCode === null) {
+    process.stderr.write(`[proof] ${label} exceeded ${timeoutMs}ms shutdown; sending SIGKILL\n`);
+    child.kill("SIGKILL");
+  }
+  const [code, signal] = await waitForChildExit(child);
+  return { code, signal, forced: true };
+}
+
+function waitForChildExit(child) {
+  if (child.exitCode !== null) {
+    return Promise.resolve([child.exitCode, child.signalCode]);
+  }
+  return once(child, "exit");
 }
 
 function capture(child, label) {
