@@ -40,6 +40,19 @@ export interface POCFOCRuntimeGateResult<TOutput = unknown> {
   output?: TOutput;
 }
 
+export class RuntimeGateOutcomePersistenceError extends Error {
+  readonly actionId: string;
+
+  constructor(actionId: string, cause: unknown) {
+    super(
+      `Mutation returned for ${actionId}, but the runtime ledger could not confirm the applied outcome. The action remains prepared and requires reconciliation.`,
+      { cause },
+    );
+    this.name = "RuntimeGateOutcomePersistenceError";
+    this.actionId = actionId;
+  }
+}
+
 /**
  * Runtime membrane between a POC/FOC action evaluation and consequential
  * Project Jennifer state mutation.
@@ -154,10 +167,9 @@ export class POCFOCRuntimeGate {
       return this.resultFromLedger(reservation.record, false);
     }
 
+    let output: TOutput;
     try {
-      const output = await applyMutation();
-      const applied = await this.ledger.markApplied(actionId, output);
-      return this.resultFromLedger(applied, false, output);
+      output = await applyMutation();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       try {
@@ -169,6 +181,16 @@ export class POCFOCRuntimeGate {
         );
       }
       throw error;
+    }
+
+    try {
+      const applied = await this.ledger.markApplied(actionId, output);
+      return this.resultFromLedger(applied, false, output);
+    } catch (error) {
+      // The mutation returned successfully, so marking it as FAILED would be a
+      // fabricated outcome. Preserve PREPARED/uncertain and force a governed
+      // reconciliation path instead.
+      throw new RuntimeGateOutcomePersistenceError(actionId, error);
     }
   }
 
