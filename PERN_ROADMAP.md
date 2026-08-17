@@ -80,9 +80,9 @@ Accepted through PR #60:
 - `apps/api/src/routes/relationships.ts` is the single source-level relationship HTTP authority surface.
 - `tools/prove-postgres-api-recovery.mjs` physically stops and restarts the PostgreSQL 16 service, proves the same Jennifer process degrades and recovers, proves no memory fallback, verifies transition telemetry, reloads the original relationship, and preserves replay suppression.
 
-### PostgreSQL → MongoDB adaptive projection rebuild gate 🚧
+### PostgreSQL → MongoDB adaptive projection rebuild gate ✅
 
-Implementation-complete on its feature branch; this gate is **not accepted until its live PostgreSQL 16 + MongoDB 7 proof is green**.
+Accepted through PR #61:
 
 - `JENNIFER_PROJECTION_MODE=in-memory|mongodb` makes adaptive projection selection explicit and separate from authority selection.
 - MongoDB projection mode is rejected unless PostgreSQL is the selected authority.
@@ -94,17 +94,37 @@ Implementation-complete on its feature branch; this gate is **not accepted until
 - MongoDB `_id` never crosses the relationship projection domain boundary.
 - `PostgresRelationshipProjectionEvidenceStore` reads relationship IDs from PostgreSQL outbox history without changing `published_at` receipts.
 - `RelationshipProjectionRebuilder` reconstructs each adaptive projection from its latest PostgreSQL authoritative snapshot and latest authoritative event.
-- `POST /api/runtime/relationships/projections/rebuild` is available only when MongoDB projection mode is selected; POC in-memory mode returns an explicit unsupported response.
+- `POST /api/runtime/relationships/projections/rebuild` is available only when MongoDB projection mode is selected.
 - `tools/prove-mongodb-projection-rebuild.mjs` proves normal projection, crash-window outbox replay idempotency, Mongo projection wipe without authority loss, full rebuild from PostgreSQL outbox evidence, repeated rebuild idempotency, and preserved authoritative replay suppression.
-- `.github/workflows/mongodb-projection-rebuild-proof.yml` runs that proof against real PostgreSQL 16 and MongoDB 7 services.
+- `.github/workflows/mongodb-projection-rebuild-proof.yml` proved that contract against real PostgreSQL 16 and MongoDB 7 services.
 
-The branch must not merge unless normal CI, governance validation, existing PostgreSQL authority/resilience gates, and the MongoDB projection rebuild proof are green.
+### React persisted relationship read-through gate 🚧
+
+Implementation-complete on its feature branch; this gate is **not accepted until its real Next.js + API + PostgreSQL 16 + MongoDB 7 proof is green**.
+
+- `apps/web/src/lib/jennifer-api.ts` performs server-side cache-free reads of both `/health` and the canonical relationship API.
+- production React read-through requires explicit `JENNIFER_API_URL` configuration.
+- the web package contains no PostgreSQL or MongoDB driver; React does not reconstruct relationship truth locally.
+- `/relationships` provides a server-rendered evidence gateway without client-owned relationship state.
+- `/relationships/[relationshipId]` is `force-dynamic`, `revalidate = 0`, and renders the live authority mode, authority database state, relationship version, projection mode/state/version, participants, authoritative event/receipt IDs, and active boundary evidence.
+- projection deletion is rendered explicitly as “authoritative PostgreSQL state available / adaptive projection absent” rather than replacing authority with a fixture.
+- the home vertical slice links to the persistence evidence gateway without replacing the existing game experience.
+- `tools/prove-react-persisted-readthrough.mjs` proves the rendered HTML changes from authoritative version 1 → 2 without rebuilding React, survives an API process restart, keeps rendering PostgreSQL authority after Mongo projection deletion, shows the rebuilt Mongo projection after governed rebuild, survives a React process restart, and preserves authoritative idempotency.
+- `.github/workflows/react-persisted-readthrough-proof.yml` runs the compiled API and production Next.js server against real PostgreSQL 16 and MongoDB 7 services.
+
+The branch must not merge unless normal CI, governance validation, all existing PostgreSQL/Mongo persistence proof lanes, and the React persisted read-through proof are green.
+
+### Bounded relationship persistence promotion
+
+Once the React read-through proof is accepted, the **relationship persistence slice** has evidence across authority, restart, outage/recovery, adaptive projection, rebuild, and React read-through and may be described as operational for that bounded domain.
+
+That is not the same as declaring PostgreSQL globally active for all of Jennifer. Other domains remain behind their own domain-owned persistence gates.
 
 ### Remaining before PostgreSQL becomes globally `active`
 
-1. Prove React reads governed persisted relationship data and rebuilt Mongo projection state through the API rather than fixture/process-local state.
-2. Promote the relationship persistence slice only after the React read-through acceptance receipt is green.
-3. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
+1. Accept the React persisted relationship read-through proof and record the bounded relationship slice as operational.
+2. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
+3. Require equivalent persistence/recovery/read-through receipts before those domains are promoted.
 
 No domain may write directly to PostgreSQL. MongoDB may not become relationship authority. Every authoritative write must pass through a domain-owned PostgreSQL repository/adapter contract, and MongoDB relationship data must remain rebuildable from PostgreSQL evidence.
 
@@ -131,7 +151,7 @@ Add the first Project Waifu Forge interface:
 
 ## Phase 6 — Runtime Validation
 
-The PERN spine is considered operational only after:
+The bounded relationship persistence slice is operational only after:
 
 - local PostgreSQL starts reproducibly
 - migrations run from zero and against an existing schema
@@ -139,7 +159,7 @@ The PERN spine is considered operational only after:
 - a consequential receipted action survives a real process restart
 - the running API degrades and recovers across a live PostgreSQL outage
 - MongoDB adaptive projections can be wiped and rebuilt from PostgreSQL evidence
-- React reads real governed persisted data
+- React reads real governed persisted relationship data and reflects projection loss/rebuild
 - offline or database-failure behaviour is explicit
 - no direct ungoverned authoritative database writes exist
 
@@ -157,6 +177,9 @@ The PERN spine is considered operational only after:
 - `apps/api/src/routes/relationships.ts`
 - `apps/api/src/routes/runtime.ts`
 - `apps/api/src/server.ts`
+- `apps/web/src/lib/jennifer-api.ts`
+- `apps/web/src/app/relationships/page.tsx`
+- `apps/web/src/app/relationships/[relationshipId]/page.tsx`
 - `infra/postgres/migrations/0001_relationship_spine.sql`
 - `infra/postgres/migrations/0002_memory_receipt_ark.sql`
 - `infra/mongodb/0001_relationship_projections.js`
@@ -164,9 +187,11 @@ The PERN spine is considered operational only after:
 - `tools/prove-postgres-api-authority.mjs`
 - `tools/prove-postgres-api-recovery.mjs`
 - `tools/prove-mongodb-projection-rebuild.mjs`
+- `tools/prove-react-persisted-readthrough.mjs`
 - `.github/workflows/postgres-live-proof.yml`
 - `.github/workflows/postgres-api-authority-proof.yml`
 - `.github/workflows/mongodb-projection-rebuild-proof.yml`
+- `.github/workflows/react-persisted-readthrough-proof.yml`
 - `docs/architecture/adr-0003-mern-pern-relationship-spine.md`
 - `docs/architecture/adr-0007-durable-memory-receipt-ark.md`
 - `docker-compose.persistence.yml`
