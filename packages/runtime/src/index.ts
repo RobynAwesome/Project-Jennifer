@@ -44,8 +44,29 @@ export type {
 
 export { ForgeRoleEngine } from "./forge-role-engine.js";
 
-export { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
+export {
+  POCFOCRuntimeGate,
+  RuntimeGateOutcomePersistenceError,
+} from "./poc-foc-runtime-gate.js";
 export type {
   GovernedRuntimeActionInput,
   POCFOCRuntimeGateResult,
 } from "./poc-foc-runtime-gate.js";
+
+export {
+  InMemoryRuntimeGateLedger,
+  createRuntimeGateLedgerRecord,
+} from "./runtime-gate-ledger.js";
+export type {
+  IRuntimeGateLedger,
+  RuntimeGateLedgerRecord,
+  RuntimeGateLedgerReservation,
+  RuntimeGateLedgerState,
+} from "./runtime-gate-ledger.js";
+
+export { PostgresRuntimeGateLedger } from "./postgres-runtime-gate-ledger.js";
+export type {
+  PostgresClientPort,
+  PostgresPoolPort,
+  PostgresQueryResult,
+} from "./postgres-runtime-gate-ledger.js";

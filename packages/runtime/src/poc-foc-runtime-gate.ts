@@ -9,6 +9,13 @@ import {
   type ReceiptMemoryLane,
 } from "@jennifer/memory";
 
+import {
+  InMemoryRuntimeGateLedger,
+  createRuntimeGateLedgerRecord,
+  type IRuntimeGateLedger,
+  type RuntimeGateLedgerRecord,
+} from "./runtime-gate-ledger.js";
+
 export interface GovernedRuntimeActionInput {
   actionId: string;
   subject: string;
@@ -33,6 +40,19 @@ export interface POCFOCRuntimeGateResult<TOutput = unknown> {
   output?: TOutput;
 }
 
+export class RuntimeGateOutcomePersistenceError extends Error {
+  readonly actionId: string;
+
+  constructor(actionId: string, cause: unknown) {
+    super(
+      `Mutation returned for ${actionId}, but the runtime ledger could not confirm the applied outcome. The action remains prepared and requires reconciliation.`,
+      { cause },
+    );
+    this.name = "RuntimeGateOutcomePersistenceError";
+    this.actionId = actionId;
+  }
+}
+
 /**
  * Runtime membrane between a POC/FOC action evaluation and consequential
  * Project Jennifer state mutation.
@@ -40,18 +60,20 @@ export interface POCFOCRuntimeGateResult<TOutput = unknown> {
  * Conceptual evaluation is deliberately performed outside this package so the
  * runtime does not acquire ownership of KPGS/VOC semantics. The runtime only
  * consumes the shared decision contract, verifies evidence admission, mints a
- * Memory Receipt, and applies the mutation if every gate remains open.
+ * Memory Receipt, reserves the action in the runtime ledger, and applies the
+ * mutation only when every gate remains open.
+ *
+ * The ledger reservation is intentionally written before the mutation. This
+ * prevents a second runtime from replaying the same action ID. If a process
+ * disappears after reservation but before the mutation outcome is durably
+ * recorded, the action remains PREPARED and is held for reconciliation rather
+ * than guessed/replayed.
  */
 export class POCFOCRuntimeGate {
-  private readonly receiptEngine: MemoryReceiptEngine;
-  private readonly priorResults = new Map<
-    string,
-    POCFOCRuntimeGateResult<unknown>
-  >();
-
-  constructor(receiptEngine: MemoryReceiptEngine = new MemoryReceiptEngine()) {
-    this.receiptEngine = receiptEngine;
-  }
+  constructor(
+    private readonly receiptEngine: MemoryReceiptEngine = new MemoryReceiptEngine(),
+    private readonly ledger: IRuntimeGateLedger = new InMemoryRuntimeGateLedger(),
+  ) {}
 
   async execute<TOutput>(
     input: GovernedRuntimeActionInput,
@@ -60,13 +82,8 @@ export class POCFOCRuntimeGate {
     const actionId = input.actionId.trim();
     if (!actionId) throw new Error("actionId is required");
 
-    const prior = this.priorResults.get(actionId);
-    if (prior) {
-      return {
-        ...(prior as POCFOCRuntimeGateResult<TOutput>),
-        duplicate: true,
-      };
-    }
+    const prior = await this.ledger.get<TOutput>(actionId);
+    if (prior) return this.resultFromLedger(prior, true);
 
     const reasons = [...input.evaluation.reasons];
     let decision = input.evaluation.decision;
@@ -125,38 +142,62 @@ export class POCFOCRuntimeGate {
       },
     });
 
-    let mutationApplied = false;
-    let output: TOutput | undefined;
-
-    if (decision === "ACCEPT" && memoryReceipt.admission === "admitted") {
-      output = await applyMutation();
-      mutationApplied = true;
-    } else if (decision === "ACCEPT") {
+    if (decision === "ACCEPT" && memoryReceipt.admission !== "admitted") {
       decision = "HOLD";
       reasons.push(
         `Memory receipt admission was ${memoryReceipt.admission}; mutation was not executed.`,
       );
     }
 
-    const result: POCFOCRuntimeGateResult<TOutput> = {
+    const candidate = createRuntimeGateLedgerRecord<TOutput>({
       actionId,
       decision,
       reasons,
-      evaluation: {
-        ...input.evaluation,
-        reasons: [...input.evaluation.reasons],
-        matchedFOCGroups: input.evaluation.matchedFOCGroups.map((group) => ({
-          ...group,
-        })),
-      },
+      evaluation: input.evaluation,
       memoryReceipt,
-      mutationApplied,
-      duplicate: false,
-      ...(mutationApplied ? { output } : {}),
-    };
+      state: decision === "ACCEPT" ? "prepared" : "blocked",
+    });
 
-    this.priorResults.set(actionId, result as POCFOCRuntimeGateResult<unknown>);
-    return result;
+    const reservation = await this.ledger.reserve(candidate);
+    if (!reservation.created) {
+      return this.resultFromLedger(reservation.record, true);
+    }
+
+    if (decision !== "ACCEPT") {
+      return this.resultFromLedger(reservation.record, false);
+    }
+
+    let output: TOutput;
+    try {
+      output = await applyMutation();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      try {
+        await this.ledger.markFailed(actionId, message);
+      } catch (ledgerError) {
+        throw new AggregateError(
+          [error, ledgerError],
+          `Runtime mutation failed and ledger failure state could not be persisted for ${actionId}.`,
+        );
+      }
+      throw error;
+    }
+
+    try {
+      const applied = await this.ledger.markApplied(actionId, output);
+      return this.resultFromLedger(applied, false, output);
+    } catch (error) {
+      // The mutation returned successfully, so marking it as FAILED would be a
+      // fabricated outcome. Preserve PREPARED/uncertain and force a governed
+      // reconciliation path instead.
+      throw new RuntimeGateOutcomePersistenceError(actionId, error);
+    }
+  }
+
+  async getAction<TOutput = unknown>(
+    actionId: string,
+  ): Promise<RuntimeGateLedgerRecord<TOutput> | undefined> {
+    return this.ledger.get<TOutput>(actionId);
   }
 
   getReceipt(receiptId: string): MemoryReceipt | undefined {
@@ -165,5 +206,39 @@ export class POCFOCRuntimeGate {
 
   listReceipts(): MemoryReceipt[] {
     return this.receiptEngine.list();
+  }
+
+  private resultFromLedger<TOutput>(
+    record: RuntimeGateLedgerRecord<TOutput>,
+    duplicate: boolean,
+    liveOutput?: TOutput,
+  ): POCFOCRuntimeGateResult<TOutput> {
+    const reasons = [...record.reasons];
+    let decision = record.decision;
+
+    if (record.state === "prepared") {
+      decision = "HOLD";
+      reasons.push(
+        "Action is durably prepared but the mutation outcome is not confirmed; automatic replay is blocked pending reconciliation.",
+      );
+    } else if (record.state === "failed") {
+      decision = "HOLD";
+      reasons.push(
+        `A prior mutation attempt failed${record.error ? `: ${record.error}` : "."} Automatic replay is blocked pending reconciliation.`,
+      );
+    }
+
+    const output = liveOutput === undefined ? record.output : liveOutput;
+
+    return {
+      actionId: record.actionId,
+      decision,
+      reasons,
+      evaluation: structuredClone(record.evaluation),
+      memoryReceipt: structuredClone(record.memoryReceipt),
+      mutationApplied: record.state === "applied" && record.mutationApplied,
+      duplicate,
+      ...(output === undefined ? {} : { output }),
+    };
   }
 }
