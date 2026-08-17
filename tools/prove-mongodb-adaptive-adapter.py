@@ -22,6 +22,10 @@ from project_jennifer.contracts import (  # noqa: E402
 from project_jennifer.storage import MongoAdaptiveContextAdapter  # noqa: E402
 
 
+LEGACY_TOKEN = "jenniferalphalegacy"
+CURRENT_TOKEN = "jenniferomegacurrent"
+
+
 def _projection(version: str, content: str) -> StorageRecord:
     return StorageRecord(
         record_id="ci-mongodb-adaptive-adapter-proof",
@@ -51,8 +55,18 @@ def main() -> None:
     if not uri:
         raise SystemExit("MONGODB_URI is required for MongoDB adaptive proof")
 
-    first = _projection("v1", "live mongodb adaptive context first projection")
-    second = _projection("v2", "live mongodb adaptive context updated projection")
+    # MongoDB $text search is tokenized/stemmed rather than exact-phrase or
+    # strict-AND search. Unique non-overlapping proof tokens therefore test the
+    # intended invariant directly: replacing the projection removes the old
+    # projection's unique searchable content from current adaptive context.
+    first = _projection(
+        "v1",
+        f"live mongodb adaptive context {LEGACY_TOKEN}",
+    )
+    second = _projection(
+        "v2",
+        f"live mongodb adaptive context {CURRENT_TOKEN}",
+    )
 
     with MongoAdaptiveContextAdapter.from_uri(
         uri,
@@ -65,7 +79,7 @@ def main() -> None:
 
         first_evidence = adapter.retrieve(
             RetrievalQuery(
-                query="live mongodb adaptive context first projection",
+                query=LEGACY_TOKEN,
                 subject="mongodb-adaptive-adapter-proof",
                 target_lane=RelationalLane.RESEARCH,
                 metadata={"limit": 5},
@@ -81,16 +95,16 @@ def main() -> None:
 
         stale = adapter.retrieve(
             RetrievalQuery(
-                query="first projection",
+                query=LEGACY_TOKEN,
                 subject="mongodb-adaptive-adapter-proof",
                 target_lane=RelationalLane.RESEARCH,
             )
         )
-        assert stale == (), "replaced projection remained searchable as current context"
+        assert stale == (), "replaced projection's unique token remained searchable"
 
         current = adapter.retrieve(
             RetrievalQuery(
-                query="updated projection",
+                query=CURRENT_TOKEN,
                 subject="mongodb-adaptive-adapter-proof",
                 target_lane=RelationalLane.RESEARCH,
             )
@@ -118,10 +132,11 @@ def main() -> None:
                     "live-mongodb-write",
                     "adaptive-upsert",
                     "adaptive-retrieval",
-                    "previous-projection-replaced",
+                    "previous-projection-unique-content-removed",
                     "authority-tier-remains-gsmb-mongodb-2",
                     "fresh-client-read-preserved-projection",
                 ],
+                "search_semantics": "tokenized-mongodb-text-search; unique proof tokens used",
             },
             sort_keys=True,
         )
