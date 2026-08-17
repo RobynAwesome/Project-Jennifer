@@ -44,7 +44,10 @@ export type {
 
 export { ForgeRoleEngine } from "./forge-role-engine.js";
 
-export { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
+export {
+  POCFOCRuntimeGate,
+  RuntimeGateOutcomePersistenceError,
+} from "./poc-foc-runtime-gate.js";
 export type {
   GovernedRuntimeActionInput,
   POCFOCRuntimeGateResult,
