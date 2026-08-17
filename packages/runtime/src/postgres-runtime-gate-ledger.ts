@@ -1,4 +1,4 @@
-import { now } from "@jennifer/shared";
+import { now, type POCFOCActionEvaluation } from "@jennifer/shared";
 import type { MemoryReceipt } from "@jennifer/memory";
 
 import type {
@@ -259,7 +259,7 @@ function deserializeRow<TOutput>(
     decision: row.decision,
     state: row.state,
     reasons: parseJsonValue<string[]>(row.reasons_json),
-    evaluation: parseJsonValue(row.evaluation_json),
+    evaluation: parseJsonValue<POCFOCActionEvaluation>(row.evaluation_json),
     memoryReceipt: parseJsonValue<MemoryReceipt>(row.receipt_json),
     mutationApplied: row.mutation_applied,
     ...(output === undefined ? {} : { output }),
