@@ -4,10 +4,14 @@ import assert from "node:assert/strict";
 import type { POCFOCActionEvaluation } from "@jennifer/shared";
 import { MemoryReceiptEngine } from "@jennifer/memory";
 
-import { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
+import {
+  POCFOCRuntimeGate,
+  RuntimeGateOutcomePersistenceError,
+} from "./poc-foc-runtime-gate.js";
 import {
   InMemoryRuntimeGateLedger,
   createRuntimeGateLedgerRecord,
+  type RuntimeGateLedgerRecord,
 } from "./runtime-gate-ledger.js";
 
 const acceptedEvaluation: POCFOCActionEvaluation = {
@@ -55,6 +59,15 @@ function baseInput(
       retrievalRoots: ["quest-event-001"],
     },
   };
+}
+
+class OutcomePersistenceFailureLedger extends InMemoryRuntimeGateLedger {
+  override async markApplied<TOutput = unknown>(
+    _actionId: string,
+    _output: TOutput,
+  ): Promise<RuntimeGateLedgerRecord<TOutput>> {
+    throw new Error("simulated outcome persistence failure");
+  }
 }
 
 test("accepted action issues admitted memory receipt before mutation", async () => {
@@ -207,4 +220,41 @@ test("prepared action is held after runtime recreation instead of guessed or rep
   assert.equal(result.mutationApplied, false);
   assert.match(result.reasons.at(-1) ?? "", /pending reconciliation/i);
   assert.equal(mutations, 0);
+});
+
+test("successful mutation with outcome persistence failure remains prepared and blocks replay", async () => {
+  const ledger = new OutcomePersistenceFailureLedger();
+  const gate = new POCFOCRuntimeGate(new MemoryReceiptEngine(), ledger);
+  let mutations = 0;
+
+  await assert.rejects(
+    () =>
+      gate.execute(baseInput("action-outcome-write-failed"), () => {
+        mutations += 1;
+        return "mutation-returned";
+      }),
+    (error: unknown) => error instanceof RuntimeGateOutcomePersistenceError,
+  );
+
+  const uncertain = await gate.getAction("action-outcome-write-failed");
+  assert.equal(uncertain?.state, "prepared");
+  assert.equal(uncertain?.mutationApplied, false);
+  assert.equal(mutations, 1);
+
+  const recreatedRuntime = new POCFOCRuntimeGate(
+    new MemoryReceiptEngine(),
+    ledger,
+  );
+  const replay = await recreatedRuntime.execute(
+    baseInput("action-outcome-write-failed"),
+    () => {
+      mutations += 1;
+      return "must-not-replay";
+    },
+  );
+
+  assert.equal(replay.decision, "HOLD");
+  assert.equal(replay.duplicate, true);
+  assert.equal(replay.mutationApplied, false);
+  assert.equal(mutations, 1);
 });
