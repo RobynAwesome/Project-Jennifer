@@ -72,7 +72,7 @@ def main() -> None:
             )
         )
         assert len(first_evidence) == 1
-        assert first_evidence[0].authority_tier.value == 10
+        assert first_evidence[0].authority_tier.value == 2
         assert first_evidence[0].source_lane == RelationalLane.RESEARCH
         assert first_evidence[0].metadata["proof_state"] == "POC"
 
@@ -119,7 +119,7 @@ def main() -> None:
                     "adaptive-upsert",
                     "adaptive-retrieval",
                     "previous-projection-replaced",
-                    "authority-tier-remains-mongodb-10",
+                    "authority-tier-remains-gsmb-mongodb-2",
                     "fresh-client-read-preserved-projection",
                 ],
             },
