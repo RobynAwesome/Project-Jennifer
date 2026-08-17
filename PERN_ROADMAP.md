@@ -33,7 +33,7 @@ Implemented:
 
 PostgreSQL owns governed relational truth. MongoDB carries only adaptive projections that must be disposable and rebuildable from PostgreSQL evidence.
 
-## Phase 3 — Driver, Repository Adapter, Memory Receipt Ark, and Relationship Persistence 🚧
+## Phase 3 — Driver, Repository Adapter, Memory Receipt Ark, and Relationship Persistence ✅
 
 ### Repository-contract proof ✅
 
@@ -98,9 +98,9 @@ Accepted through PR #61:
 - `tools/prove-mongodb-projection-rebuild.mjs` proves normal projection, crash-window outbox replay idempotency, Mongo projection wipe without authority loss, full rebuild from PostgreSQL outbox evidence, repeated rebuild idempotency, and preserved authoritative replay suppression.
 - `.github/workflows/mongodb-projection-rebuild-proof.yml` proved that contract against real PostgreSQL 16 and MongoDB 7 services.
 
-### React persisted relationship read-through gate 🚧
+### React persisted relationship read-through gate ✅
 
-Implementation-complete on its feature branch; this gate is **not accepted until its real Next.js + API + PostgreSQL 16 + MongoDB 7 proof is green**.
+Accepted through PR #62 exact-head proof:
 
 - `apps/web/src/lib/jennifer-api.ts` performs server-side cache-free reads of both `/health` and the canonical relationship API.
 - production React read-through requires explicit `JENNIFER_API_URL` configuration.
@@ -109,35 +109,50 @@ Implementation-complete on its feature branch; this gate is **not accepted until
 - `/relationships/[relationshipId]` is `force-dynamic`, `revalidate = 0`, and renders the live authority mode, authority database state, relationship version, projection mode/state/version, participants, authoritative event/receipt IDs, and active boundary evidence.
 - projection deletion is rendered explicitly as “authoritative PostgreSQL state available / adaptive projection absent” rather than replacing authority with a fixture.
 - the home vertical slice links to the persistence evidence gateway without replacing the existing game experience.
-- `tools/prove-react-persisted-readthrough.mjs` proves the rendered HTML changes from authoritative version 1 → 2 without rebuilding React, survives an API process restart, keeps rendering PostgreSQL authority after Mongo projection deletion, shows the rebuilt Mongo projection after governed rebuild, survives a React process restart, and preserves authoritative idempotency.
-- `.github/workflows/react-persisted-readthrough-proof.yml` runs the compiled API and production Next.js server against real PostgreSQL 16 and MongoDB 7 services.
+- `tools/prove-react-persisted-readthrough.mjs` proved the rendered HTML changes from authoritative version 1 → 2 without rebuilding React, survives an API process restart, keeps rendering PostgreSQL authority after Mongo projection deletion, shows the rebuilt Mongo projection after governed rebuild, survives a React process restart, and preserves authoritative idempotency.
+- `.github/workflows/react-persisted-readthrough-proof.yml` proved the compiled API and production Next.js server against real PostgreSQL 16 and MongoDB 7 services.
 
-The branch must not merge unless normal CI, governance validation, all existing PostgreSQL/Mongo persistence proof lanes, and the React persisted read-through proof are green.
+## Bounded relationship persistence slice — OPERATIONAL ✅
 
-### Bounded relationship persistence promotion
+The **relationships** domain has now earned an end-to-end persistence receipt across:
 
-Once the React read-through proof is accepted, the **relationship persistence slice** has evidence across authority, restart, outage/recovery, adaptive projection, rebuild, and React read-through and may be described as operational for that bounded domain.
+1. PostgreSQL authoritative state + event + validation receipt + outbox transaction;
+2. restart-safe idempotency and crash-window handling;
+3. live PostgreSQL outage degradation and same-process recovery;
+4. MongoDB adaptive projection with monotonic retry semantics;
+5. full projection wipe/rebuild from PostgreSQL outbox evidence;
+6. production React cache-free read-through of authoritative and projected state;
+7. API restart, projection loss/rebuild, and React process restart without loss of canonical relationship truth.
 
-That is not the same as declaring PostgreSQL globally active for all of Jennifer. Other domains remain behind their own domain-owned persistence gates.
+`PROJECT_JENNIFER_BOUNDED_PERSISTENCE_SLICES` records this state machine-readably as:
+
+- domain: `relationships`
+- status: `operational`
+- authority: `postgresql`
+- projection: `mongodb`
+- read-through: `react-api`
+
+This bounded promotion **does not** declare PostgreSQL globally active for all of Jennifer. Other consequential domains remain behind their own domain-owned persistence, recovery, projection/read-through, and CCP acceptance gates.
 
 ### Remaining before PostgreSQL becomes globally `active`
 
-1. Accept the React persisted relationship read-through proof and record the bounded relationship slice as operational.
-2. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
-3. Require equivalent persistence/recovery/read-through receipts before those domains are promoted.
+1. Add domain-owned PostgreSQL authority for NCMP concept candidates and transition receipts.
+2. Add domain-owned persistence for Waifu Forge asset manifests and storyline state.
+3. Persist governance and validation receipts through equivalent governed adapters.
+4. Require equivalent restart/recovery/read-through evidence before each domain is promoted.
 
 No domain may write directly to PostgreSQL. MongoDB may not become relationship authority. Every authoritative write must pass through a domain-owned PostgreSQL repository/adapter contract, and MongoDB relationship data must remain rebuildable from PostgreSQL evidence.
 
-## Phase 4 — NCMP and Waifu Forge Persistence
+## Phase 4 — NCMP and Waifu Forge Persistence 🚧
 
-Persist the next bounded domains only after the Phase 3 relationship persistence gate is proven:
+Next bounded domains:
 
-1. NCMP concept candidates and transition receipts
-2. Project Waifu Forge asset-manifest records
-3. storyline quest state and scene progression
-4. governance and validation receipts
+1. **NCMP concept candidates and transition receipts** — next active gate.
+2. Project Waifu Forge asset-manifest records.
+3. storyline quest state and scene progression.
+4. governance and validation receipts.
 
-NCMP mutation endpoints remain intentionally disabled until this persistence gate exists. The read-only canonical discovery endpoint is available at `GET /api/ncmp`.
+NCMP mutation endpoints remain intentionally disabled until its own persistence gate exists. The read-only canonical discovery endpoint is available at `GET /api/ncmp`.
 
 ## Phase 5 — React Storyline Interface
 
@@ -151,17 +166,18 @@ Add the first Project Waifu Forge interface:
 
 ## Phase 6 — Runtime Validation
 
-The bounded relationship persistence slice is operational only after:
+The bounded relationship persistence slice is **operational** because it has proven:
 
-- local PostgreSQL starts reproducibly
-- migrations run from zero and against an existing schema
-- API typechecks and boots with the concrete database adapter
-- a consequential receipted action survives a real process restart
-- the running API degrades and recovers across a live PostgreSQL outage
-- MongoDB adaptive projections can be wiped and rebuilt from PostgreSQL evidence
-- React reads real governed persisted relationship data and reflects projection loss/rebuild
-- offline or database-failure behaviour is explicit
-- no direct ungoverned authoritative database writes exist
+- reproducible PostgreSQL startup and migrations;
+- API boot with concrete database authority;
+- receipted action persistence across restart;
+- live PostgreSQL outage degradation/recovery;
+- MongoDB projection wipe/rebuild from PostgreSQL evidence;
+- production React read-through reflecting mutation, projection loss, rebuild, API restart, and web restart;
+- explicit failure behavior without silent authority fallback;
+- no direct ungoverned relationship database writes.
+
+Global Jennifer persistence remains domain-gated until the remaining consequential domains earn equivalent receipts.
 
 ## Code Locations
 
