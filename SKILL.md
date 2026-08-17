@@ -64,7 +64,7 @@ CDP
 → NCMP when genuine agent-originated novelty requires human recognition
 ```
 
-- **CDP — Conceptual Divergence Protocol:** expand the possibility space. Portable/specification surface exists; a dedicated Jennifer CDP runtime module is not currently proven.
+- **CDP — Conceptual Divergence Protocol:** expand the possibility space. Canonical semantics + portable skill exist, and the dedicated TypeScript parser/runtime is coded and tested under `packages/conceptual/src/cdp/`; actual execution is proven only by a runtime receipt with `dedicatedCdpEngineExecuted: true`.
 - **CEEP — Conceptual Evaluation Engine:** evaluate candidates and emit evaluation/evolution receipts.
 - **POC-vs-FOC:** separate evidence-bearing proof from unsupported conceptual promotion.
 - **VOC Registry Parser:** preserve the KPGS `POC` branch and emergent operational `FOC-G##` groups from `RobynAwesome/Introduction-to-MCP` with provenance instead of flattening them into Jennifer semantic risk categories.
