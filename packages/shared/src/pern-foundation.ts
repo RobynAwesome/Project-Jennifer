@@ -1,11 +1,11 @@
 /**
  * Project Jennifer PERN foundation.
  *
- * React, Express, and Node are active. PostgreSQL now has approved schemas for
- * the relationship spine and Memory Receipt Ark plus a domain-owned runtime
- * gate repository adapter. PostgreSQL remains contract-ready until a concrete
- * governed driver/pool, deterministic migration execution, and transaction-
- * bound domain mutations are proven against a running database.
+ * React, Express, and Node are active. PostgreSQL has approved schemas,
+ * checksum-pinned migrations, live-database proof, and a concrete API binding
+ * for the governed relationship authority domain. PostgreSQL remains
+ * contract-ready globally until outage/recovery, governed projections, React
+ * read-through, and subsequent domain activation gates are proven.
  */
 
 export const PERN_LAYERS = ["postgresql", "express", "react", "node"] as const;
@@ -98,12 +98,20 @@ export const PROJECT_JENNIFER_PERN_FOUNDATION: readonly PernLayerDescriptor[] = 
       "infra/postgres/migrations/0001_relationship_spine.sql",
       "infra/postgres/migrations/0002_memory_receipt_ark.sql",
       "packages/runtime/src/postgres-runtime-gate-ledger.ts",
+      "packages/runtime/src/postgres-migration-runner.ts",
+      "packages/runtime/src/postgres-relationship-authority-store.ts",
+      "apps/api/src/persistence.ts",
+      "apps/api/src/routes/relationships.ts",
+      "tools/prove-postgres-runtime-gate.mjs",
+      "tools/prove-postgres-api-authority.mjs",
+      ".github/workflows/postgres-live-proof.yml",
+      ".github/workflows/postgres-api-authority-proof.yml",
       "docs/architecture/adr-0003-mern-pern-relationship-spine.md",
       "docs/architecture/adr-0007-durable-memory-receipt-ark.md",
       "PERN_ROADMAP.md",
     ],
     nextGate:
-      "Bind a concrete governed PostgreSQL driver/pool, execute migrations deterministically, and transaction-bind authoritative domain mutations to their receipt/idempotency records.",
+      "Prove live outage/recovery, bind rebuildable relationship projections to governed MongoDB, and prove React reads persisted governed data before global activation.",
   },
   {
     layer: "express",
@@ -143,6 +151,6 @@ export function getPernFoundationStatus(): {
     layers: PROJECT_JENNIFER_PERN_FOUNDATION.map(clonePernLayerDescriptor),
     nextGate: complete
       ? "PERN runtime is active. Continue governed feature delivery."
-      : "Connect the concrete PostgreSQL driver/pool, run migrations against a live database, and bind consequential mutations to the authoritative transaction boundary.",
+      : "Relationship authority can run against PostgreSQL; next prove outage/recovery, governed projection rebuild, and React read-through before global PostgreSQL activation.",
   };
 }
