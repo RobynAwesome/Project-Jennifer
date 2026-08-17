@@ -1,19 +1,14 @@
-import { Router, type IRouter, type Response } from "express";
+import { Router, type IRouter } from "express";
 import {
   CompanionManager,
   DistrictManager,
   ForgeRoleEngine,
   PersonaManager,
-  RelationshipEngine,
-  RelationshipGovernanceError,
 } from "@jennifer/runtime";
 import {
   FORGE_CLAIM_STAGES,
   isCompanionId,
-  type ApplyRelationshipQuestDecisionInput,
   type CompanionRelationshipLane,
-  type CreateRelationshipInput,
-  type DeclareRelationshipBoundaryInput,
   type ForgeBootstrapInput,
   type ForgeClaimPromotionInput,
   type PersonaMode,
@@ -24,7 +19,6 @@ const districtManager = new DistrictManager();
 const personaManager = new PersonaManager();
 const companionManager = new CompanionManager();
 const forgeRoleEngine = new ForgeRoleEngine();
-const relationshipEngine = new RelationshipEngine();
 
 const VALID_PERSONAS: PersonaMode[] = [
   "best-friend",
@@ -204,130 +198,13 @@ router.post("/forge-role/claims/promote", (req, res) => {
   }
 
   const result = forgeRoleEngine.evaluateClaimPromotion(
-    body as ForgeClaimPromotionInput
+    body as ForgeClaimPromotionInput,
   );
   res.status(result.allowed ? 200 : 422).json({ promotion: result });
 });
 
-// ─── MERN adaptive core + PERN relationship validation spine ─────────────────
-
-router.post("/relationships", async (req, res) => {
-  const input = req.body as Partial<CreateRelationshipInput>;
-  if (
-    !input.relationshipType?.trim() ||
-    !input.createdByActorId?.trim() ||
-    !input.idempotencyKey?.trim() ||
-    !input.lane ||
-    !VALID_COMPANION_LANES.includes(input.lane) ||
-    !Array.isArray(input.actors)
-  ) {
-    res.status(400).json({
-      error:
-        "relationshipType, createdByActorId, idempotencyKey, a valid lane and actors are required",
-    });
-    return;
-  }
-
-  try {
-    const result = await relationshipEngine.createRelationship(
-      input as CreateRelationshipInput
-    );
-    res.status(result.duplicate ? 200 : 201).json(result);
-  } catch (error) {
-    sendRelationshipError(res, error);
-  }
-});
-
-router.get("/relationships/:relationshipId", async (req, res) => {
-  const snapshot = await relationshipEngine.getSnapshot(
-    req.params.relationshipId
-  );
-  if (!snapshot) {
-    res.status(404).json({ error: "Relationship not found" });
-    return;
-  }
-  res.json({ snapshot });
-});
-
-router.get("/relationships/:relationshipId/receipts", async (req, res) => {
-  try {
-    const receipts = await relationshipEngine.getReceipts(
-      req.params.relationshipId
-    );
-    res.json({ receipts });
-  } catch (error) {
-    sendRelationshipError(res, error);
-  }
-});
-
-router.post("/relationships/:relationshipId/boundaries", async (req, res) => {
-  const body = req.body as Partial<DeclareRelationshipBoundaryInput>;
-  if (
-    !body.declaredByActorId?.trim() ||
-    !body.boundaryType?.trim() ||
-    !body.boundaryValue?.trim() ||
-    !body.idempotencyKey?.trim()
-  ) {
-    res.status(400).json({
-      error:
-        "declaredByActorId, boundaryType, boundaryValue and idempotencyKey are required",
-    });
-    return;
-  }
-
-  try {
-    const result = await relationshipEngine.declareBoundary({
-      ...body,
-      relationshipId: req.params.relationshipId,
-    } as DeclareRelationshipBoundaryInput);
-    res.status(result.duplicate ? 200 : 201).json(result);
-  } catch (error) {
-    sendRelationshipError(res, error);
-  }
-});
-
-router.post("/relationships/:relationshipId/decisions", async (req, res) => {
-  const body = req.body as Partial<ApplyRelationshipQuestDecisionInput>;
-  if (
-    !body.questInstanceId?.trim() ||
-    !body.sourceActorId?.trim() ||
-    !body.decisionType?.trim() ||
-    !body.selectedOption?.trim() ||
-    !body.idempotencyKey?.trim()
-  ) {
-    res.status(400).json({
-      error:
-        "questInstanceId, sourceActorId, decisionType, selectedOption and idempotencyKey are required",
-    });
-    return;
-  }
-
-  try {
-    const result = await relationshipEngine.applyQuestDecision({
-      ...body,
-      relationshipId: req.params.relationshipId,
-    } as ApplyRelationshipQuestDecisionInput);
-    res.status(result.duplicate ? 200 : 201).json(result);
-  } catch (error) {
-    sendRelationshipError(res, error);
-  }
-});
-
-router.post("/relationships/projections/flush", async (_req, res) => {
-  const projected = await relationshipEngine.flushProjections();
-  res.json({ projected });
-});
-
-function sendRelationshipError(res: Response, error: unknown): void {
-  if (error instanceof RelationshipGovernanceError) {
-    const status = error.code === "RIVM-NOT-FOUND" ? 404 : 422;
-    res.status(status).json({ error: error.message, code: error.code });
-    return;
-  }
-
-  res.status(500).json({
-    error: error instanceof Error ? error.message : "Relationship command failed",
-  });
-}
+// Relationship authority intentionally does not live in this legacy router.
+// `server.ts` mounts the dependency-injected canonical relationship router at
+// `/api/runtime/relationships`, preserving one source-level authority surface.
 
 export { router as runtimeRouter };

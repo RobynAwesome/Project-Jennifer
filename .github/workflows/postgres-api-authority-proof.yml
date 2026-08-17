@@ -9,6 +9,7 @@ on:
       - "packages/shared/**"
       - "infra/postgres/**"
       - "tools/prove-postgres-api-authority.mjs"
+      - "tools/prove-postgres-api-recovery.mjs"
       - ".github/workflows/postgres-api-authority-proof.yml"
       - "pnpm-lock.yaml"
   pull_request:
@@ -19,6 +20,7 @@ on:
       - "packages/shared/**"
       - "infra/postgres/**"
       - "tools/prove-postgres-api-authority.mjs"
+      - "tools/prove-postgres-api-recovery.mjs"
       - ".github/workflows/postgres-api-authority-proof.yml"
       - "pnpm-lock.yaml"
 
@@ -29,7 +31,7 @@ env:
 
 jobs:
   api-authority-proof:
-    name: API PostgreSQL authority + restart proof
+    name: API PostgreSQL authority + outage/recovery proof
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -71,3 +73,8 @@ jobs:
 
       - name: Prove API authority, restart, idempotency, and fail-closed startup
         run: node tools/prove-postgres-api-authority.mjs
+
+      - name: Prove live database outage, degradation, recovery, and telemetry
+        env:
+          POSTGRES_CONTAINER_ID: ${{ job.services.postgres.id }}
+        run: node tools/prove-postgres-api-recovery.mjs

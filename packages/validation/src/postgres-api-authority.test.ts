@@ -43,8 +43,9 @@ test("relationship authority adapter transaction-binds event, receipt, and outbo
   assert.match(adapter, /RelationshipAuthorityDuplicateError/);
 });
 
-test("canonical relationship router precedes legacy runtime routing", () => {
+test("canonical relationship router is the only source-level relationship HTTP authority", () => {
   const server = read("apps/api/src/server.ts");
+  const legacyRuntime = read("apps/api/src/routes/runtime.ts");
   const canonicalMount = server.indexOf(
     'app.use(\n  "/api/runtime/relationships"',
   );
@@ -56,24 +57,52 @@ test("canonical relationship router precedes legacy runtime routing", () => {
     canonicalMount < legacyMount,
     "canonical relationship authority must be mounted before the legacy runtime router",
   );
+  assert.doesNotMatch(legacyRuntime, /router\.(get|post)\("\/relationships/);
+  assert.doesNotMatch(legacyRuntime, /new RelationshipEngine\(/);
+  assert.match(legacyRuntime, /Relationship authority intentionally does not live in this legacy router/);
   assert.match(server, /persistence:\s*persistenceHealth/);
   assert.match(server, /persistenceHealth\.database === "ready"/);
 });
 
-test("live API authority proof is an executable PostgreSQL 16 gate", () => {
+test("PostgreSQL readiness transitions survive pool errors and emit explicit recovery telemetry", () => {
+  const persistence = read("apps/api/src/persistence.ts");
+
+  assert.match(persistence, /this\.pool\.on\("error"/);
+  assert.match(persistence, /"pool-error"/);
+  assert.match(persistence, /persistence\.database-unavailable/);
+  assert.match(persistence, /persistence\.database-recovered/);
+  assert.match(persistence, /databaseState === "unavailable"/);
+});
+
+test("live API authority and outage recovery proofs are executable PostgreSQL 16 gates", () => {
   const workflowPath = ".github/workflows/postgres-api-authority-proof.yml";
-  const proofPath = "tools/prove-postgres-api-authority.mjs";
+  const authorityProofPath = "tools/prove-postgres-api-authority.mjs";
+  const recoveryProofPath = "tools/prove-postgres-api-recovery.mjs";
   assert.equal(existsSync(repoPath(workflowPath)), true);
-  assert.equal(existsSync(repoPath(proofPath)), true);
+  assert.equal(existsSync(repoPath(authorityProofPath)), true);
+  assert.equal(existsSync(repoPath(recoveryProofPath)), true);
 
   const workflow = read(workflowPath);
-  const proof = read(proofPath);
+  const authorityProof = read(authorityProofPath);
+  const recoveryProof = read(recoveryProofPath);
   assert.match(workflow, /postgres:16-alpine/);
   assert.match(workflow, /pnpm install --frozen-lockfile/);
   assert.match(workflow, /prove-postgres-api-authority\.mjs/);
-  assert.match(proof, /Promise\.all/);
-  assert.match(proof, /restartRecovered:\s*true/);
-  assert.match(proof, /replaySuppressed:\s*true/);
-  assert.match(proof, /databaseFailureFailsClosed:\s*true/);
-  assert.match(proof, /productionModeMustBeExplicit:\s*true/);
+  assert.match(workflow, /POSTGRES_CONTAINER_ID:\s*\$\{\{ job\.services\.postgres\.id \}\}/);
+  assert.match(workflow, /prove-postgres-api-recovery\.mjs/);
+
+  assert.match(authorityProof, /Promise\.all/);
+  assert.match(authorityProof, /restartRecovered:\s*true/);
+  assert.match(authorityProof, /replaySuppressed:\s*true/);
+  assert.match(authorityProof, /databaseFailureFailsClosed:\s*true/);
+  assert.match(authorityProof, /productionModeMustBeExplicit:\s*true/);
+
+  assert.match(recoveryProof, /docker", \["stop"/);
+  assert.match(recoveryProof, /docker", \["start"/);
+  assert.match(recoveryProof, /processStable:\s*true/);
+  assert.match(recoveryProof, /readinessDegraded:\s*true/);
+  assert.match(recoveryProof, /readinessRecovered:\s*true/);
+  assert.match(recoveryProof, /outageTelemetry:\s*true/);
+  assert.match(recoveryProof, /recoveryTelemetry:\s*true/);
+  assert.match(recoveryProof, /replaySuppressedAfterRecovery:\s*true/);
 });

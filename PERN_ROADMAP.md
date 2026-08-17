@@ -56,9 +56,9 @@ This establishes PostgreSQL as the governed relational spine while MongoDB carri
 - `.github/workflows/postgres-live-proof.yml` starts PostgreSQL 16 and proves the runtime repository against a real database.
 - `tools/prove-postgres-runtime-gate.mjs` proves fresh migration, deterministic second-run no-op, concurrent action reservation, persisted `applied` state, real pool recreation, replay suppression, and checksum-drift rejection.
 
-### API relationship-authority activation gate 🚧
+### API relationship-authority activation gate ✅
 
-The next bounded activation slice moves the governed relationship domain through the real application boundary without promoting PostgreSQL globally before the remaining proof gates are complete:
+The governed relationship domain now crosses the real application boundary without promoting PostgreSQL globally before the remaining proof gates are complete:
 
 - `apps/api` owns the concrete `pg` driver; runtime/domain packages remain vendor-driver-free.
 - `JENNIFER_PERSISTENCE_MODE=in-memory|postgres` makes authority selection explicit.
@@ -66,20 +66,32 @@ The next bounded activation slice moves the governed relationship domain through
 - PostgreSQL mode validates configuration, checks connectivity, executes checksum-pinned migrations, and fails startup instead of silently falling back to memory.
 - `PostgresRelationshipAuthorityStore` transaction-binds relationship state, authoritative event, validation receipt, quest decision when present, and outbox evidence.
 - a PostgreSQL advisory lock closes cross-process idempotency races before authoritative writes begin.
-- the canonical `/api/runtime/relationships` router is mounted ahead of the legacy runtime router and retries only the persisted winner after an idempotency race.
+- the canonical `/api/runtime/relationships` router is dependency-injected from the persistence composition root.
 - `/health` reports configured authority, durability, migration count, and live database reachability.
 - connect/query/transaction/startup/shutdown/failure events emit governed telemetry without recording SQL bodies.
 - graceful `SIGINT` / `SIGTERM` closes the HTTP server and PostgreSQL pool.
 - `.github/workflows/postgres-api-authority-proof.yml` proves the application boundary against PostgreSQL 16.
 - `tools/prove-postgres-api-authority.mjs` proves concurrent HTTP idempotency, one authoritative database event, process restart recovery, replay suppression, dead-database startup failure, and explicit production mode selection.
 
+### API outage/recovery + single-authority proof gate 🚧
+
+This gate is implementation-complete on its feature branch and MUST pass its live PostgreSQL proof before merge:
+
+- PostgreSQL idle-pool errors have an explicit listener, preventing database disappearance from becoming an unhandled process-terminating event.
+- `/health` records `ready → unavailable → ready` transitions without restarting Jennifer.
+- transition telemetry emits `persistence.database-unavailable` and `persistence.database-recovered` only when readiness state changes.
+- the superseded relationship handlers and private in-memory `RelationshipEngine` have been removed from `apps/api/src/routes/runtime.ts`.
+- `apps/api/src/routes/relationships.ts` is therefore the single source-level relationship HTTP authority surface.
+- `tools/prove-postgres-api-recovery.mjs` starts the compiled API, creates authoritative state, physically stops the PostgreSQL service container, proves the same API process stays alive and reports HTTP 503, proves relationship reads fail rather than fall back to memory, restarts PostgreSQL, proves the same process becomes ready again, verifies transition telemetry, reloads the original relationship, and proves replay remains suppressed after recovery.
+- the recovery proof is executed inside `.github/workflows/postgres-api-authority-proof.yml` using the real PostgreSQL 16 service container ID.
+
+The branch must not merge unless normal CI, governance validation, the runtime PostgreSQL proof, and the API authority/recovery proof are green. Once merged, this gate is considered accepted.
+
 ### Remaining before PostgreSQL becomes globally `active`
 
-1. Prove live database outage and recovery while the API process remains running, including readiness transition and recovery telemetry.
-2. Remove the superseded relationship handlers from the legacy runtime router after canonical-router parity is accepted, so there is one source-level relationship HTTP surface as well as one runtime surface.
-3. Bind the rebuildable relationship projection path to governed MongoDB rather than process-local memory and prove projection rebuild from the PostgreSQL outbox.
-4. Prove React reads governed persisted data through the API rather than fixture/process-local state.
-5. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
+1. Bind the rebuildable relationship projection path to governed MongoDB rather than process-local memory and prove projection rebuild from the PostgreSQL outbox.
+2. Prove React reads governed persisted data through the API rather than fixture/process-local state.
+3. Expand transactional authority only through domain-owned adapters for NCMP, Waifu Forge, governance, and validation receipts.
 
 No domain may write directly to PostgreSQL. Every write must pass through a domain-owned repository or adapter contract.
 
@@ -112,6 +124,7 @@ The PERN spine is considered operational only after:
 - migrations run from zero and against an existing schema
 - API typechecks and boots with the concrete database adapter
 - a consequential receipted action survives a real process restart
+- the running API degrades and recovers across a live PostgreSQL outage
 - React reads real governed data
 - offline or database-failure behaviour is explicit
 - no direct ungoverned database writes exist
@@ -125,11 +138,13 @@ The PERN spine is considered operational only after:
 - `packages/runtime/src/postgres-relationship-authority-store.ts`
 - `apps/api/src/persistence.ts`
 - `apps/api/src/routes/relationships.ts`
+- `apps/api/src/routes/runtime.ts`
 - `apps/api/src/server.ts`
 - `infra/postgres/migrations/0001_relationship_spine.sql`
 - `infra/postgres/migrations/0002_memory_receipt_ark.sql`
 - `tools/prove-postgres-runtime-gate.mjs`
 - `tools/prove-postgres-api-authority.mjs`
+- `tools/prove-postgres-api-recovery.mjs`
 - `.github/workflows/postgres-live-proof.yml`
 - `.github/workflows/postgres-api-authority-proof.yml`
 - `docs/architecture/adr-0003-mern-pern-relationship-spine.md`
