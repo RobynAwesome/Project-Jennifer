@@ -1,10 +1,11 @@
 /**
  * Project Jennifer PERN foundation.
  *
- * React, Express, and Node are active. PostgreSQL now has an approved
- * relationship-spine schema and local service scaffold, but it remains
- * contract-ready until a governed driver, migration runner, and domain-owned
- * repository adapters are connected to runtime writes.
+ * React, Express, and Node are active. PostgreSQL now has approved schemas for
+ * the relationship spine and Memory Receipt Ark plus a domain-owned runtime
+ * gate repository adapter. PostgreSQL remains contract-ready until a concrete
+ * governed driver/pool, deterministic migration execution, and transaction-
+ * bound domain mutations are proven against a running database.
  */
 
 export const PERN_LAYERS = ["postgresql", "express", "react", "node"] as const;
@@ -95,11 +96,14 @@ export const PROJECT_JENNIFER_PERN_FOUNDATION: readonly PernLayerDescriptor[] = 
       ".env.example",
       "docker-compose.persistence.yml",
       "infra/postgres/migrations/0001_relationship_spine.sql",
+      "infra/postgres/migrations/0002_memory_receipt_ark.sql",
+      "packages/runtime/src/postgres-runtime-gate-ledger.ts",
       "docs/architecture/adr-0003-mern-pern-relationship-spine.md",
+      "docs/architecture/adr-0007-durable-memory-receipt-ark.md",
       "PERN_ROADMAP.md",
     ],
     nextGate:
-      "Install the governed driver, add a migration runner and connection pool, then route writes through domain-owned repositories.",
+      "Bind a concrete governed PostgreSQL driver/pool, execute migrations deterministically, and transaction-bind authoritative domain mutations to their receipt/idempotency records.",
   },
   {
     layer: "express",
@@ -139,6 +143,6 @@ export function getPernFoundationStatus(): {
     layers: PROJECT_JENNIFER_PERN_FOUNDATION.map(clonePernLayerDescriptor),
     nextGate: complete
       ? "PERN runtime is active. Continue governed feature delivery."
-      : "Connect PostgreSQL through the approved repository-adapter and migration-runner gate.",
+      : "Connect the concrete PostgreSQL driver/pool, run migrations against a live database, and bind consequential mutations to the authoritative transaction boundary.",
   };
 }
