@@ -1,0 +1,86 @@
+name: MongoDB Projection Rebuild Proof
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "apps/api/**"
+      - "packages/runtime/**"
+      - "packages/shared/**"
+      - "infra/mongodb/**"
+      - "infra/postgres/**"
+      - "tools/prove-mongodb-projection-rebuild.mjs"
+      - ".github/workflows/mongodb-projection-rebuild-proof.yml"
+      - "pnpm-lock.yaml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "apps/api/**"
+      - "packages/runtime/**"
+      - "packages/shared/**"
+      - "infra/mongodb/**"
+      - "infra/postgres/**"
+      - "tools/prove-mongodb-projection-rebuild.mjs"
+      - ".github/workflows/mongodb-projection-rebuild-proof.yml"
+      - "pnpm-lock.yaml"
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.4.0"
+  DATABASE_URL: "postgresql://jennifer:jennifer_ci@127.0.0.1:5432/project_jennifer_projection_ci"
+  MONGODB_URI: "mongodb://127.0.0.1:27017"
+  MONGODB_DATABASE: "project_jennifer_projection_ci"
+
+jobs:
+  projection-rebuild-proof:
+    name: PostgreSQL authority + MongoDB projection rebuild proof
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: project_jennifer_projection_ci
+          POSTGRES_USER: jennifer
+          POSTGRES_PASSWORD: jennifer_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U jennifer -d project_jennifer_projection_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'quit(db.adminCommand({ ping: 1 }).ok ? 0 : 2)'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build API dependency graph
+        run: pnpm --filter @jennifer/api... build
+
+      - name: Prove projection replay idempotency and PostgreSQL-driven rebuild
+        run: node tools/prove-mongodb-projection-rebuild.mjs
