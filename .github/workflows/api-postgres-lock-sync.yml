@@ -1,0 +1,52 @@
+name: API PostgreSQL lockfile sync
+
+on:
+  push:
+    branches:
+      - forge/api-postgres-authority-2026-08-17
+    paths:
+      - "apps/api/package.json"
+      - ".github/workflows/api-postgres-lock-sync.yml"
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.4.0"
+
+jobs:
+  sync-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: forge/api-postgres-authority-2026-08-17
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Regenerate lockfile deterministically
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+
+      - name: Commit lockfile receipt
+        shell: bash
+        run: |
+          git add pnpm-lock.yaml
+          if git diff --cached --quiet; then
+            echo "pnpm-lock.yaml already synchronized"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(api): sync postgres lockfile"
+          git push origin HEAD:forge/api-postgres-authority-2026-08-17
