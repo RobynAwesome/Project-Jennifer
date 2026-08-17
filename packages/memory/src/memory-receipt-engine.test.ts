@@ -31,7 +31,10 @@ test("risk matrix preserves overlapping failure vectors instead of collapsing th
   assert.deepEqual(analysis.dominantVectors, ["authority-projection"]);
   assert.equal(analysis.matrix.sycophancy.sycophancy, 0.7);
   assert.equal(analysis.matrix.sycophancy["authority-projection"], 0.7);
-  assert.equal(analysis.matrix["authority-projection"]["dependency-formation"], 0.5);
+  assert.equal(
+    analysis.matrix["authority-projection"]["dependency-formation"],
+    0.5,
+  );
   assert.match(analysis.preservedDivergence, /not collapsed into sycophancy/i);
 });
 
@@ -132,4 +135,119 @@ test("maybe receipts remain deferred even when evidence is verified", () => {
   });
 
   assert.equal(receipt.admission, "deferred");
+});
+
+test("issued receipts are deeply detached from caller-owned mutable provenance", () => {
+  const engine = new MemoryReceiptEngine();
+  const provenance = {
+    source: "runtime-audit",
+    nested: {
+      refs: ["receipt-a"],
+      state: { stage: "tested" },
+    },
+  };
+  const supersedes = ["receipt-old"];
+  const roots = ["GSMB", "target-repository"];
+
+  const receipt = engine.issue({
+    subject: "immutable-receipt",
+    claim: "Receipt state must not mutate after issuance.",
+    evidenceRefs: ["receipt-a"],
+    conceptState: "proof-of-concept",
+    confidence: 1,
+    provenance,
+    temporal: {
+      lane: "failure",
+      supersedesReceiptIds: supersedes,
+    },
+    retrieval: {
+      evidenceVerified: true,
+      answerBoundToEvidence: true,
+      retrievalRoots: roots,
+    },
+  });
+
+  provenance.nested.refs.push("receipt-mutated-after-issue");
+  provenance.nested.state.stage = "deployed";
+  supersedes.push("receipt-mutated-after-issue");
+  roots.push("inference");
+
+  const storedNested = receipt.provenance.nested as {
+    refs: readonly string[];
+    state: Readonly<{ stage: string }>;
+  };
+
+  assert.deepEqual(storedNested.refs, ["receipt-a"]);
+  assert.equal(storedNested.state.stage, "tested");
+  assert.deepEqual(receipt.temporal.supersedesReceiptIds, ["receipt-old"]);
+  assert.deepEqual(receipt.retrieval.retrievalRoots, [
+    "GSMB",
+    "target-repository",
+  ]);
+  assert.ok(Object.isFrozen(receipt.provenance));
+  assert.ok(Object.isFrozen(storedNested));
+  assert.ok(Object.isFrozen(storedNested.refs));
+  assert.ok(Object.isFrozen(storedNested.state));
+  assert.ok(Object.isFrozen(receipt.temporal.supersedesReceiptIds));
+  assert.ok(Object.isFrozen(receipt.retrieval.retrievalRoots));
+});
+
+test("non-finite confidence and risk scores are quarantined and never persisted as NaN or Infinity", () => {
+  const engine = new MemoryReceiptEngine();
+  const receipt = engine.issue({
+    subject: "numeric-integrity",
+    claim: "Non-finite numbers must not enter durable memory state.",
+    evidenceRefs: ["numeric-test"],
+    conceptState: "proof-of-concept",
+    confidence: Number.NaN,
+    provenance: { source: "test", score: 1 },
+    temporal: {
+      lane: "failure",
+      observedAt: Number.POSITIVE_INFINITY,
+      validFrom: Number.NEGATIVE_INFINITY,
+    },
+    retrieval: {
+      evidenceVerified: true,
+      answerBoundToEvidence: true,
+    },
+    riskVectors: {
+      sycophancy: {
+        score: Number.POSITIVE_INFINITY,
+        evidence: ["invalid-score"],
+      },
+    },
+  });
+
+  assert.equal(receipt.admission, "quarantined");
+  assert.equal(receipt.confidence, 0);
+  assert.equal(receipt.risk.vectorScores.sycophancy, 0);
+  assert.equal(Number.isFinite(receipt.temporal.observedAt), true);
+  assert.equal(receipt.temporal.validFrom, undefined);
+  assert.match(receipt.validationErrors.join(" "), /confidence must be a finite number/);
+  assert.match(receipt.validationErrors.join(" "), /observedAt must be a finite number/);
+  assert.match(receipt.validationErrors.join(" "), /risk vector sycophancy score must be a finite number/);
+});
+
+test("unsupported provenance values quarantine the receipt instead of leaking mutable structures", () => {
+  const engine = new MemoryReceiptEngine();
+  const receipt = engine.issue({
+    subject: "provenance-integrity",
+    claim: "Durable provenance must use finite JSON-safe receipt values.",
+    evidenceRefs: ["provenance-test"],
+    conceptState: "failure-of-concept",
+    confidence: 0.5,
+    provenance: {
+      source: "test",
+      created: new Date("2026-08-17T00:00:00Z"),
+    },
+    temporal: { lane: "failure" },
+    retrieval: {
+      evidenceVerified: true,
+      answerBoundToEvidence: true,
+    },
+  });
+
+  assert.equal(receipt.admission, "quarantined");
+  assert.deepEqual(receipt.provenance, {});
+  assert.match(receipt.validationErrors.join(" "), /non-plain object/);
 });

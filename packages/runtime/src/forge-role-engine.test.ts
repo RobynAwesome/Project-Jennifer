@@ -38,6 +38,30 @@ test("bootstrap requires the mini-GSMB and current target repository state", () 
   assert.deepEqual(ready.missing, []);
 });
 
+test("bootstrap rejects blank target repositories and blank supplied receipts", () => {
+  assert.throws(
+    () =>
+      engine.bootstrap({
+        targetRepository: "   ",
+        currentInstruction: "Inspect current state.",
+        contextRootLoaded: true,
+        targetRepositoryInspected: true,
+      }),
+    /targetRepository is required/,
+  );
+
+  const result = engine.bootstrap({
+    targetRepository: "RobynAwesome/Project-Jennifer",
+    currentInstruction: "Inspect current state.",
+    contextRootLoaded: true,
+    targetRepositoryInspected: true,
+    receiptRefs: ["commit:abc", "   "],
+  });
+
+  assert.equal(result.ready, false);
+  assert.match(result.missing.join(" "), /receipt references must be non-blank/);
+});
+
 test("mini-GSMB context alone cannot promote a claim to implemented", () => {
   const result = engine.evaluateClaimPromotion({
     from: "specified",
@@ -70,4 +94,52 @@ test("runtime validation requires runtime evidence", () => {
 
   assert.equal(result.allowed, false);
   assert.match(result.reasons.join(" "), /runtime evidence/);
+});
+
+test("claim downgrade requires an explicit durable correction receipt", () => {
+  const missingCorrection = engine.evaluateClaimPromotion({
+    from: "runtime-validated",
+    to: "implemented",
+    evidenceSources: ["target-repository", "branch-pr-commit-receipt"],
+    evidenceRefs: ["receipt:correction-1"],
+  });
+
+  assert.equal(missingCorrection.allowed, false);
+  assert.match(
+    missingCorrection.reasons.join(" "),
+    /explicit supersession or correction receipt/,
+  );
+
+  const wrongRef = engine.evaluateClaimPromotion({
+    from: "runtime-validated",
+    to: "implemented",
+    evidenceSources: ["target-repository", "branch-pr-commit-receipt"],
+    evidenceRefs: ["receipt:other"],
+    correctionReceipt: {
+      receiptRef: "receipt:correction-1",
+      reason: "Runtime evidence was invalidated by a later repository audit.",
+      supersedesRefs: ["receipt:runtime-old"],
+    },
+  });
+
+  assert.equal(wrongRef.allowed, false);
+  assert.match(
+    wrongRef.reasons.join(" "),
+    /must also be present in evidenceRefs/,
+  );
+
+  const corrected = engine.evaluateClaimPromotion({
+    from: "runtime-validated",
+    to: "implemented",
+    evidenceSources: ["target-repository", "branch-pr-commit-receipt"],
+    evidenceRefs: ["receipt:correction-1"],
+    correctionReceipt: {
+      receiptRef: "receipt:correction-1",
+      reason: "Runtime evidence was invalidated by a later repository audit.",
+      supersedesRefs: ["receipt:runtime-old"],
+    },
+  });
+
+  assert.equal(corrected.allowed, true);
+  assert.match(corrected.reasons.join(" "), /correction\/supersession receipt/);
 });

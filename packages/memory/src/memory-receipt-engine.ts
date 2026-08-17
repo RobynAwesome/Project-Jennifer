@@ -35,7 +35,7 @@ export type ReceiptAdmission = "admitted" | "deferred" | "quarantined";
 
 export interface RiskVectorObservation {
   score: number;
-  evidence: string[];
+  evidence: readonly string[];
   note?: string;
 }
 
@@ -53,7 +53,7 @@ export interface TemporalGovernance {
   observedAt: number;
   validFrom?: number;
   validUntil?: number;
-  supersedesReceiptIds?: string[];
+  supersedesReceiptIds?: readonly string[];
   sourceModel?: string;
   targetModel?: string;
   handoffId?: string;
@@ -89,13 +89,13 @@ export interface RetrievalValidationTrace {
   chronologicalEvidenceRead?: boolean;
   evidenceVerified: boolean;
   answerBoundToEvidence?: boolean;
-  retrievalRoots?: string[];
+  retrievalRoots?: readonly string[];
 }
 
 export interface MemoryReceiptInput {
   subject: string;
   claim: string;
-  evidenceRefs: string[];
+  evidenceRefs: readonly string[];
   conceptState: ReceiptConceptState;
   confidence: number;
   consequence?: string;
@@ -106,10 +106,10 @@ export interface MemoryReceiptInput {
 }
 
 export interface MemoryReceiptRiskAnalysis {
-  vectorScores: Record<RelationalFailureVector, number>;
-  matrix: RiskVectorMatrix;
-  activeVectors: RelationalFailureVector[];
-  dominantVectors: RelationalFailureVector[];
+  vectorScores: Readonly<Record<RelationalFailureVector, number>>;
+  matrix: Readonly<RiskVectorMatrix>;
+  activeVectors: readonly RelationalFailureVector[];
+  dominantVectors: readonly RelationalFailureVector[];
   preservedDivergence: string;
 }
 
@@ -136,12 +136,18 @@ export const MEMORY_RECEIPT_INVARIANTS = [
   "No single failure vector may absorb other observed vectors into an overly powerful root node.",
   "Retrieval continuity is not equivalent to validation.",
   "Model handoff metadata must remain traceable when the intelligence substrate changes.",
+  "Issued receipts must be deeply immutable and detached from caller-owned mutable references.",
+  "Non-finite numeric values may not enter durable receipt state.",
 ] as const;
 
 function emptyVectorScores(): Record<RelationalFailureVector, number> {
   return Object.fromEntries(
     RELATIONAL_FAILURE_VECTORS.map((vector) => [vector, 0]),
   ) as Record<RelationalFailureVector, number>;
+}
+
+function finiteClamped(value: number, fallback = 0): number {
+  return Number.isFinite(value) ? clamp(value, 0, 1) : fallback;
 }
 
 /**
@@ -157,7 +163,7 @@ export function buildRiskVectorMatrix(
   const scores = emptyVectorScores();
 
   for (const vector of RELATIONAL_FAILURE_VECTORS) {
-    scores[vector] = clamp(observations[vector]?.score ?? 0, 0, 1);
+    scores[vector] = finiteClamped(observations[vector]?.score ?? 0);
   }
 
   const matrix = {} as RiskVectorMatrix;
@@ -198,6 +204,12 @@ export function validateMemoryReceiptInput(input: MemoryReceiptInput): string[] 
   if (input.evidenceRefs.length === 0) {
     errors.push("at least one evidence reference is required");
   }
+  if (input.evidenceRefs.some((ref) => !ref.trim())) {
+    errors.push("evidence references must be non-blank");
+  }
+  if (!Number.isFinite(input.confidence)) {
+    errors.push("confidence must be a finite number");
+  }
 
   if (
     input.conceptState === "proof-of-concept" &&
@@ -206,42 +218,149 @@ export function validateMemoryReceiptInput(input: MemoryReceiptInput): string[] 
     errors.push("proof-of-concept requires verified evidence");
   }
 
+  validateFiniteOptionalNumber(input.temporal.observedAt, "observedAt", errors);
+  validateFiniteOptionalNumber(input.temporal.validFrom, "validFrom", errors);
+  validateFiniteOptionalNumber(input.temporal.validUntil, "validUntil", errors);
+
   if (
     input.temporal.validFrom != null &&
+    Number.isFinite(input.temporal.validFrom) &&
     input.temporal.validUntil != null &&
+    Number.isFinite(input.temporal.validUntil) &&
     input.temporal.validUntil < input.temporal.validFrom
   ) {
     errors.push("validUntil cannot be earlier than validFrom");
   }
 
-  for (const [vector, observation] of Object.entries(
-    input.riskVectors ?? {},
-  )) {
+  if (
+    input.temporal.supersedesReceiptIds?.some((ref) => !ref.trim())
+  ) {
+    errors.push("superseded receipt references must be non-blank");
+  }
+  if (input.retrieval.retrievalRoots?.some((root) => !root.trim())) {
+    errors.push("retrieval roots must be non-blank");
+  }
+
+  try {
+    cloneReceiptValue(input.provenance);
+  } catch (error) {
+    errors.push(
+      `provenance must contain only finite JSON-safe receipt values: ${errorMessage(error)}`,
+    );
+  }
+
+  for (const [vector, observation] of Object.entries(input.riskVectors ?? {})) {
     if (!RELATIONAL_FAILURE_VECTORS.includes(vector as RelationalFailureVector)) {
       errors.push(`unknown risk vector: ${vector}`);
       continue;
     }
-    if (observation && observation.evidence.length === 0 && observation.score > 0) {
-      errors.push(`risk vector ${vector} requires evidence when score is non-zero`);
+    if (!observation) continue;
+
+    if (!Number.isFinite(observation.score)) {
+      errors.push(`risk vector ${vector} score must be a finite number`);
+    }
+    if (observation.evidence.some((ref) => !ref.trim())) {
+      errors.push(`risk vector ${vector} evidence references must be non-blank`);
+    }
+    if (
+      Number.isFinite(observation.score) &&
+      observation.score > 0 &&
+      observation.evidence.length === 0
+    ) {
+      errors.push(
+        `risk vector ${vector} requires evidence when score is non-zero`,
+      );
     }
   }
 
   return errors;
 }
 
-function freezeReceipt(receipt: MemoryReceipt): MemoryReceipt {
-  Object.freeze(receipt.evidenceRefs);
-  Object.freeze(receipt.validationErrors);
-  Object.freeze(receipt.provenance);
-  Object.freeze(receipt.temporal);
-  Object.freeze(receipt.retrieval);
-  Object.freeze(receipt.risk.vectorScores);
-  for (const row of Object.values(receipt.risk.matrix)) Object.freeze(row);
-  Object.freeze(receipt.risk.matrix);
-  Object.freeze(receipt.risk.activeVectors);
-  Object.freeze(receipt.risk.dominantVectors);
-  Object.freeze(receipt.risk);
-  return Object.freeze(receipt);
+function validateFiniteOptionalNumber(
+  value: number | undefined,
+  field: string,
+  errors: string[],
+): void {
+  if (value != null && !Number.isFinite(value)) {
+    errors.push(`${field} must be a finite number when supplied`);
+  }
+}
+
+function cloneReceiptValue<T>(value: T, seen = new WeakSet<object>()): T {
+  if (
+    value === null ||
+    typeof value === "string" ||
+    typeof value === "boolean"
+  ) {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) {
+      throw new TypeError("non-finite number");
+    }
+    return value;
+  }
+
+  if (typeof value !== "object") {
+    throw new TypeError(`unsupported ${typeof value} value`);
+  }
+
+  const objectValue = value as object;
+  if (seen.has(objectValue)) {
+    throw new TypeError("circular reference");
+  }
+  seen.add(objectValue);
+
+  try {
+    if (Array.isArray(value)) {
+      return value.map((item) => cloneReceiptValue(item, seen)) as T;
+    }
+
+    if (Object.getPrototypeOf(value) !== Object.prototype) {
+      throw new TypeError("non-plain object");
+    }
+
+    const clone: Record<string, unknown> = {};
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+      clone[key] = cloneReceiptValue(item, seen);
+    }
+    return clone as T;
+  } finally {
+    seen.delete(objectValue);
+  }
+}
+
+function cloneProvenance(
+  provenance: Record<string, unknown>,
+): Record<string, unknown> {
+  try {
+    return cloneReceiptValue(provenance);
+  } catch {
+    return {};
+  }
+}
+
+function deepFreeze<T>(value: T, seen = new WeakSet<object>()): T {
+  if (value === null || typeof value !== "object") return value;
+
+  const objectValue = value as object;
+  if (seen.has(objectValue)) return value;
+  seen.add(objectValue);
+
+  for (const nested of Object.values(value as Record<string, unknown>)) {
+    deepFreeze(nested, seen);
+  }
+
+  return Object.freeze(value);
+}
+
+function finiteOptional(value: number | undefined): number | undefined {
+  return value == null || !Number.isFinite(value) ? undefined : value;
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 export class MemoryReceiptEngine {
@@ -260,31 +379,37 @@ export class MemoryReceiptEngine {
           ? "deferred"
           : "admitted";
 
-    const receipt: MemoryReceipt = freezeReceipt({
+    const observedAt = Number.isFinite(input.temporal.observedAt)
+      ? input.temporal.observedAt!
+      : now();
+
+    const receipt: MemoryReceipt = deepFreeze({
       id: generateId(),
       subject: input.subject.trim(),
       claim: input.claim.trim(),
-      evidenceRefs: [...input.evidenceRefs],
+      evidenceRefs: input.evidenceRefs.map((ref) => ref.trim()),
       conceptState: input.conceptState,
-      confidence: clamp(input.confidence, 0, 1),
+      confidence: finiteClamped(input.confidence),
       consequence: input.consequence,
-      provenance: { ...input.provenance },
+      provenance: cloneProvenance(input.provenance),
       temporal: {
         ...input.temporal,
-        observedAt: input.temporal.observedAt ?? now(),
+        observedAt,
+        validFrom: finiteOptional(input.temporal.validFrom),
+        validUntil: finiteOptional(input.temporal.validUntil),
         supersedesReceiptIds: input.temporal.supersedesReceiptIds
-          ? [...input.temporal.supersedesReceiptIds]
+          ? input.temporal.supersedesReceiptIds.map((ref) => ref.trim())
           : undefined,
       },
       retrieval: {
         ...input.retrieval,
         retrievalRoots: input.retrieval.retrievalRoots
-          ? [...input.retrieval.retrievalRoots]
+          ? input.retrieval.retrievalRoots.map((root) => root.trim())
           : undefined,
       },
       risk,
       admission,
-      validationErrors,
+      validationErrors: [...validationErrors],
       createdAt: now(),
     });
 
