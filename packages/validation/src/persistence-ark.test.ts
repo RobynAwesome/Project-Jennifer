@@ -36,7 +36,7 @@ test("Postgres runtime gate adapter reserves before mutation and exposes conflic
   assert.match(adapter, /ROLLBACK/);
 });
 
-test("PERN remains contract-ready until a live driver and transaction-bound mutation are proven", () => {
+test("PERN remains contract-ready until outage, projection, and read-through proof complete", () => {
   const foundation = read("packages/shared/src/pern-foundation.ts");
   const roadmap = read("PERN_ROADMAP.md");
   const adr = read("docs/architecture/adr-0007-durable-memory-receipt-ark.md");
@@ -45,8 +45,8 @@ test("PERN remains contract-ready until a live driver and transaction-bound muta
     foundation,
     /layer:\s*"postgresql"[\s\S]*status:\s*"contract-ready"/,
   );
-  assert.match(foundation, /concrete governed PostgreSQL driver\/pool/i);
-  assert.match(roadmap, /Remaining before PostgreSQL becomes `active`/i);
+  assert.match(foundation, /Relationship authority can run against PostgreSQL/i);
+  assert.match(roadmap, /Remaining before PostgreSQL becomes globally `active`/i);
   assert.match(adr, /does \*\*not\*\* claim exactly-once semantics/i);
   assert.match(adr, /PREPARED[\s\S]*HOLD/i);
 });
