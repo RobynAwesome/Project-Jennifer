@@ -1,7 +1,4 @@
-import type {
-  RelationshipContextProjection,
-  RelationshipSnapshot,
-} from "@jennifer/shared";
+import type { RelationshipSnapshot } from "@jennifer/shared";
 
 import type {
   IRelationshipAuthorityStore,
@@ -90,5 +87,3 @@ function latestAuthoritativeEventId(
 ): string | undefined {
   return snapshot.events.at(-1)?.id;
 }
-
-export type { RelationshipContextProjection };
