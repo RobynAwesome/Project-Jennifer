@@ -31,6 +31,9 @@ export default async function RelationshipEvidencePage({
 
   const { snapshot, persistence, apiStatus } = readThrough;
   const { relationship, projection } = snapshot;
+  const activeBoundaries = snapshot.boundaries.filter(
+    (boundary) => boundary.status === "active",
+  );
 
   return (
     <main
@@ -121,6 +124,31 @@ export default async function RelationshipEvidencePage({
               value={snapshot.receipts.at(-1)?.id ?? "none"}
             />
           </dl>
+
+          {activeBoundaries.length > 0 ? (
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <p className="font-mono text-xs uppercase tracking-wider text-gray-500">
+                Active boundary evidence
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {activeBoundaries.map((boundary) => (
+                  <article
+                    key={boundary.id}
+                    className="rounded-lg border border-white/10 bg-white/5 p-3"
+                    data-boundary-type={boundary.boundaryType}
+                    data-boundary-value={boundary.boundaryValue}
+                  >
+                    <p className="font-mono text-xs text-jennifer-primary">
+                      {boundary.boundaryType}
+                    </p>
+                    <p className="mt-1 break-words text-sm text-gray-200">
+                      {boundary.boundaryValue}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
