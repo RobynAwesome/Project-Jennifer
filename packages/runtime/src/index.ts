@@ -70,3 +70,12 @@ export type {
   PostgresPoolPort,
   PostgresQueryResult,
 } from "./postgres-runtime-gate-ledger.js";
+
+export {
+  PostgresMigrationDriftError,
+  PostgresMigrationRunner,
+} from "./postgres-migration-runner.js";
+export type {
+  PostgresMigration,
+  PostgresMigrationResult,
+} from "./postgres-migration-runner.js";
