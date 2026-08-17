@@ -3,10 +3,11 @@
  *
  * React, Express, and Node are active. PostgreSQL has approved schemas,
  * checksum-pinned migrations, live-database proof, a concrete API binding for
- * the governed relationship authority domain, and executable restart + live
- * outage/recovery proof. PostgreSQL remains contract-ready globally until
- * governed projections, React read-through, and subsequent domain activation
- * gates are proven.
+ * the governed relationship authority domain, executable restart + live
+ * outage/recovery proof, and an executable PostgreSQL-to-MongoDB adaptive
+ * projection rebuild gate. PostgreSQL remains contract-ready globally until
+ * persisted React read-through and subsequent domain activation gates are
+ * proven.
  */
 
 export const PERN_LAYERS = ["postgresql", "express", "react", "node"] as const;
@@ -98,23 +99,29 @@ export const PROJECT_JENNIFER_PERN_FOUNDATION: readonly PernLayerDescriptor[] = 
       "docker-compose.persistence.yml",
       "infra/postgres/migrations/0001_relationship_spine.sql",
       "infra/postgres/migrations/0002_memory_receipt_ark.sql",
+      "infra/mongodb/0001_relationship_projections.js",
       "packages/runtime/src/postgres-runtime-gate-ledger.ts",
       "packages/runtime/src/postgres-migration-runner.ts",
       "packages/runtime/src/postgres-relationship-authority-store.ts",
+      "packages/runtime/src/mongo-relationship-projection-store.ts",
+      "packages/runtime/src/relationship-projection-rebuilder.ts",
       "apps/api/src/persistence.ts",
+      "apps/api/src/mongo-projection.ts",
       "apps/api/src/routes/relationships.ts",
       "apps/api/src/routes/runtime.ts",
       "tools/prove-postgres-runtime-gate.mjs",
       "tools/prove-postgres-api-authority.mjs",
       "tools/prove-postgres-api-recovery.mjs",
+      "tools/prove-mongodb-projection-rebuild.mjs",
       ".github/workflows/postgres-live-proof.yml",
       ".github/workflows/postgres-api-authority-proof.yml",
+      ".github/workflows/mongodb-projection-rebuild-proof.yml",
       "docs/architecture/adr-0003-mern-pern-relationship-spine.md",
       "docs/architecture/adr-0007-durable-memory-receipt-ark.md",
       "PERN_ROADMAP.md",
     ],
     nextGate:
-      "Bind rebuildable relationship projections to governed MongoDB and prove React reads persisted governed data before global activation.",
+      "Accept the PostgreSQL-to-MongoDB projection rebuild proof, then prove React reads persisted governed relationship data before global activation.",
   },
   {
     layer: "express",
@@ -154,6 +161,6 @@ export function getPernFoundationStatus(): {
     layers: PROJECT_JENNIFER_PERN_FOUNDATION.map(clonePernLayerDescriptor),
     nextGate: complete
       ? "PERN runtime is active. Continue governed feature delivery."
-      : "Relationship authority has restart and outage/recovery proof against PostgreSQL; next prove governed projection rebuild and React persisted read-through before global PostgreSQL activation.",
+      : "Relationship authority has PostgreSQL restart/resilience evidence and a PostgreSQL-to-MongoDB projection rebuild gate; next accept that proof and prove React persisted read-through before global PostgreSQL activation.",
   };
 }
