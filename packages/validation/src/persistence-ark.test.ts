@@ -36,7 +36,7 @@ test("Postgres runtime gate adapter reserves before mutation and exposes conflic
   assert.match(adapter, /ROLLBACK/);
 });
 
-test("PERN remains contract-ready until projection and read-through proof complete", () => {
+test("PERN remains contract-ready until projection proof and React read-through complete", () => {
   const foundation = read("packages/shared/src/pern-foundation.ts");
   const roadmap = read("PERN_ROADMAP.md");
   const adr = read("docs/architecture/adr-0007-durable-memory-receipt-ark.md");
@@ -45,8 +45,9 @@ test("PERN remains contract-ready until projection and read-through proof comple
     foundation,
     /layer:\s*"postgresql"[\s\S]*status:\s*"contract-ready"/,
   );
-  assert.match(foundation, /restart and outage\/recovery proof against PostgreSQL/i);
-  assert.match(foundation, /governed projection rebuild and React persisted read-through/i);
+  assert.match(foundation, /restart\/resilience evidence/i);
+  assert.match(foundation, /PostgreSQL-to-MongoDB projection rebuild gate/i);
+  assert.match(foundation, /React persisted read-through/i);
   assert.match(roadmap, /Remaining before PostgreSQL becomes globally `active`/i);
   assert.match(adr, /does \*\*not\*\* claim exactly-once semantics/i);
   assert.match(adr, /PREPARED[\s\S]*HOLD/i);

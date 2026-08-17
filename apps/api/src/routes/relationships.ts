@@ -4,6 +4,7 @@ import {
   RelationshipAuthorityDuplicateError,
   RelationshipEngine,
   RelationshipGovernanceError,
+  type RelationshipProjectionRebuildResult,
 } from "@jennifer/runtime";
 import type {
   ApplyRelationshipQuestDecisionInput,
@@ -21,6 +22,10 @@ const VALID_COMPANION_LANES: CompanionRelationshipLane[] = [
   "romantic",
 ];
 
+export interface RelationshipAuthorityRouterOptions {
+  rebuildProjections?: () => Promise<RelationshipProjectionRebuildResult>;
+}
+
 /**
  * Canonical relationship authority routes.
  *
@@ -29,8 +34,26 @@ const VALID_COMPANION_LANES: CompanionRelationshipLane[] = [
  */
 export function createRelationshipAuthorityRouter(
   relationshipEngine: RelationshipEngine,
+  options: RelationshipAuthorityRouterOptions = {},
 ): IRouter {
   const router: IRouter = Router();
+
+  router.post("/projections/rebuild", async (_req, res) => {
+    if (!options.rebuildProjections) {
+      res.status(409).json({
+        error:
+          "Relationship projection rebuild requires PostgreSQL authority with MongoDB projection mode.",
+      });
+      return;
+    }
+
+    try {
+      const rebuild = await options.rebuildProjections();
+      res.json({ rebuild });
+    } catch (error) {
+      sendRelationshipError(res, error);
+    }
+  });
 
   router.post("/projections/flush", async (_req, res) => {
     const projected = await relationshipEngine.flushProjections();

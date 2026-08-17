@@ -10,16 +10,27 @@ import {
   InMemoryRelationshipProjectionStore,
   PostgresMigrationRunner,
   PostgresRelationshipAuthorityStore,
+  PostgresRelationshipProjectionEvidenceStore,
   RelationshipEngine,
+  RelationshipProjectionRebuilder,
   type PostgresClientPort,
   type PostgresPoolPort,
   type PostgresQueryResult,
+  type RelationshipProjectionRebuildResult,
 } from "@jennifer/runtime";
 import {
   readPostgresConfig,
   type PostgresConnectionConfig,
 } from "@jennifer/shared";
 import type { TelemetryCollector } from "@jennifer/telemetry";
+
+import {
+  initializeMongoProjection,
+  readProjectionMode,
+  type JenniferProjectionHealth,
+  type JenniferProjectionMode,
+  type JenniferProjectionRuntime,
+} from "./mongo-projection.js";
 
 export type JenniferPersistenceMode = "in-memory" | "postgres";
 
@@ -29,13 +40,16 @@ export interface JenniferPersistenceHealth {
   durable: boolean;
   database: "not-configured" | "ready" | "unavailable";
   migrationCount: number;
+  projection: JenniferProjectionHealth;
   error?: string;
 }
 
 export interface JenniferPersistenceRuntime {
   mode: JenniferPersistenceMode;
+  projectionMode: JenniferProjectionMode;
   relationshipEngine: RelationshipEngine;
   health(): Promise<JenniferPersistenceHealth>;
+  rebuildRelationshipProjections(): Promise<RelationshipProjectionRebuildResult>;
   close(): Promise<void>;
 }
 
@@ -44,8 +58,15 @@ export async function initializePersistence(input: {
   telemetry: TelemetryCollector;
 }): Promise<JenniferPersistenceRuntime> {
   const mode = readPersistenceMode(input.env);
+  const projectionMode = readProjectionMode(input.env);
 
   if (mode === "in-memory") {
+    if (projectionMode === "mongodb") {
+      throw new Error(
+        "JENNIFER_PROJECTION_MODE=mongodb requires JENNIFER_PERSISTENCE_MODE=postgres so projections always have durable authoritative evidence.",
+      );
+    }
+
     const authority = new IdempotencyGuardedRelationshipAuthorityStore(
       new InMemoryRelationshipAuthorityStore(),
     );
@@ -56,12 +77,14 @@ export async function initializePersistence(input: {
 
     await emitLifecycle(input.telemetry, "persistence.ready", {
       mode,
+      projectionMode,
       durable: false,
       authority: "in-memory-poc",
     });
 
     return {
       mode,
+      projectionMode,
       relationshipEngine,
       async health() {
         return {
@@ -70,7 +93,17 @@ export async function initializePersistence(input: {
           durable: false,
           database: "not-configured",
           migrationCount: 0,
+          projection: {
+            mode: "in-memory",
+            database: "not-configured",
+            rebuildable: false,
+          },
         };
+      },
+      async rebuildRelationshipProjections() {
+        throw new Error(
+          "Relationship projection rebuild requires PostgreSQL authority and MongoDB projection mode.",
+        );
       },
       async close() {},
     };
@@ -79,19 +112,38 @@ export async function initializePersistence(input: {
   const config = readPostgresConfig(input.env);
   const pool = new Pool(toPgPoolConfig(config));
   const observed = new ObservedPostgresPool(pool, input.telemetry);
+  let projectionRuntime: JenniferProjectionRuntime | undefined;
 
   try {
     await observed.query("SELECT 1 AS jennifer_postgres_ready");
     const migrations = await loadPostgresMigrations();
     const results = await new PostgresMigrationRunner(observed).apply(migrations);
+
+    projectionRuntime = await initializeMongoProjection({
+      env: input.env,
+      telemetry: input.telemetry,
+    });
+
+    const authority = new PostgresRelationshipAuthorityStore(observed);
+    const projectionStore =
+      projectionRuntime.store ?? new InMemoryRelationshipProjectionStore();
     const relationshipEngine = new RelationshipEngine(
-      new PostgresRelationshipAuthorityStore(observed),
-      new InMemoryRelationshipProjectionStore(),
+      authority,
+      projectionStore,
     );
+    const rebuilder =
+      projectionRuntime.mode === "mongodb"
+        ? new RelationshipProjectionRebuilder(
+            authority,
+            projectionStore,
+            new PostgresRelationshipProjectionEvidenceStore(observed),
+          )
+        : undefined;
     let databaseState: "ready" | "unavailable" = "ready";
 
     await emitLifecycle(input.telemetry, "persistence.ready", {
       mode,
+      projectionMode: projectionRuntime.mode,
       durable: true,
       authority: "postgresql",
       migrationCount: results.length,
@@ -100,8 +152,10 @@ export async function initializePersistence(input: {
 
     return {
       mode,
+      projectionMode: projectionRuntime.mode,
       relationshipEngine,
       async health() {
+        const projection = await projectionRuntime!.health();
         try {
           await observed.query("SELECT 1 AS jennifer_postgres_health");
           if (databaseState === "unavailable") {
@@ -117,6 +171,7 @@ export async function initializePersistence(input: {
             durable: true,
             database: "ready",
             migrationCount: results.length,
+            projection,
           };
         } catch (error) {
           const message = errorMessage(error);
@@ -134,20 +189,43 @@ export async function initializePersistence(input: {
             durable: true,
             database: "unavailable",
             migrationCount: results.length,
+            projection,
             error: message,
           };
         }
       },
+      async rebuildRelationshipProjections() {
+        if (!rebuilder) {
+          throw new Error(
+            "Relationship projection rebuild requires JENNIFER_PROJECTION_MODE=mongodb.",
+          );
+        }
+        await emitLifecycle(input.telemetry, "projection.rebuild-started", {
+          projectionMode: projectionRuntime!.mode,
+        });
+        const result = await rebuilder.rebuildAll();
+        await emitLifecycle(input.telemetry, "projection.rebuild-completed", {
+          projectionMode: projectionRuntime!.mode,
+          ...result,
+        });
+        return result;
+      },
       async close() {
-        await emitLifecycle(input.telemetry, "persistence.shutdown", { mode });
+        await emitLifecycle(input.telemetry, "persistence.shutdown", {
+          mode,
+          projectionMode: projectionRuntime!.mode,
+        });
+        await projectionRuntime!.close();
         await pool.end();
       },
     };
   } catch (error) {
     await emitLifecycle(input.telemetry, "persistence.startup-failed", {
       mode,
+      projectionMode,
       error: errorMessage(error),
     });
+    await projectionRuntime?.close().catch(() => undefined);
     await pool.end().catch(() => undefined);
     throw error;
   }
