@@ -1,0 +1,51 @@
+name: API MongoDB dependency sync
+
+on:
+  push:
+    branches:
+      - forge/mongo-projection-rebuild-2026-08-17
+    paths:
+      - ".github/workflows/api-mongodb-lock-sync.yml"
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.4.0"
+
+jobs:
+  sync-mongodb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: forge/mongo-projection-rebuild-2026-08-17
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Add MongoDB driver through pnpm
+        run: pnpm --filter @jennifer/api add mongodb
+
+      - name: Commit package and lockfile receipts
+        shell: bash
+        run: |
+          git add apps/api/package.json pnpm-lock.yaml
+          if git diff --cached --quiet; then
+            echo "MongoDB dependency already synchronized"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(api): sync mongodb dependency"
+          git push origin HEAD:forge/mongo-projection-rebuild-2026-08-17
