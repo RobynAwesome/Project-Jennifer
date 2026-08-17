@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import unittest
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Iterable, Mapping, Sequence
 
 from project_jennifer.contracts import (
     PersistenceRail,
@@ -188,7 +188,7 @@ class MongoAdaptiveContextAdapterTests(unittest.TestCase):
         self.assertEqual(bundle.evidence, ())
         self.assertFalse(bundle.grounding_complete)
 
-    def test_retrieval_projection_emits_mongodb_authority_tier_and_provenance(self) -> None:
+    def test_retrieval_projection_emits_current_gsmb_mongodb_tier_and_provenance(self) -> None:
         self.adapter.upsert_projection(
             projection_record(
                 "adaptive-evidence-1",
@@ -222,7 +222,7 @@ class MongoAdaptiveContextAdapterTests(unittest.TestCase):
         evidence = bundle.evidence[0]
         self.assertEqual(evidence.evidence_id, "adaptive-evidence-1")
         self.assertEqual(evidence.source_id, "mongodb-adaptive-context")
-        self.assertEqual(evidence.authority_tier.value, 10)
+        self.assertEqual(evidence.authority_tier.value, 2)
         self.assertEqual(
             evidence.authority_scope,
             "project-jennifer.adaptive-root-routing",
