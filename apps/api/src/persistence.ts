@@ -158,24 +158,30 @@ export function readPersistenceMode(
   );
 }
 
-function toPgPoolConfig(config: PostgresConnectionConfig): ConstructorParameters<typeof Pool>[0] {
+function toPgPoolConfig(
+  config: PostgresConnectionConfig,
+): ConstructorParameters<typeof Pool>[0] {
   const ssl = config.ssl ? { rejectUnauthorized: false } : false;
+  const common = {
+    ssl,
+    application_name: config.applicationName,
+    connectionTimeoutMillis: 5_000,
+  };
+
   if (config.connectionString) {
     return {
+      ...common,
       connectionString: config.connectionString,
-      ssl,
-      application_name: config.applicationName,
     };
   }
 
   return {
+    ...common,
     host: config.host,
     port: config.port,
     database: config.database,
     user: config.user,
     password: config.password,
-    ssl,
-    application_name: config.applicationName,
   };
 }
 
@@ -206,13 +212,9 @@ class ObservedPostgresPool implements PostgresPoolPort {
     text: string,
     values?: unknown[],
   ): Promise<PostgresQueryResult<TRow>> {
-    return this.observeQuery("pool", text, async () => {
-      const result = await this.pool.query(text, values);
-      return {
-        rows: result.rows as TRow[],
-        rowCount: result.rowCount ?? result.rows.length,
-      };
-    });
+    return this.observeQuery("pool", text, async () =>
+      normalizePgResult<TRow>(await this.pool.query(text, values)),
+    );
   }
 
   async connect(): Promise<PostgresClientPort> {
@@ -277,7 +279,9 @@ class ObservedPostgresClient implements PostgresClientPort {
     const startedAt = Date.now();
     const statement = classifyStatement(text);
     try {
-      const result = await this.client.query(text, values);
+      const result = normalizePgResult<TRow>(
+        await this.client.query(text, values),
+      );
       await emitDatabaseTelemetry(
         this.telemetry,
         statement.startsWith("transaction.") ? "transaction" : "query",
@@ -286,13 +290,10 @@ class ObservedPostgresClient implements PostgresClientPort {
           statement,
           success: true,
           durationMs: Date.now() - startedAt,
-          rowCount: result.rowCount ?? result.rows.length,
+          rowCount: result.rowCount,
         },
       );
-      return {
-        rows: result.rows as TRow[],
-        rowCount: result.rowCount ?? result.rows.length,
-      };
+      return result;
     } catch (error) {
       await emitDatabaseTelemetry(
         this.telemetry,
@@ -312,6 +313,20 @@ class ObservedPostgresClient implements PostgresClientPort {
   release(): void {
     this.client.release();
   }
+}
+
+function normalizePgResult<TRow>(raw: unknown): PostgresQueryResult<TRow> {
+  const results = Array.isArray(raw) ? raw : [raw];
+  const last = results.at(-1) as
+    | { rows?: unknown[]; rowCount?: number | null }
+    | undefined;
+  const rows = Array.isArray(last?.rows) ? (last.rows as TRow[]) : [];
+  const rowCount = results.reduce((sum, entry) => {
+    if (!entry || typeof entry !== "object") return sum;
+    const value = (entry as { rowCount?: unknown }).rowCount;
+    return sum + (typeof value === "number" ? value : 0);
+  }, 0);
+  return { rows, rowCount };
 }
 
 function classifyStatement(sql: string): string {
