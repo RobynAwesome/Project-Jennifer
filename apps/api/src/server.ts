@@ -2,13 +2,20 @@ import express, { type Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { getPernFoundationStatus, InMemoryEventBus } from "@jennifer/shared";
-import { TelemetryCollector, TimeTracker, EnvironmentMonitor } from "@jennifer/telemetry";
-import { telemetryMiddleware, errorHandler } from "./middleware/index.js";
+import {
+  EnvironmentMonitor,
+  TelemetryCollector,
+  TimeTracker,
+} from "@jennifer/telemetry";
+
+import { errorHandler, telemetryMiddleware } from "./middleware/index.js";
+import { initializePersistence } from "./persistence.js";
+import { crisisRouter } from "./routes/crisis.js";
 import { governanceRouter } from "./routes/governance.js";
 import { memoryRouter } from "./routes/memory.js";
-import { crisisRouter } from "./routes/crisis.js";
-import { runtimeRouter } from "./routes/runtime.js";
 import { ncmpRouter } from "./routes/ncmp.js";
+import { createRelationshipAuthorityRouter } from "./routes/relationships.js";
+import { runtimeRouter } from "./routes/runtime.js";
 
 const PORT = process.env.PORT ?? 3001;
 
@@ -18,6 +25,12 @@ const bus = new InMemoryEventBus();
 const telemetry = new TelemetryCollector(bus);
 const timeTracker = new TimeTracker();
 const envMonitor = new EnvironmentMonitor();
+const persistence = await initializePersistence({
+  env: process.env,
+  telemetry,
+});
+
+envMonitor.setMetadata("persistenceMode", persistence.mode);
 
 // ─── Express app ─────────────────────────────────────────────────────────────
 
@@ -30,12 +43,18 @@ app.use(telemetryMiddleware(telemetry));
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
-app.get("/health", (_req, res) => {
-  res.json({
-    status: "ok",
+app.get("/health", async (_req, res) => {
+  const persistenceHealth = await persistence.health();
+  const ready =
+    persistenceHealth.mode !== "postgres" ||
+    persistenceHealth.database === "ready";
+
+  res.status(ready ? 200 : 503).json({
+    status: ready ? "ok" : "degraded",
     uptime: timeTracker.uptimeMs(),
     tick: timeTracker.currentTick(),
     environment: envMonitor.snapshot(),
+    persistence: persistenceHealth,
     pern: getPernFoundationStatus(),
     timestamp: new Date().toISOString(),
   });
@@ -46,24 +65,66 @@ app.get("/health", (_req, res) => {
 app.use("/api/governance", governanceRouter);
 app.use("/api/memory", memoryRouter);
 app.use("/api/crisis", crisisRouter);
+
+// Relationship authority is mounted first so the canonical relationship paths
+// cannot fall through to the legacy in-memory runtime router.
+app.use(
+  "/api/runtime/relationships",
+  createRelationshipAuthorityRouter(persistence.relationshipEngine),
+);
 app.use("/api/runtime", runtimeRouter);
 app.use("/api/ncmp", ncmpRouter);
 
-// Telemetry endpoint
 app.get("/api/telemetry", (_req, res) => {
   const limit = 100;
-  res.json({ events: telemetry.query({ limit }), total: telemetry.getAll().length });
+  res.json({
+    events: telemetry.query({ limit }),
+    total: telemetry.getAll().length,
+  });
 });
 
 // ─── Error handling ───────────────────────────────────────────────────────────
 
 app.use(errorHandler);
 
-// ─── Start server ─────────────────────────────────────────────────────────────
+// ─── Start / governed shutdown ────────────────────────────────────────────────
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`[Jennifer API] Listening on http://localhost:${PORT}`);
   console.log(`[Jennifer API] Environment: ${envMonitor.snapshot().platform}`);
+  console.log(`[Jennifer API] Persistence: ${persistence.mode}`);
 });
 
-export { app };
+let shuttingDown = false;
+async function shutdown(signal: "SIGINT" | "SIGTERM"): Promise<void> {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[Jennifer API] ${signal} received; closing governed resources`);
+
+  try {
+    await closeServer();
+    await persistence.close();
+    process.exitCode = 0;
+  } catch (error) {
+    console.error("[Jennifer API] Shutdown failure", error);
+    process.exitCode = 1;
+  }
+}
+
+function closeServer(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    server.close((error) => {
+      if (error) reject(error);
+      else resolve();
+    });
+  });
+}
+
+process.once("SIGINT", () => {
+  void shutdown("SIGINT");
+});
+process.once("SIGTERM", () => {
+  void shutdown("SIGTERM");
+});
+
+export { app, persistence, server };
