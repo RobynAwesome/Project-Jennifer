@@ -3,7 +3,6 @@ import {
   MongoClient,
   MongoServerError,
   type Filter,
-  type ObjectId,
   type WithId,
 } from "mongodb";
 
@@ -171,15 +170,17 @@ class MongoProjectionCollectionPort
           _id: existing._id,
           projectionVersion: current.projectionVersion,
         } as Filter<MongoProjectionDocument>;
-        const result = await this.collection.replaceOne(filter, projection, {
-          upsert: false,
-        });
+        const result = await this.collection.replaceOne(
+          filter,
+          { ...projection },
+          { upsert: false },
+        );
         if (result.modifiedCount === 1) return projection;
         continue;
       }
 
       try {
-        await this.collection.insertOne(projection);
+        await this.collection.insertOne({ ...projection });
         return projection;
       } catch (error) {
         if (isDuplicateKeyError(error)) continue;
@@ -230,10 +231,7 @@ function stripMongoId(
 }
 
 function isDuplicateKeyError(error: unknown): boolean {
-  return (
-    error instanceof MongoServerError &&
-    error.code === 11_000
-  );
+  return error instanceof MongoServerError && error.code === 11_000;
 }
 
 async function emitMongoTelemetry(
