@@ -11,15 +11,81 @@ import {
   type RelationshipSnapshot,
 } from "@jennifer/shared";
 
-import {
-  RelationshipAuthorityDuplicateError,
-  type AuthorityCommit,
-  type IRelationshipAuthorityStore,
-} from "./relationship-engine.js";
+import type { IRelationshipAuthorityStore } from "./relationship-engine.js";
 import type {
   PostgresClientPort,
   PostgresPoolPort,
 } from "./postgres-runtime-gate-ledger.js";
+
+type AuthorityCommit = Parameters<IRelationshipAuthorityStore["commit"]>[0];
+
+export class RelationshipAuthorityDuplicateError extends Error {
+  constructor(readonly idempotencyKey: string) {
+    super(`Relationship authority already committed idempotency key '${idempotencyKey}'.`);
+    this.name = "RelationshipAuthorityDuplicateError";
+  }
+}
+
+/**
+ * POC/dev guard that closes the async check/commit race around the existing
+ * in-memory authority adapter. PostgreSQL uses a database advisory lock instead.
+ */
+export class IdempotencyGuardedRelationshipAuthorityStore
+  implements IRelationshipAuthorityStore
+{
+  private tail: Promise<void> = Promise.resolve();
+
+  constructor(private readonly inner: IRelationshipAuthorityStore) {}
+
+  async commit(input: AuthorityCommit): Promise<void> {
+    let release!: () => void;
+    const previous = this.tail;
+    this.tail = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+
+    await previous;
+    try {
+      const existing = await this.inner.getEventByIdempotencyKey(
+        input.event.idempotencyKey,
+      );
+      if (existing) {
+        throw new RelationshipAuthorityDuplicateError(input.event.idempotencyKey);
+      }
+      await this.inner.commit(input);
+    } finally {
+      release();
+    }
+  }
+
+  getSnapshot(relationshipId: string): Promise<RelationshipSnapshot | undefined> {
+    return this.inner.getSnapshot(relationshipId);
+  }
+
+  getEventByIdempotencyKey(
+    idempotencyKey: string,
+  ): Promise<RelationshipEvent | undefined> {
+    return this.inner.getEventByIdempotencyKey(idempotencyKey);
+  }
+
+  getReceiptByEventId(
+    eventId: string,
+  ): Promise<GovernedRelationshipReceipt | undefined> {
+    return this.inner.getReceiptByEventId(eventId);
+  }
+
+  listPendingOutbox(limit?: number): Promise<RelationshipOutboxEvent[]> {
+    return this.inner.listPendingOutbox(limit);
+  }
+
+  markOutboxPublished(outboxId: string): Promise<void> {
+    return this.inner.markOutboxPublished(outboxId);
+  }
+
+  markOutboxFailed(outboxId: string, error: string): Promise<void> {
+    return this.inner.markOutboxFailed(outboxId, error);
+  }
+}
 
 interface RelationshipRow {
   id: string;
@@ -65,7 +131,6 @@ interface EventRow {
   id: string;
   relationship_id: string;
   event_type: RelationshipEvent["eventType"];
-  event_version: 1;
   source_actor_id: string;
   correlation_id: string;
   causation_id: string | null;
@@ -104,7 +169,6 @@ interface DecisionRow {
 
 interface OutboxRow {
   id: string;
-  aggregate_type: "relationship";
   aggregate_id: string;
   event_type: RelationshipEvent["eventType"];
   payload_json: unknown;
@@ -117,9 +181,9 @@ interface OutboxRow {
 /**
  * PostgreSQL authority adapter for the governed relationship domain.
  *
- * The authoritative relationship mutation, event, validation receipt and
- * outbox record are committed inside one database transaction. An advisory
- * lock on the idempotency key closes the check/commit race across processes.
+ * Relationship state, event, validation receipt and outbox evidence commit in
+ * one transaction. A transaction-scoped advisory lock serializes each
+ * idempotency key across processes before any authoritative write begins.
  */
 export class PostgresRelationshipAuthorityStore
   implements IRelationshipAuthorityStore
@@ -128,7 +192,6 @@ export class PostgresRelationshipAuthorityStore
 
   async commit(input: AuthorityCommit): Promise<void> {
     const client = await this.pool.connect();
-
     try {
       await client.query("BEGIN");
       await client.query(
@@ -136,15 +199,11 @@ export class PostgresRelationshipAuthorityStore
         [input.event.idempotencyKey],
       );
 
-      const duplicate = await client.query<{ id: string }>(
-        `
-          SELECT id
-          FROM relationship_events
-          WHERE idempotency_key = $1
-        `,
+      const existing = await client.query<{ id: string }>(
+        "SELECT id FROM relationship_events WHERE idempotency_key = $1",
         [input.event.idempotencyKey],
       );
-      if (duplicate.rows[0]) {
+      if (existing.rows[0]) {
         await client.query("COMMIT");
         throw new RelationshipAuthorityDuplicateError(
           input.event.idempotencyKey,
@@ -153,18 +212,16 @@ export class PostgresRelationshipAuthorityStore
 
       for (const actor of input.actors ?? []) {
         await client.query(
-          `
-            INSERT INTO relationship_actors (
-              id, actor_type, canonical_name, companion_id,
-              external_identity_ref, created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-            ON CONFLICT (id) DO UPDATE SET
-              actor_type = EXCLUDED.actor_type,
-              canonical_name = EXCLUDED.canonical_name,
-              companion_id = EXCLUDED.companion_id,
-              external_identity_ref = EXCLUDED.external_identity_ref,
-              updated_at = EXCLUDED.updated_at
-          `,
+          `INSERT INTO relationship_actors (
+             id, actor_type, canonical_name, companion_id,
+             external_identity_ref, created_at, updated_at
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7)
+           ON CONFLICT (id) DO UPDATE SET
+             actor_type = EXCLUDED.actor_type,
+             canonical_name = EXCLUDED.canonical_name,
+             companion_id = EXCLUDED.companion_id,
+             external_identity_ref = EXCLUDED.external_identity_ref,
+             updated_at = EXCLUDED.updated_at`,
           [
             actor.id,
             actor.actorType,
@@ -179,18 +236,16 @@ export class PostgresRelationshipAuthorityStore
 
       const relationship = input.relationship;
       await client.query(
-        `
-          INSERT INTO relationship_instances (
-            id, relationship_type, active_lane, status,
-            created_by_actor_id, version, created_at, updated_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          ON CONFLICT (id) DO UPDATE SET
-            relationship_type = EXCLUDED.relationship_type,
-            active_lane = EXCLUDED.active_lane,
-            status = EXCLUDED.status,
-            version = EXCLUDED.version,
-            updated_at = EXCLUDED.updated_at
-        `,
+        `INSERT INTO relationship_instances (
+           id, relationship_type, active_lane, status, created_by_actor_id,
+           version, created_at, updated_at
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         ON CONFLICT (id) DO UPDATE SET
+           relationship_type = EXCLUDED.relationship_type,
+           active_lane = EXCLUDED.active_lane,
+           status = EXCLUDED.status,
+           version = EXCLUDED.version,
+           updated_at = EXCLUDED.updated_at`,
         [
           relationship.id,
           relationship.relationshipType,
@@ -205,15 +260,13 @@ export class PostgresRelationshipAuthorityStore
 
       for (const participant of input.participants ?? []) {
         await client.query(
-          `
-            INSERT INTO relationship_participants (
-              relationship_id, actor_id, participant_role, joined_at, left_at
-            ) VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT (relationship_id, actor_id) DO UPDATE SET
-              participant_role = EXCLUDED.participant_role,
-              joined_at = EXCLUDED.joined_at,
-              left_at = EXCLUDED.left_at
-          `,
+          `INSERT INTO relationship_participants (
+             relationship_id, actor_id, participant_role, joined_at, left_at
+           ) VALUES ($1,$2,$3,$4,$5)
+           ON CONFLICT (relationship_id, actor_id) DO UPDATE SET
+             participant_role = EXCLUDED.participant_role,
+             joined_at = EXCLUDED.joined_at,
+             left_at = EXCLUDED.left_at`,
           [
             participant.relationshipId,
             participant.actorId,
@@ -226,19 +279,16 @@ export class PostgresRelationshipAuthorityStore
 
       for (const boundary of input.boundaries ?? []) {
         await client.query(
-          `
-            INSERT INTO relationship_boundaries (
-              id, relationship_id, boundary_type, boundary_value,
-              declared_by_actor_id, status, effective_at,
-              supersedes_boundary_id
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            ON CONFLICT (id) DO UPDATE SET
-              boundary_type = EXCLUDED.boundary_type,
-              boundary_value = EXCLUDED.boundary_value,
-              status = EXCLUDED.status,
-              effective_at = EXCLUDED.effective_at,
-              supersedes_boundary_id = EXCLUDED.supersedes_boundary_id
-          `,
+          `INSERT INTO relationship_boundaries (
+             id, relationship_id, boundary_type, boundary_value,
+             declared_by_actor_id, status, effective_at, supersedes_boundary_id
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+           ON CONFLICT (id) DO UPDATE SET
+             boundary_type = EXCLUDED.boundary_type,
+             boundary_value = EXCLUDED.boundary_value,
+             status = EXCLUDED.status,
+             effective_at = EXCLUDED.effective_at,
+             supersedes_boundary_id = EXCLUDED.supersedes_boundary_id`,
           [
             boundary.id,
             boundary.relationshipId,
@@ -254,13 +304,11 @@ export class PostgresRelationshipAuthorityStore
 
       const event = input.event;
       await client.query(
-        `
-          INSERT INTO relationship_events (
-            id, relationship_id, event_type, event_version, source_actor_id,
-            correlation_id, causation_id, idempotency_key, payload_json,
-            occurred_at, recorded_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11)
-        `,
+        `INSERT INTO relationship_events (
+           id, relationship_id, event_type, event_version, source_actor_id,
+           correlation_id, causation_id, idempotency_key, payload_json,
+           occurred_at, recorded_at
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$11)`,
         [
           event.id,
           event.relationshipId,
@@ -278,16 +326,11 @@ export class PostgresRelationshipAuthorityStore
 
       const receipt = input.receipt;
       await client.query(
-        `
-          INSERT INTO relationship_validation_receipts (
-            id, event_id, relationship_id, protocol, protocol_version,
-            result, checks_json, warnings_json, failure_codes_json,
-            evidence_refs_json, human_validated, integrity_hash, created_at
-          ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7::jsonb, $8::jsonb, $9::jsonb,
-            $10::jsonb, $11, $12, $13
-          )
-        `,
+        `INSERT INTO relationship_validation_receipts (
+           id, event_id, relationship_id, protocol, protocol_version, result,
+           checks_json, warnings_json, failure_codes_json, evidence_refs_json,
+           human_validated, integrity_hash, created_at
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9::jsonb,$10::jsonb,$11,$12,$13)`,
         [
           receipt.id,
           receipt.eventId,
@@ -308,12 +351,10 @@ export class PostgresRelationshipAuthorityStore
       if (input.decision) {
         const decision = input.decision;
         await client.query(
-          `
-            INSERT INTO relationship_quest_decisions (
-              id, quest_instance_id, relationship_id, decision_type,
-              selected_option, trigger_event_id, receipt_id, created_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          `,
+          `INSERT INTO relationship_quest_decisions (
+             id, quest_instance_id, relationship_id, decision_type,
+             selected_option, trigger_event_id, receipt_id, created_at
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
           [
             decision.id,
             decision.questInstanceId,
@@ -329,12 +370,10 @@ export class PostgresRelationshipAuthorityStore
 
       const outbox = input.outbox;
       await client.query(
-        `
-          INSERT INTO relationship_outbox_events (
-            id, aggregate_type, aggregate_id, event_type, payload_json,
-            published_at, attempt_count, last_error, created_at
-          ) VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, $8, $9)
-        `,
+        `INSERT INTO relationship_outbox_events (
+           id, aggregate_type, aggregate_id, event_type, payload_json,
+           published_at, attempt_count, last_error, created_at
+         ) VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9)`,
         [
           outbox.id,
           outbox.aggregateType,
@@ -363,85 +402,48 @@ export class PostgresRelationshipAuthorityStore
     relationshipId: string,
   ): Promise<RelationshipSnapshot | undefined> {
     const client = await this.pool.connect();
-
     try {
       await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
       const relationshipResult = await client.query<RelationshipRow>(
-        `
-          SELECT *
-          FROM relationship_instances
-          WHERE id = $1
-        `,
+        "SELECT * FROM relationship_instances WHERE id = $1",
         [relationshipId],
       );
-      const relationshipRow = relationshipResult.rows[0];
-      if (!relationshipRow) {
+      const relationship = relationshipResult.rows[0];
+      if (!relationship) {
         await client.query("COMMIT");
         return undefined;
       }
 
-      const [actors, participants, boundaries, events, receipts, decisions] =
-        await Promise.all([
-          client.query<ActorRow>(
-            `
-              SELECT a.*
-              FROM relationship_actors a
-              INNER JOIN relationship_participants p ON p.actor_id = a.id
-              WHERE p.relationship_id = $1
-              ORDER BY p.joined_at, a.id
-            `,
-            [relationshipId],
-          ),
-          client.query<ParticipantRow>(
-            `
-              SELECT *
-              FROM relationship_participants
-              WHERE relationship_id = $1
-              ORDER BY joined_at, actor_id
-            `,
-            [relationshipId],
-          ),
-          client.query<BoundaryRow>(
-            `
-              SELECT *
-              FROM relationship_boundaries
-              WHERE relationship_id = $1
-              ORDER BY effective_at, id
-            `,
-            [relationshipId],
-          ),
-          client.query<EventRow>(
-            `
-              SELECT *
-              FROM relationship_events
-              WHERE relationship_id = $1
-              ORDER BY recorded_at, id
-            `,
-            [relationshipId],
-          ),
-          client.query<ReceiptRow>(
-            `
-              SELECT *
-              FROM relationship_validation_receipts
-              WHERE relationship_id = $1
-              ORDER BY created_at, id
-            `,
-            [relationshipId],
-          ),
-          client.query<DecisionRow>(
-            `
-              SELECT *
-              FROM relationship_quest_decisions
-              WHERE relationship_id = $1
-              ORDER BY created_at, id
-            `,
-            [relationshipId],
-          ),
-        ]);
-
+      const actors = await client.query<ActorRow>(
+        `SELECT a.* FROM relationship_actors a
+         INNER JOIN relationship_participants p ON p.actor_id = a.id
+         WHERE p.relationship_id = $1 ORDER BY p.joined_at, a.id`,
+        [relationshipId],
+      );
+      const participants = await client.query<ParticipantRow>(
+        "SELECT * FROM relationship_participants WHERE relationship_id = $1 ORDER BY joined_at, actor_id",
+        [relationshipId],
+      );
+      const boundaries = await client.query<BoundaryRow>(
+        "SELECT * FROM relationship_boundaries WHERE relationship_id = $1 ORDER BY effective_at, id",
+        [relationshipId],
+      );
+      const events = await client.query<EventRow>(
+        "SELECT * FROM relationship_events WHERE relationship_id = $1 ORDER BY recorded_at, id",
+        [relationshipId],
+      );
+      const receipts = await client.query<ReceiptRow>(
+        "SELECT * FROM relationship_validation_receipts WHERE relationship_id = $1 ORDER BY created_at, id",
+        [relationshipId],
+      );
+      const decisions = await client.query<DecisionRow>(
+        "SELECT * FROM relationship_quest_decisions WHERE relationship_id = $1 ORDER BY created_at, id",
+        [relationshipId],
+      );
       await client.query("COMMIT");
+
       return {
-        relationship: mapRelationship(relationshipRow),
+        relationship: mapRelationship(relationship),
         actors: actors.rows.map(mapActor),
         participants: participants.rows.map(mapParticipant),
         boundaries: boundaries.rows.map(mapBoundary),
@@ -461,11 +463,7 @@ export class PostgresRelationshipAuthorityStore
     idempotencyKey: string,
   ): Promise<RelationshipEvent | undefined> {
     const result = await this.pool.query<EventRow>(
-      `
-        SELECT *
-        FROM relationship_events
-        WHERE idempotency_key = $1
-      `,
+      "SELECT * FROM relationship_events WHERE idempotency_key = $1",
       [idempotencyKey],
     );
     return result.rows[0] ? mapEvent(result.rows[0]) : undefined;
@@ -475,11 +473,7 @@ export class PostgresRelationshipAuthorityStore
     eventId: string,
   ): Promise<GovernedRelationshipReceipt | undefined> {
     const result = await this.pool.query<ReceiptRow>(
-      `
-        SELECT *
-        FROM relationship_validation_receipts
-        WHERE event_id = $1
-      `,
+      "SELECT * FROM relationship_validation_receipts WHERE event_id = $1",
       [eventId],
     );
     return result.rows[0] ? mapReceipt(result.rows[0]) : undefined;
@@ -488,13 +482,8 @@ export class PostgresRelationshipAuthorityStore
   async listPendingOutbox(limit = 100): Promise<RelationshipOutboxEvent[]> {
     const normalizedLimit = Math.max(1, Math.min(Math.trunc(limit), 1_000));
     const result = await this.pool.query<OutboxRow>(
-      `
-        SELECT *
-        FROM relationship_outbox_events
-        WHERE published_at IS NULL
-        ORDER BY created_at, id
-        LIMIT $1
-      `,
+      `SELECT * FROM relationship_outbox_events
+       WHERE published_at IS NULL ORDER BY created_at, id LIMIT $1`,
       [normalizedLimit],
     );
     return result.rows.map(mapOutbox);
@@ -502,24 +491,16 @@ export class PostgresRelationshipAuthorityStore
 
   async markOutboxPublished(outboxId: string): Promise<void> {
     await this.pool.query(
-      `
-        UPDATE relationship_outbox_events
-        SET published_at = $2,
-            last_error = NULL
-        WHERE id = $1
-      `,
+      `UPDATE relationship_outbox_events
+       SET published_at = $2, last_error = NULL WHERE id = $1`,
       [outboxId, now()],
     );
   }
 
   async markOutboxFailed(outboxId: string, error: string): Promise<void> {
     await this.pool.query(
-      `
-        UPDATE relationship_outbox_events
-        SET attempt_count = attempt_count + 1,
-            last_error = $2
-        WHERE id = $1
-      `,
+      `UPDATE relationship_outbox_events
+       SET attempt_count = attempt_count + 1, last_error = $2 WHERE id = $1`,
       [outboxId, error],
     );
   }
@@ -583,7 +564,7 @@ function mapEvent(row: EventRow): RelationshipEvent {
     correlationId: row.correlation_id,
     causationId: row.causation_id ?? undefined,
     idempotencyKey: row.idempotency_key,
-    payload: jsonRecord(row.payload_json),
+    payload: jsonValue<Record<string, unknown>>(row.payload_json),
     occurredAt: toEpoch(row.occurred_at),
     recordedAt: toEpoch(row.recorded_at),
   };
@@ -626,7 +607,7 @@ function mapOutbox(row: OutboxRow): RelationshipOutboxEvent {
     aggregateType: "relationship",
     aggregateId: row.aggregate_id,
     eventType: row.event_type,
-    payload: jsonRecord(row.payload_json),
+    payload: jsonValue<Record<string, unknown>>(row.payload_json),
     publishedAt: optionalEpoch(row.published_at),
     attemptCount: Number(row.attempt_count),
     lastError: row.last_error ?? undefined,
@@ -634,13 +615,8 @@ function mapOutbox(row: OutboxRow): RelationshipOutboxEvent {
   };
 }
 
-function jsonRecord(value: unknown): Record<string, unknown> {
-  return jsonValue<Record<string, unknown>>(value);
-}
-
 function jsonValue<T>(value: unknown): T {
-  if (typeof value === "string") return JSON.parse(value) as T;
-  return value as T;
+  return (typeof value === "string" ? JSON.parse(value) : value) as T;
 }
 
 function toEpoch(value: string | number | bigint): number {
