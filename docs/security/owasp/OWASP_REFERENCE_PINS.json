@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "project-jennifer.owasp-reference-pins.v1",
+  "fetchedAt": "2026-08-20T09:41:00Z",
+  "policy": {
+    "mode": "reference-only",
+    "reason": "Preserve upstream licensing and provenance. Project Jennifer stores pinned source references and derives its own controls instead of vendoring full OWASP documents into the MIT repository.",
+    "refreshRule": "A newer upstream revision does not silently replace this baseline. Re-pin through review and record the new commit hash."
+  },
+  "sources": [
+    {
+      "name": "OWASP Agentic Skills Top 10",
+      "repository": "https://github.com/OWASP/www-project-agentic-skills-top-10",
+      "commit": "d6f7d7d0de314f52a83a85d1828e06ab096e595c",
+      "license": "CC-BY-SA-4.0",
+      "files": [
+        {
+          "path": "ast01.md",
+          "purpose": "Malicious skills; SOUL.md persistence; MEMORY.md poisoning; identity cloning and impersonation; identity-artifact protection."
+        },
+        {
+          "path": "ast03.md",
+          "purpose": "Over-privileged skills; identity-file backdoors; instruction hierarchy; explicit operator consent for persistent state changes."
+        },
+        {
+          "path": "ast09.md",
+          "purpose": "Agentic governance; centralized inventory; non-human identities; audit logging; bilateral admission/outcome receipt guidance."
+        },
+        {
+          "path": "ast10.md",
+          "purpose": "Cross-platform reuse; deny-write controls for SOUL.md/MEMORY.md/AGENTS.md; signatures, hashes and provenance normalization."
+        }
+      ]
+    },
+    {
+      "name": "OWASP MCP Top 10",
+      "repository": "https://github.com/OWASP/www-project-mcp-top-10",
+      "commit": "165fe0f78ef104459237b4a8e0f6e78db9b02391",
+      "license": "CC-BY-NC-SA-4.0",
+      "files": [
+        {
+          "path": "2025/MCP03-2025–Tool-Poisoning.md",
+          "purpose": "Tool/schema poisoning; signed schemas; content-addressed versions; semantic invariants; schema attestation and provenance."
+        },
+        {
+          "path": "2025/MCP06-2025–Intent-Flow-Subversion.md",
+          "purpose": "Intent-flow hijacking through retrieved context; untrusted-by-default tool/resource output; semantic anchoring; independent intent verification."
+        },
+        {
+          "path": "2025/MCP08-2025–Lack-of-Audit-and-Telemetry.md",
+          "purpose": "Tamper-evident action telemetry; agent/session/tool/schema correlation; anomaly detection and forensic reconstruction."
+        },
+        {
+          "path": "2025/MCP10-2025–ContextInjection&OverSharing.md",
+          "purpose": "Cross-agent/user context contamination; per-agent namespaces; TTL; context access logging; instruction-like content filtering."
+        }
+      ]
+    }
+  ],
+  "projectJenniferInterpretation": {
+    "mcpIsTransportNotAuthority": true,
+    "toolAndSkillContentIsUntrustedByDefault": true,
+    "identityArtifactsAreProtectedState": true,
+    "persistentIdentityMutationRequiresGovernance": true,
+    "modelRuntimeMayChangeWithoutChangingSoulIdentity": true,
+    "memoryMayAdaptWithoutMutatingSoulInvariants": true
+  }
+}
