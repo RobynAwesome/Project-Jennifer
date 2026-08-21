@@ -10,6 +10,16 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./browser": {
+      "import": "./dist/browser.js",
+      "require": "./dist/browser.js",
+      "types": "./dist/browser.d.ts"
+    },
+    "./soul-file": {
+      "import": "./dist/soul-file.js",
+      "require": "./dist/soul-file.js",
+      "types": "./dist/soul-file.d.ts"
     }
   },
   "scripts": {

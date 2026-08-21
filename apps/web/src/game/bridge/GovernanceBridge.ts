@@ -1,16 +1,19 @@
-import { PolicyEngine } from "@jennifer/governance";
+import { PolicyEngine } from "@jennifer/governance/browser";
 import type {
   PolicyDecision,
   PolicyContext,
   PolicyResult,
   PolicyRule,
-} from "@jennifer/governance";
+} from "@jennifer/governance/browser";
 
 export type { PolicyDecision, PolicyContext, PolicyResult };
 
 /**
- * GovernanceBridge – thin game-layer wrapper around the real PolicyEngine
- * from @jennifer/governance.
+ * GovernanceBridge – thin game-layer wrapper around the browser-safe PolicyEngine
+ * from @jennifer/governance/browser.
+ *
+ * Canonical integrity primitives such as SoulFile sealing remain server-side and
+ * are intentionally excluded from the game client bundle.
  *
  * Registers the Memory District claim-validation policy and exposes a single
  * `evaluate()` method consumed by ValidationBridge.
