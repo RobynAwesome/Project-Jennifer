@@ -5,7 +5,8 @@ license: MIT
 compatibility: Project Jennifer Agent Skill; depends conceptually on KMEC, PKA and KPGS authority surfaces.
 metadata:
   author: Kholofelo Robyn Rababalela / Kopano Labs
-  version: "0.1.0"
+  version: "0.2.0"
+  runtime: packages/runtime/src/world-event-heartbeat.ts
 ---
 
 # KPPE World Evaluation
@@ -28,6 +29,21 @@ LIVE
 → RECEIPT
 → REFLECT
 ```
+
+Executable heartbeat after structuring/parsing:
+
+```text
+StructuredWorldEvent
+→ PKA
+→ GLM
+→ CDP
+→ CCP
+→ KPGS
+→ Execution
+→ WorldEventReceipt
+```
+
+`packages/runtime/src/world-event-heartbeat.ts` enforces that ordering. Models may interpret and propose; they do not receive world authority from the heartbeat.
 
 ## Parser law
 
@@ -52,6 +68,8 @@ insufficient evidence    -> HOLD / MAYBE
 bounded closure          -> PROPOSE / POC_CANDIDATE
 ```
 
+The heartbeat treats `MAYBE/HOLD` and `FOC_CANDIDATE/BLOCK` as terminal for that evaluation pass. GLM, CDP, CCP, KPGS execution and side effects are not invoked after PKA refuses progression.
+
 Future evidence creates a new evaluation; it does not rewrite what was known at an earlier time.
 
 ## Emoji Protocol core
@@ -59,8 +77,20 @@ Future evidence creates a new evaluation; it does not rewrite what was known at 
 ```text
 📍 anchored event
 ⏭️ progression candidate
-👑 authority/governance required or applied
-🔔 signal emitted
+👑 authority/governance consulted
+🔔 final signal/receipt emitted
+```
+
+A complete admitted heartbeat therefore produces:
+
+```text
+📍 → ⏭️ → 👑 → 🔔
+```
+
+A PKA hold/block produces only:
+
+```text
+📍 → 🔔
 ```
 
 Emoji tokens are compressed communication, not the complete authoritative payload. Consequential EP output must point to a structured receipt or packet.
@@ -83,11 +113,32 @@ RTC      -> council synthesis + ten domain SLM jurisdictions
 
 ## World-affinity boundary
 
-Interactions may create evidence that the player cares for, invests in, exploits, abandons, protects or returns to the world. Treat this as game-state evidence, not a permanent psychological diagnosis.
+Interactions may create bounded evidence that the player cares for, invests in, exploits, abandons, protects or returns to the world. `WorldAffinityEvidence` records ecosystem, signal, strength and basis only.
+
+Treat that evidence as game-state evidence, not a permanent psychological diagnosis, and do not silently promote bounded telemetry into identity canon.
 
 ## Execution boundary
 
 No NPC/model may directly mutate consequential economic, governance, identity, blockchain or external-device state without a governed transition and receipt.
+
+CCP may only select a candidate that CDP actually emitted. KPGS `REJECTED` or `HITL_REQUIRED` prevents execution. A failed execution receives a failure receipt rather than being rewritten as success.
+
+## First heartbeat proof case
+
+The runtime test fixture uses a deliberately bounded mercy/rain scenario:
+
+```text
+player spares guardian
+→ PKA: POC_CANDIDATE / PROPOSE
+→ GLM: mercy / relief / renewal interpretation
+→ CDP: weather response vs relationship-only response
+→ CCP: selects localized rain candidate
+→ KPGS: approves game-world-only consequence
+→ Execution: localized rain / BLESSING
+→ receipt: 📍 ⏭️ 👑 🔔
+```
+
+The test does not claim supernatural causality. It proves that symbolic world response can be proposed, governed, executed and receipted without turning model interpretation into authority.
 
 ## Premium boundary
 
