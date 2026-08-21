@@ -97,3 +97,36 @@ export type {
   PostgresMigration,
   PostgresMigrationResult,
 } from "./postgres-migration-runner.js";
+
+export {
+  WORLD_EVENT_RECEIPT_VERSION,
+  WORLD_EVENT_SCHEMA_VERSION,
+  runWorldEventHeartbeat,
+  validateStructuredWorldEvent,
+} from "./world-event-heartbeat.js";
+export type {
+  CDPCandidate,
+  CCPSelection,
+  EmojiProtocolToken,
+  GLMInterpretation,
+  KPGSVerdict,
+  KPGSVerdictStatus,
+  PKADisposition,
+  PKAEpistemicState,
+  PKAEvaluation,
+  StructuredWorldEvent,
+  WorldActorKind,
+  WorldActorRef,
+  WorldAffinityEvidence,
+  WorldEcosystem,
+  WorldEventHeartbeatPorts,
+  WorldEventReceipt,
+  WorldExecutionResult,
+  WorldExecutionStatus,
+  WorldHeartbeatResult,
+  WorldHeartbeatStatus,
+  WorldProvenanceRef,
+  WorldTargetRef,
+  WorldTelemetry,
+  WorldTelemetryObservation,
+} from "./world-event-heartbeat.js";
