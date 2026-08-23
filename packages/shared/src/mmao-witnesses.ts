@@ -1,4 +1,4 @@
-export type MMAOWitnessMode = "blind-witness" | "full-context-integrator";
+export type MMAOWitnessMode = "blind-witness" | "orchestrator" | "full-context-integrator";
 
 export interface MMAOWitness {
   witnessId: string;
@@ -30,7 +30,9 @@ function requireText(value: string, field: string): void {
 /**
  * Founder-defined witness separation:
  * blind witnesses must not receive each other's answers before testimony is recorded.
- * A full-context integrator is an explicit exception and must not be reported as blind replication.
+ * The orchestrator may receive recorded contributions for comparison/synthesis but must not
+ * leak them into later blind-witness prompts. A full-context integrator is an explicit exception
+ * and must not be reported as blind independent replication.
  */
 export function mayReceiveContribution(
   recipient: MMAOWitness,
@@ -42,14 +44,26 @@ export function mayReceiveContribution(
 
   if (recipient.witnessId === source.witnessId) return true;
 
-  if (recipient.mode === "full-context-integrator") {
+  if (recipient.mode === "orchestrator" || recipient.mode === "full-context-integrator") {
     return sourceContributionRecorded;
   }
 
   return false;
 }
 
-export function validateBlindWitnessSet(witnesses: readonly MMAOWitness[]): void {
+/**
+ * A prompt for a blind witness may contain the common Forge-issued task/context, but not
+ * another blind witness's recorded answer. This makes answer sharing explicit and testable.
+ */
+export function mayIncludePriorContributionInPrompt(
+  recipient: MMAOWitness,
+  source: MMAOWitness,
+): boolean {
+  if (recipient.witnessId === source.witnessId) return true;
+  return recipient.mode === "full-context-integrator";
+}
+
+export function validateWitnessSet(witnesses: readonly MMAOWitness[]): void {
   const ids = new Set<string>();
 
   for (const witness of witnesses) {
@@ -77,8 +91,8 @@ export const PROJECT_JENNIFER_WITNESS_TOPOLOGY: readonly MMAOWitness[] = [
   },
   {
     witnessId: "forge",
-    mode: "blind-witness",
-    role: "architecture-implementation-validation",
+    mode: "orchestrator",
+    role: "prompt-router-architecture-implementation-validation",
   },
   {
     witnessId: "cindy",
@@ -87,4 +101,4 @@ export const PROJECT_JENNIFER_WITNESS_TOPOLOGY: readonly MMAOWitness[] = [
   },
 ] as const;
 
-validateBlindWitnessSet(PROJECT_JENNIFER_WITNESS_TOPOLOGY);
+validateWitnessSet(PROJECT_JENNIFER_WITNESS_TOPOLOGY);
