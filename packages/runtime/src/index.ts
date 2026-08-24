@@ -72,6 +72,16 @@ export type {
 } from "./poc-foc-runtime-gate.js";
 
 export {
+  NPCConsequenceAdmissionError,
+  NPCConsequenceRuntimeGateway,
+} from "./npc-consequence-admission.js";
+export type {
+  NPCConsequenceAdmissionInput,
+  NPCConsequenceAdmissionResult,
+  NPCConsequenceMaturityEvidence,
+} from "./npc-consequence-admission.js";
+
+export {
   InMemoryRuntimeGateLedger,
   createRuntimeGateLedgerRecord,
 } from "./runtime-gate-ledger.js";
