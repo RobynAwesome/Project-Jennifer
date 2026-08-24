@@ -25,7 +25,7 @@ CV should not be treated as a cheap numeric grind mechanic. The game should prim
 
 ### CDP — Conceptual Divergence Protocol
 
-CDP expands the possibility space.
+CDP expands or reopens a possibility space.
 
 ```text
 known state
@@ -40,20 +40,69 @@ The player experiments with how they use, prompt, teach, challenge, protect, com
 
 ### CCP — Conceptual Convergence Protocol
 
-CCP identifies the stable pattern that survives that divergence.
+CCP identifies a stable pattern that currently survives evidence and evaluation.
 
 ```text
 A ─┐
 B ─┤
-C ─┼──► validated shared pattern
+C ─┼──► evidence-bearing shared pattern
 D ─┤
 E ─┘
 ```
 
-CDP asks **what could this become?**  
-CCP asks **what consistently works between us?**
+CDP asks **what could this become or what alternatives must remain open?**  
+CCP asks **what consistently works / survives the current evidence?**
 
-Pure divergence becomes chaos. Pure convergence without exploration becomes rigidity. Project Jennifer requires both.
+Pure divergence can become chaos. Pure convergence can become rigidity. Project Jennifer requires both, but it does **not** grant either protocol a universal first position.
+
+### Situational transition law
+
+The protocol order is governed by the state, evidence and authority available at that moment.
+
+```text
+CURRENT STATE
+    │
+    ├─ stable evidence / compression needed ─────► CCP / CONVERGE
+    │
+    ├─ alternatives must open or reopen ────────► CDP / DIVERGE
+    │
+    └─ insufficient evidence / authority ───────► HOLD
+```
+
+Valid examples include:
+
+```text
+CDP → CEEP → CCP
+```
+
+when the possibility field is intentionally widened before evaluation;
+
+```text
+CCP → contradictory evidence → CDP
+```
+
+when an apparently stable pattern must be reopened;
+
+```text
+CDP → HOLD
+```
+
+when alternatives exist but authority/evidence is insufficient;
+
+```text
+CCP → HOLD
+```
+
+when attempted convergence reaches an unresolved proof boundary.
+
+Therefore:
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Either can lead toward POC. Either can deepen FOC. The route is validated only through consequence, evidence and governed evaluation.
 
 ## Relationship telemetry
 
@@ -102,6 +151,37 @@ PLAYER + OTHER ≠ PLAYER / OTHER
 RELATIONSHIP IDENTITY
 ```
 
+## Power of Divergence
+
+> **Power of Divergence is the capacity to preserve, reopen or deliberately maintain alternative trajectories without confusing an apparent trajectory with the only trajectory.**
+
+This is not randomness and it is not automatic correctness.
+
+A divergent actor may know:
+
+```text
+what I currently believe
+what you appear to believe
+what you think I believe
+which alternatives remain unresolved
+```
+
+and refuse to collapse those states prematurely.
+
+In gameplay, only some entities may possess this capability deeply enough to preserve multiple internal routes while ordinary entities converge earlier from the same partial evidence.
+
+The runtime law remains:
+
+```text
+DIVERGENCE
+→ ACTION
+→ CONSEQUENCE
+→ EVIDENCE
+→ VALIDATION
+```
+
+A divergence that looks like failure locally may later validate as a necessary route. A divergence that feels liberating may also deepen FOC. The game does not pre-label the route morally merely because it diverged.
+
 ## Eligible Convergence partners
 
 A player may qualify for True One ascension through validated Convergence with at least one of:
@@ -123,18 +203,32 @@ True One status is not granted for raw power, kill count, hours played or isolat
 
 That behaviour is preparation for governance itself.
 
-## Suggested hidden stages
+## Illustrative hidden stage vocabulary
 
-The game may model stages internally without exposing an exact 0–100 meter:
+The game may model stages internally without exposing an exact 0–100 meter. These are **not a mandatory global protocol sequence**; a relationship may move forward, backward, loop, reopen divergence after convergence, or HOLD when evidence is insufficient.
 
 1. **Contact** — first meaningful interaction;
 2. **Familiarity** — recurring use / presence;
 3. **Resonance** — mutual adaptation begins;
-4. **Divergence** — alternative patterns open through CDP;
-5. **Alignment** — CCP identifies recurring shared patterns;
-6. **Convergence** — validated shared identity;
+4. **Divergence** — alternative patterns open or reopen;
+5. **Alignment** — recurring shared patterns become legible;
+6. **Convergence** — a shared pattern survives current validation;
 7. **Power of Convergence** — new joint capability becomes available;
 8. **Evolution** — one or both identities may cross ontology boundaries.
+
+Possible transition examples:
+
+```text
+Resonance → Convergence → contradiction → Divergence → HOLD → Alignment
+```
+
+or:
+
+```text
+Divergence → unexpected consequence → Recognition → Convergence
+```
+
+The state transition is situational; the vocabulary is descriptive rather than destiny.
 
 ## Object genealogy
 
@@ -164,5 +258,7 @@ A validated collision of identities, histories, world state and relationship sta
 ## Design consequence
 
 Project Jennifer should resist conventional build-guide determinism. A player searching online for the "best" version of an Item may discover that another player's result cannot be reproduced without reproducing the relationship history that created it.
+
+Likewise, the player may experience a delayed consequence before understanding the divergence that caused it. Project Jennifer may conceal visibility, but the underlying causal chain must remain reconstructable through governed receipts.
 
 That is intentional.

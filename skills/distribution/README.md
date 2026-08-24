@@ -63,22 +63,47 @@ A runtime may expose the catalog without invoking every skill on every request. 
 
 ## Conceptual suite
 
+The conceptual suite is situational rather than a universal pipeline:
+
+```text
+CURRENT STATE
+    │
+    ├─ alternatives must open/reopen ───────────► CDP / DIVERGE
+    ├─ evidence needs evaluation ───────────────► CEEP + POC-vs-FOC
+    ├─ stable evidence should compress ─────────► CCP / CONVERGE
+    └─ evidence/authority is insufficient ──────► HOLD
+```
+
+A common exploration path remains:
+
 ```text
 CDP
 → CEEP
 → POC-vs-FOC
-→ CCP
+→ CCP when convergence is requested/earned
 → canonical/evolution receipt
 → NCMP when a new agent-originated concept needs human recognition + governed registration
 ```
 
+But a prior convergence may be reopened:
+
+```text
+CCP → contradictory evidence → CDP
+```
+
 Important proof boundaries:
 
-- **CDP** is canonically specified and packaged as a portable workflow; no dedicated `packages/conceptual/src/cdp/` runtime module is currently proven.
+- **CDP** is canonically specified, packaged as a portable workflow, and has a dedicated coded/tested TypeScript parser/runtime under `packages/conceptual/src/cdp/`. Dedicated execution requires its runtime receipt.
 - **CEEP** has a current TypeScript implementation under `packages/conceptual/src/ceep/`.
 - **POC-vs-FOC** has a current TypeScript evaluator under `packages/conceptual/src/pocvsfoc/`.
 - **CCP** has a current TypeScript implementation under `packages/conceptual/src/ccp/`.
 - **NCMP** has a coded storage-agnostic/in-memory registry; agents may propose but human recognition is mandatory before its recognition transition.
+- **NPC epistemic divergence** under `packages/npc/src/epistemic-divergence.ts` is a separate actor-model primitive; local `CONVERGE | DIVERGE | HOLD` does not prove CDP/CCP conceptual runtime execution.
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
 
 Adapters must preserve those distinctions.
 

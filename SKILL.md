@@ -1,6 +1,6 @@
 ---
 name: project-jennifer
-description: Govern Project Jennifer work through stateless-renter routing, CDP, CEEP, POC-vs-FOC, VOC registry parsing, runtime mutation gates, CCP, NCMP, CAG, governed RAG, RIVM, receipts, source authority and current repository evidence.
+description: Govern Project Jennifer work through stateless-renter routing, situational CDP/CCP transitions, CEEP, POC-vs-FOC, VOC registry parsing, runtime mutation gates, NCMP, CAG, governed RAG, RIVM, NPC epistemic divergence, receipts, source authority and current repository evidence.
 tags:
   - governance
   - agent-skills
@@ -53,7 +53,20 @@ current human instruction
 
 Do not promote memory, semantic similarity, generated output, lore or a portable skill description into implementation truth.
 
-## Core conceptual routing
+## Situational conceptual routing
+
+Project Jennifer does not grant either divergence or convergence a universal first position.
+
+```text
+CURRENT STATE
+    │
+    ├─ alternatives must open/reopen ───────────► CDP / DIVERGE
+    ├─ evidence needs evaluation ───────────────► CEEP + POC-vs-FOC
+    ├─ stable evidence should compress ─────────► CCP / CONVERGE
+    └─ evidence/authority is insufficient ──────► HOLD
+```
+
+A common exploration path remains:
 
 ```text
 CDP
@@ -61,16 +74,31 @@ CDP
 → POC-vs-FOC
 → CCP
 → canonical/evolution receipt
-→ NCMP when genuine agent-originated novelty requires human recognition
 ```
 
-- **CDP — Conceptual Divergence Protocol:** expand the possibility space. Canonical semantics + portable skill exist, and the dedicated TypeScript parser/runtime is coded and tested under `packages/conceptual/src/cdp/`; actual execution is proven only by a runtime receipt with `dedicatedCdpEngineExecuted: true`.
+but valid routes also include:
+
+```text
+CCP → contradictory evidence → CDP
+CDP → HOLD
+CCP → HOLD
+```
+
+Canonical boundary:
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+- **CDP — Conceptual Divergence Protocol:** expand or reopen the possibility space when divergence is the admitted transition. Canonical semantics + portable skill exist, and the dedicated TypeScript parser/runtime is coded and tested under `packages/conceptual/src/cdp/`; actual execution is proven only by a runtime receipt with `dedicatedCdpEngineExecuted: true`.
 - **CEEP — Conceptual Evaluation Engine:** evaluate candidates and emit evaluation/evolution receipts.
 - **POC-vs-FOC:** separate evidence-bearing proof from unsupported conceptual promotion.
 - **VOC Registry Parser:** preserve the KPGS `POC` branch and emergent operational `FOC-G##` groups from `RobynAwesome/Introduction-to-MCP` with provenance instead of flattening them into Jennifer semantic risk categories.
 - **POC/FOC Runtime Gate:** require a consequential action to survive conceptual evaluation, operational FOC checks, evidence binding and Memory Receipt admission before state mutation.
-- **CCP — Conceptual Convergence Protocol:** determine which pattern survives evidence and evaluation; current TypeScript implementation exists under `packages/conceptual/src/ccp/`.
+- **CCP — Conceptual Convergence Protocol:** determine which pattern currently survives evidence and evaluation; current TypeScript implementation exists under `packages/conceptual/src/ccp/`. A prior convergence may be reopened when new evidence arrives.
 - **NCMP — New Concept MMAO Protocol:** govern genuinely new agent-originated concepts; human recognition remains mandatory.
+- **NPC Epistemic Divergence:** `packages/npc/src/epistemic-divergence.ts` emits actor-local `CONVERGE | DIVERGE | HOLD` receipts. These are actor-model dispositions, not proof that CDP/CCP executed and not POC/FOC verdicts.
 
 ## Consequential runtime routing
 
@@ -89,6 +117,8 @@ parsed VOCRegistry
 
 `Project Jennifer FOCType`, KPGS operational `FOC-G##`, and Memory Receipt admission are separate namespaces and must remain separately inspectable.
 
+A player-facing consequence may be latent or initially opaque, but Project Jennifer must retain a reconstructable causal receipt for why that consequence exists.
+
 ## Specialist skill index
 
 Start at [`skills.md`](skills.md). Major portable routes include:
@@ -106,6 +136,7 @@ Start at [`skills.md`](skills.md). Major portable routes include:
 - [`skills/jennifer-stateless-renter/SKILL.md`](skills/jennifer-stateless-renter/SKILL.md)
 - [`skills/forge-rivm/SKILL.md`](skills/forge-rivm/SKILL.md)
 - [`skills/authored-relational-attention/SKILL.md`](skills/authored-relational-attention/SKILL.md)
+- [`skills/jennifer-companions-npcs/SKILL.md`](skills/jennifer-companions-npcs/SKILL.md)
 
 For the complete current registry and proof-state table, use [`skills.md`](skills.md).
 

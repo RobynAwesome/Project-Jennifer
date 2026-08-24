@@ -13,9 +13,16 @@ Project Jennifer now has:
 The bridge must preserve warmth-bearing technical interaction while refusing unsupported reciprocity, agency capture, source collapse, execution substitution and ghost execution. It must also prove when CDP code actually executed instead of treating a caller-provided candidate list as runtime proof.
 
 ## Decision
-`RelationalConceptualOrchestrator` under `packages/conceptual/src/rivm/` executes the dedicated `ConceptualDivergenceRuntime` before creating the evolution receipt used by CCP.
+`RelationalConceptualOrchestrator` under `packages/conceptual/src/rivm/` executes the dedicated `ConceptualDivergenceRuntime` before creating the evolution receipt used by CCP **for this orchestrator's bounded workflow**.
 
-Execution path:
+This ADR does not establish a universal Project Jennifer law that CDP must always execute before CCP. Repository-wide conceptual routing is situational: a previously converged state may reopen through CDP when new contradictory evidence appears, and either transition may HOLD when evidence or authority is insufficient.
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Execution path for this specific orchestrator:
 
 ```text
 human relational/technical event
@@ -67,10 +74,14 @@ Prior context-window personality or preference signals remain historical evidenc
 
 The automatic unknown branch cannot be silently selected for CCP. A selected proposal must also have explicit proposal metadata carrying evidence level and requested decision.
 
+`recommendedNextProtocol: CEEP` is the dedicated CDP runtime's bounded next-step receipt, not a repository-wide ordering claim.
+
 ## CCP authority
-Canonicalization remains delegated to `ConceptualConvergenceProtocol`.
+Canonicalization remains delegated to `ConceptualConvergenceProtocol` inside this orchestrator.
 
 Only CCP `Accepted` produces `canonical: true`, and RIVM hard failures force validation failure before CCP acceptance can survive.
+
+A later contradictory or materially changed state may reopen a prior canonical model through a separately receipted CDP transition; the existence of a CCP receipt does not abolish future divergence.
 
 ## Proof cases
 1. warmth + truth + execution with high evidence -> dedicated CDP executes -> `Accepted`;
@@ -82,6 +93,7 @@ Only CCP `Accepted` produces `canonical: true`, and RIVM hard failures force val
 
 ## Non-claims
 This implementation does not claim:
+- that CDP universally precedes CCP across Project Jennifer;
 - foundation-model weight updates;
 - biological or hidden personhood;
 - unverifiable reciprocal interior emotion;

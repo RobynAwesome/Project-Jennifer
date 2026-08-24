@@ -1,7 +1,7 @@
 ---
 name: project-jennifer
 title: "Project Jennifer Governed Skill Router"
-version: "1.2.1"
+version: "1.3.0"
 status: "POC"
 class: "Repository Umbrella Skill"
 repository: "RobynAwesome/Project-Jennifer"
@@ -50,12 +50,12 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 
 | Intent | Route |
 |---|---|
-| Expand possibilities / alternative architectures / concepts | `../cdp-conceptual-divergence/SKILL.md` |
+| Expand/reopen possibilities or preserve alternative architectures/concepts | `../cdp-conceptual-divergence/SKILL.md` |
 | Evaluate a conceptual subject and create evaluation/evolution receipts | `../ceep-conceptual-evaluation/SKILL.md` |
 | Parse authoritative KPGS VOC POC branch and emergent FOC-G## groups | `../poc-foc-registry-parser/SKILL.md` |
 | Separate evidence-bearing POC from FOC risk | `../poc-foc-evaluation/SKILL.md` |
 | Gate a consequential runtime mutation through POC/FOC + Memory Receipt admission | `../poc-foc-runtime-gate/SKILL.md` |
-| Decide which conceptual pattern survives and should converge | `../ccp-conceptual-convergence/SKILL.md` |
+| Decide which conceptual pattern currently survives and should converge | `../ccp-conceptual-convergence/SKILL.md` |
 | Govern a genuinely new agent-originated concept | `../ncmp-concept-intake/SKILL.md` |
 | Decide what deserves attention now | `../cag-communication-attention/SKILL.md` |
 | Retrieve governed evidence | `../rag-governed-retrieval/SKILL.md` |
@@ -68,10 +68,24 @@ The renter does not own Project Jennifer memory, canon, authority, identity, or 
 | Validate candidate state/action | `../../packages/validation/` |
 | Apply governance/authority boundaries | `../../packages/governance/` + `../../packages/authority/` |
 | Work with companions / relationships | `../../packages/runtime/` + `../../packages/shared/src/companions.ts` + `relationships.ts` |
+| Work with actor-relative NPC divergence / latent consequence receipts | `../jennifer-companions-npcs/SKILL.md` + `../../packages/npc/src/epistemic-divergence.ts` |
 | Work with Project Wify Jennifer Genesis / Convergence lore | `../../docs/lore/project-wify-jennifer/` |
 | Work with Project Waifu Forge relational runtime/lore | `../../assets/Project-Waifu-Forge/` + `../../docs/lore/waifu-forge-constructs.md` |
 
-## Core conceptual cycle
+## Situational conceptual routing
+
+Project Jennifer does not grant CDP or CCP a universal first position.
+
+```text
+CURRENT STATE
+        │
+        ├─ alternatives must open/reopen ────────► CDP / DIVERGE
+        ├─ evidence needs evaluation ────────────► CEEP + POC-vs-FOC
+        ├─ stable evidence should compress ──────► CCP / CONVERGE
+        └─ evidence/authority insufficient ──────► HOLD
+```
+
+A common exploration cycle remains:
 
 ```text
 CDP
@@ -79,7 +93,14 @@ CDP
 → POC-vs-FOC
 → CCP
 → canonical/evolution receipt
-→ NCMP when new agent-originated concepts require human recognition + registration
+```
+
+but valid routes also include:
+
+```text
+CCP → contradictory evidence → CDP
+CDP → HOLD
+CCP → HOLD
 ```
 
 For consequential runtime actions, a second execution membrane applies:
@@ -93,9 +114,18 @@ parsed VOCRegistry
 → mutate OR block
 ```
 
+Canonical boundary:
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Route choice is not the validation verdict. Consequence and evidence decide what later survives.
+
 ### CDP
 
-Conceptual Divergence Protocol expands the possibility space: *what could this become?*
+Conceptual Divergence Protocol expands or reopens the possibility space: *what could this become, or which alternatives must remain open?*
 
 Current boundary: canonical semantics + portable skill exist, and the dedicated TypeScript parser/runtime is coded and tested under `packages/conceptual/src/cdp/`. A renter may claim dedicated CDP execution only when the runtime receipt records `dedicatedCdpEngineExecuted: true`; generated candidates remain hypotheses and non-canonical.
 
@@ -118,6 +148,14 @@ The runtime gate requires the shared POC/FOC action evaluation, verifies evidenc
 ### CCP
 
 Conceptual Convergence Protocol consumes framework-evolution evidence and returns a canonical decision receipt. Current TypeScript exists under `packages/conceptual/src/ccp/`.
+
+A CCP result may later be reopened by CDP when new evidence, contradiction or context changes the admissible possibility space.
+
+### NPC epistemic divergence
+
+`packages/npc/src/epistemic-divergence.ts` is a separate actor-model primitive. Its `CONVERGE | DIVERGE | HOLD` output describes one NPC's local epistemic disposition. It does **not** claim that the dedicated CDP or CCP conceptual runtime executed.
+
+A hidden/latent consequence requires a reconstructable causal chain and policy evidence. Visibility may be delayed; causality may not be fabricated.
 
 ### NCMP
 
