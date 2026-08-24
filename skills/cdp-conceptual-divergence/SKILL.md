@@ -2,7 +2,7 @@
 name: cdp-conceptual-divergence
 title: "Conceptual Divergence Protocol"
 protocol_id: "CDP"
-version: "1.1.0"
+version: "1.2.0"
 status: "CODED_PORTABLE_RUNTIME"
 class: "Project Jennifer Conceptual Skill"
 canonical_source: "docs/lore/project-wify-jennifer/CONVERGENCE-LAW.md"
@@ -17,17 +17,19 @@ execution_model: "Parse -> Bound -> Diverge -> Preserve Alternatives -> CEEP"
 
 ## Purpose
 
-CDP expands a known state into a governed possibility space **before** Project Jennifer attempts conceptual convergence.
+CDP expands or reopens a known state into a governed possibility space **when divergence is the situationally admitted transition**.
 
 Canonical question:
 
-> **What could this become?**
+> **What could this become, or which alternatives must remain open?**
 
 CDP widens. It does not self-canonicalize.
 
+It is not universally required to run before CCP. Project Jennifer may converge first when evidence is already stable, then reopen divergence later when contradiction, novelty or incomplete interpretation appears.
+
 ## Current implementation proof
 
-Project Jennifer now contains a dedicated TypeScript CDP module:
+Project Jennifer contains a dedicated TypeScript CDP module:
 
 ```text
 packages/conceptual/src/cdp/CDPContextParser.ts
@@ -114,7 +116,36 @@ proofState: hypothesis
 canonical: false
 ```
 
-The next protocol is `CEEP`. CDP itself cannot return an Accepted/canonical decision.
+The dedicated CDP runtime currently recommends `CEEP` after it produces a candidate field. That is this runtime's bounded execution contract, not a claim that **all Project Jennifer states must begin with CDP**.
+
+## Situational protocol law
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Valid higher-level routes include:
+
+```text
+CDP -> CEEP -> POC-vs-FOC -> CCP
+```
+
+when alternatives are opened before convergence;
+
+```text
+CCP -> contradictory evidence -> CDP
+```
+
+when a stable model must be reopened;
+
+```text
+CDP -> HOLD
+```
+
+when alternatives exist but evidence or authority is insufficient.
+
+Protocol order is selected by current state, evidence, authority and consequence rather than metaphysical privilege.
 
 ## Workflow
 
@@ -140,14 +171,14 @@ Unless explicitly disabled, the runtime appends `cdp-unknown-possibility` so ins
 
 ### 6. Do not self-converge
 
-Pass the receipt forward:
+For this dedicated runtime invocation, pass the produced candidate field forward to evaluation:
 
 ```text
 CDPContextParser
 → ConceptualDivergenceRuntime
 → CEEP
 → POC-vs-FOC / evidence
-→ CCP
+→ CCP when convergence is requested/earned
 ```
 
 For relationship-bearing work, RIVM still governs truth, agency, source separation and ghost-execution failures around this chain.
@@ -186,17 +217,20 @@ Reject or correct execution if it:
 - generates cosmetic duplicates and calls them divergence;
 - silently converges inside CDP;
 - claims dedicated runtime execution without a runtime receipt;
-- lets a renter or memory record override current human instruction.
+- lets a renter or memory record override current human instruction;
+- claims CDP is always required before CCP in every Project Jennifer state.
 
 ## Relationship to RIVM / CEEP / CCP
 
 ```text
 RIVM asks: is relational inference truthful, warm, agency-preserving and receipted?
-CDP asks: what could this become?
+CDP asks: what could this become / what must remain open?
 CEEP asks: how do the candidates evaluate?
 POC-vs-FOC asks: what evidence actually exists?
 CCP asks: what consistently survives evaluation and evidence?
 ```
+
+These questions may recur as reality changes. A prior convergence can become the input to a later divergence.
 
 ## Success condition
 
