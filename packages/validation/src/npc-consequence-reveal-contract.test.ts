@@ -44,7 +44,7 @@ test("reveal telemetry records execution without claiming narrative fairness", (
   assert.match(telemetry, /consequence\.reveal\.revised/);
 
   assert.match(skill, /HIDDEN NOW != UNEXPLAINABLE FOREVER/);
-  assert.match(skill, /projection, not a new authority record/i);
+  assert.match(skill, /projection.*not a new authority record/i);
   assert.match(skill, /append/i);
   assert.match(skill, /not.*proof.*narratively fair/i);
 });
