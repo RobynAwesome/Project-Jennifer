@@ -54,10 +54,10 @@ A renter may execute within granted authority. It may not convert remembered con
 | [`kpgs-apple-deployment-parser`](skills/kpgs-apple-deployment-parser/SKILL.md) | **PORTABLE / CODED** | Parse Xcode/Xcode Cloud/App Store Connect/TestFlight/build-upload/notarization workflows without flattening them into cloud-service deployment. | KMEC Apple parser + Apple first-party docs |
 | [`kpgs-model-hardware-router`](skills/kpgs-model-hardware-router/SKILL.md) | **PORTABLE / CODED** | Route exact models/runtimes by hard hardware constraints, demanded skills and measured benchmarks. | KMEC model router |
 | [`kpgs-mmao-mao-renter`](skills/kpgs-mmao-mao-renter/SKILL.md) | **PORTABLE / CODED** | Issue purpose-bound renter leases through non-linear MAO/MMAO workflows. | KMEC workflow graph + KPGS MMAO authority |
-| [`cdp-conceptual-divergence`](skills/cdp-conceptual-divergence/SKILL.md) | **PORTABLE / CODED** | Parse governed context and deliberately expand the possibility space before convergence. | `packages/conceptual/src/cdp/` + Convergence Law |
+| [`cdp-conceptual-divergence`](skills/cdp-conceptual-divergence/SKILL.md) | **PORTABLE / CODED** | Parse governed context and deliberately expand or reopen the possibility space when divergence is the admitted transition. | `packages/conceptual/src/cdp/` + Convergence Law |
 | [`ceep-conceptual-evaluation`](skills/ceep-conceptual-evaluation/SKILL.md) | **PORTABLE / CODED** | Evaluate a conceptual subject and emit evaluation/evolution receipts. | `packages/conceptual/src/ceep/` |
 | [`poc-foc-evaluation`](skills/poc-foc-evaluation/SKILL.md) | **PORTABLE / CODED** | Separate evidence-bearing proof from FOC risk before promotion. | `packages/conceptual/src/pocvsfoc/` |
-| [`ccp-conceptual-convergence`](skills/ccp-conceptual-convergence/SKILL.md) | **PORTABLE / CODED** | Decide which conceptual pattern survives evidence/evaluation. | `packages/conceptual/src/ccp/` |
+| [`ccp-conceptual-convergence`](skills/ccp-conceptual-convergence/SKILL.md) | **PORTABLE / CODED** | Decide which conceptual pattern currently survives evidence/evaluation. | `packages/conceptual/src/ccp/` |
 | [`ncmp-concept-intake`](skills/ncmp-concept-intake/SKILL.md) | **PORTABLE / CODED** | Govern an agent-originated concept from candidate through human recognition, validation and registration. | `packages/shared/src/ncmp.ts` |
 | [`cag-communication-attention`](skills/cag-communication-attention/SKILL.md) | **PORTABLE / CODED** | Decide what deserves attention now; gate irrelevant/privacy-invalid context. | skill + CAG implementation |
 | [`rag-governed-retrieval`](skills/rag-governed-retrieval/SKILL.md) | **PORTABLE / CODED** | Retrieve evidence with authority, privacy, provenance and receipt boundaries. | skill + governed RAG implementation |
@@ -68,7 +68,7 @@ A renter may execute within granted authority. It may not convert remembered con
 | [`jennifer-runtime-memory`](skills/jennifer-runtime-memory/SKILL.md) | **PORTABLE / ROUTER** | Work on runtime continuity, relationships, GSMB, memory receipts or persistent consequence. | `packages/runtime/`, `packages/memory/` |
 | [`jennifer-validation-poc-foc`](skills/jennifer-validation-poc-foc/SKILL.md) | **PORTABLE / GOVERNANCE** | Validate architecture/runtime claims and preserve POC/FOC evidence boundaries. | `VALIDATION_POLICY.md`, validation code/tests |
 | [`jennifer-conceptual-convergence`](skills/jennifer-conceptual-convergence/SKILL.md) | **PORTABLE / ROUTER** | Apply CCP, CEEP, framework evolution or conceptual receipts. | `packages/conceptual/`, conceptual docs |
-| [`jennifer-companions-npcs`](skills/jennifer-companions-npcs/SKILL.md) | **PORTABLE / ROUTER** | Work on companion identity, progression, NPC behavior or character-state governance. | runtime/NPC packages, companion manifests |
+| [`jennifer-companions-npcs`](skills/jennifer-companions-npcs/SKILL.md) | **PORTABLE / ROUTER** | Work on companion identity, progression, NPC behavior, actor-relative divergence or character-state governance. | runtime/NPC packages, companion manifests |
 | [`jennifer-telemetry-storage`](skills/jennifer-telemetry-storage/SKILL.md) | **PORTABLE / ROUTER** | Work on telemetry, receipts, persistence, replay or reconciliation. | telemetry/memory/storage code and infra |
 | [`jennifer-ncmp-mmao`](skills/jennifer-ncmp-mmao/SKILL.md) | **PORTABLE / GOVERNANCE** | Govern NCMP, MMAO or multi-renter sessions and orchestration. | `NCMP.md`, `docs/mmao/`, NCMP contracts |
 | [`jennifer-game-web-api`](skills/jennifer-game-web-api/SKILL.md) | **PORTABLE / ROUTER** | Build or debug the Next.js/Phaser web game, API or browser/runtime bridges. | `apps/web/`, `apps/api/`, shared/runtime contracts |
@@ -95,39 +95,61 @@ A renter may execute within granted authority. It may not convert remembered con
 | Companion Runtime | `packages/runtime/src/companion-engine.ts` | Governed companion mechanisms and identity state. |
 | Relationship Engine | `packages/runtime/src/relationship-engine.ts` | Relationship events, transitions, constraints and receipts. |
 | NPC Runtime | `packages/npc/` | Bounded NPC behavior/world interaction. |
+| NPC Epistemic Divergence | `packages/npc/src/epistemic-divergence.ts` | Deterministic actor-relative observation/interpretation and policy-backed consequence-intent receipts. |
 | Source Authority Registry | `governance/source-authority-registry.json` | Authority/privacy/canon/proof classification. |
 
 The repository-native skills route work to these surfaces. **Packaged as a skill** does not mean the capability is wired into every runtime, validated, deployed or canonical; inspect the current code and receipts.
 
 ---
 
-## The conceptual reasoning spine
+## Situational conceptual routing
+
+Project Jennifer does not impose one global sequence on every conceptual state.
 
 ```text
 CURRENT / KNOWN STATE
-        ↓
-CDP — Conceptual Divergence Protocol
-        ↓
-multiple possibilities
-        ↓
-CEEP — Conceptual Evaluation Engine
-        ↓
-POC-vs-FOC — evidence / risk boundary
-        ↓
-CCP — Conceptual Convergence Protocol
-        ↓
-Accepted / Experimental / Refine / Rejected / Deprecated
-        ↓
-canonical / evolution receipt
-        ↓
-NCMP when a genuinely new agent-originated concept needs recognition + registration
+        │
+        ├─ alternatives must open/reopen ─────────────► CDP / DIVERGE
+        ├─ evidence must be evaluated ────────────────► CEEP + POC-vs-FOC
+        ├─ stable evidence should compress ───────────► CCP / CONVERGE
+        └─ evidence / authority is insufficient ──────► HOLD
 ```
+
+A common exploration path is still:
+
+```text
+CDP
+→ multiple possibilities
+→ CEEP
+→ POC-vs-FOC
+→ CCP when convergence is requested/earned
+→ Accepted / Experimental / Refine / Rejected / Deprecated
+→ canonical / evolution receipt
+→ NCMP when a genuinely new agent-originated concept needs recognition + registration
+```
+
+But valid transitions also include:
+
+```text
+CCP → contradictory evidence → CDP
+CDP → HOLD
+CCP → HOLD
+```
+
+Canonical boundary:
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Either route may later validate or fail through consequence and evidence.
 
 ### CDP
 
-**Question:** *What could this become?*
+**Question:** *What could this become, or which alternatives must remain open?*
 
-CDP expands the possibility space. Current proof state:
+CDP expands or reopens the possibility space. Current proof state:
 
 ```text
 canonical semantics: YES
@@ -160,6 +182,23 @@ When the action is consequential, conceptual evaluation is not enough. Route the
 
 The current TypeScript implementation consumes a `FrameworkEvolutionReceipt` and returns a `CanonicalReceipt`. Only `Accepted` is canonical in current code.
 
+A prior CCP result may become input to later CDP when contradiction, novelty or changed context reopens the possibility field.
+
+### NPC epistemic divergence
+
+The NPC engine is deliberately separate from the conceptual CDP/CCP runtimes:
+
+```text
+objective event facts
+→ actor-local observations
+→ partial-known state
+→ actor interpretation
+→ CONVERGE | DIVERGE | HOLD
+→ optional policy-backed consequence intent
+```
+
+These receipts remain `proofState: actor-model`, `validationState: UNVALIDATED`, and `canonical: false`. Local `DIVERGE` or `CONVERGE` never proves the conceptual CDP/CCP runtime executed.
+
 ### NCMP
 
 NCMP governs the rare case where a new concept originates inside MMAO. Agents may propose; **only the human architect may recognize the concept as NCMP**. Recognition still does not equal validation or registration.
@@ -169,11 +208,22 @@ NCMP governs the rare case where a new concept originates inside MMAO. Agents ma
 ## Recommended routing
 
 ```text
-Explore possibilities
+Explore / reopen possibilities
 → CDP
 → CEEP
 → POC-vs-FOC
 → CCP only when convergence is requested/earned
+
+Reopen a previously converged model
+→ existing CCP/canonical receipt + new contradictory evidence
+→ source authority
+→ CDP
+→ CEEP / POC-vs-FOC as needed
+→ CCP again only if earned
+
+Insufficient evidence / authority
+→ HOLD
+→ preserve uncertainty + receipt
 
 Parse KPGS VOC / immune registry
 → source authority
@@ -197,6 +247,14 @@ Converge / canonicalize
 → CEEP + POC-vs-FOC
 → CCP
 → receipt
+
+NPC actor-relative consequence
+→ authoritative event facts + evidence
+→ jennifer-companions-npcs
+→ EpistemicDivergenceEngine
+→ actor-model receipt
+→ policy-backed consequence intent only when evidence exists
+→ persistent mutation only through runtime/memory + POC/FOC gates
 
 New agent-originated protocol/concept
 → CDP/CEEP as needed
