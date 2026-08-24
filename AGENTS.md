@@ -53,24 +53,52 @@ jennifer-human-crisis-ingress
 
 See [`skills.md`](skills.md) for the complete capability and proof-state map. Use [`skills/SKILL.md`](skills/SKILL.md) for the repository-native implementation lanes.
 
-## Conceptual protocol order
+## Conceptual protocol routing
+
+Project Jennifer does **not** impose one metaphysical protocol order on every state.
 
 ```text
-CDP — expand possibility space
-→ CEEP — evaluate
-→ POC-vs-FOC — separate proof from unsupported promotion
-→ CCP — converge
-→ canonical/evolution receipt
-→ NCMP when a genuinely new agent-originated concept needs human recognition + governed registration
+CURRENT STATE
+    │
+    ├─ alternatives must open/reopen ───────────► CDP / DIVERGE
+    ├─ evidence must be evaluated ──────────────► CEEP + POC-vs-FOC
+    ├─ stable evidence should compress ─────────► CCP / CONVERGE
+    └─ evidence/authority is insufficient ─────► HOLD
 ```
+
+A common exploration path remains:
+
+```text
+CDP → CEEP → POC-vs-FOC → CCP → canonical/evolution receipt
+```
+
+but it is not universal. Valid transitions also include:
+
+```text
+CCP → contradictory evidence → CDP
+CDP → HOLD
+CCP → HOLD
+```
+
+NCMP remains the governed lane when a genuinely new agent-originated concept needs human recognition + registration.
+
+Canonical boundary:
+
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Either route may validate or fail through consequence and evidence.
 
 Proof-state boundaries:
 
-- **CDP:** specified in the Convergence Law + portable workflow skill; no dedicated `packages/conceptual/src/cdp/` runtime module is currently proven.
+- **CDP:** portable workflow + current dedicated TypeScript parser/runtime under `packages/conceptual/src/cdp/`; generated candidates remain non-canonical unless later governance admits them.
 - **CEEP:** portable workflow + current TypeScript implementation under `packages/conceptual/src/ceep/`.
 - **POC-vs-FOC:** portable workflow + current TypeScript evaluator under `packages/conceptual/src/pocvsfoc/`.
 - **CCP:** portable workflow + current TypeScript implementation under `packages/conceptual/src/ccp/`.
 - **NCMP:** portable workflow + current storage-agnostic/in-memory registry; only the human architect may perform the recognition transition.
+- **NPC epistemic divergence:** deterministic actor-model primitive under `packages/npc/src/epistemic-divergence.ts`; its `CONVERGE | DIVERGE | HOLD` receipts are local actor dispositions, not claims that the dedicated CDP/CCP runtimes executed.
 
 Do not collapse those states.
 
@@ -85,6 +113,7 @@ Do not collapse those states.
 - Do not convert lore/design into runtime implementation claims.
 - Do not claim a test, build, deployment, write, or external action happened without a real receipt.
 - Preserve Project Waifu Forge and Project Wify Jennifer as distinct namespaces unless current repository evidence explicitly changes that boundary.
+- Hidden player consequence may conceal visibility, but its causal chain must remain reconstructable from governed receipts.
 
 ## Skill routing shorthand
 
@@ -101,6 +130,7 @@ Do not collapse those states.
 | Govern consequential relational inference | `skills/forge-rivm/SKILL.md` |
 | Preserve authored relational attention | `skills/authored-relational-attention/SKILL.md` |
 | Enter a repository implementation domain | `skills/SKILL.md` |
+| Build actor-relative NPC divergence / delayed causal consequence | `skills/jennifer-companions-npcs/SKILL.md` |
 | Unknown / cross-system Jennifer task | `skills/project-jennifer/SKILL.md` |
 
 > **The skill tells the renter how to work. The repository tells the renter what exists. The receipt tells the renter what passed. The human decides the task.**
