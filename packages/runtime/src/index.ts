@@ -82,6 +82,12 @@ export type {
 } from "./npc-consequence-admission.js";
 
 export {
+  ConsequenceRevealError,
+  NPCConsequenceRevealEngine,
+} from "./npc-consequence-reveal.js";
+export type { ConsequenceRevealSource } from "./npc-consequence-reveal.js";
+
+export {
   InMemoryRuntimeGateLedger,
   createRuntimeGateLedgerRecord,
 } from "./runtime-gate-ledger.js";

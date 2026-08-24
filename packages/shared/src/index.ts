@@ -12,3 +12,4 @@ export * from "./forge-role.js";
 export * from "./zodiac.js";
 export * from "./player-convergence.js";
 export * from "./mmao-witnesses.js";
+export * from "./consequence-reveal.js";

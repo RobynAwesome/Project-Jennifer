@@ -1,13 +1,13 @@
 ---
 name: jennifer-companions-npcs
-description: Build Project Jennifer companions, companion selection/progression, persona-aware NPCs and governed character behavior. Use whenever work touches companion-engine, companion registries/assets, NPC runtime, DialogNPC, companion selection scenes, rarity/edition logic, persistent character state, or actor-relative divergence/consequence behavior.
-version: 1.2.0
+description: Build Project Jennifer companions, companion selection/progression, persona-aware NPCs and governed character behavior. Use whenever work touches companion-engine, companion registries/assets, NPC runtime, DialogNPC, companion selection scenes, rarity/edition logic, persistent character state, actor-relative divergence/consequence behavior, or player-safe consequence reveal state.
+version: 1.3.0
 license: MIT
 metadata:
   project: Project Jennifer
   owner: Kholofelo Robyn Rababalela
   capability: companions-npcs
-  tags: [companions, npc, characters, progression, game, divergence]
+  tags: [companions, npc, characters, progression, game, divergence, consequence-reveal]
 ---
 
 # Jennifer Companions + NPCs
@@ -18,6 +18,8 @@ metadata:
 - `packages/npc/src/npc-runtime.ts`
 - `packages/npc/src/epistemic-divergence.ts`
 - `packages/runtime/src/npc-consequence-admission.ts`
+- `packages/runtime/src/npc-consequence-reveal.ts`
+- `packages/shared/src/consequence-reveal.ts`
 - `packages/shared/src/companions.ts`
 - `docs/architecture/companion-system.md`
 - `docs/architecture/npc-epistemic-divergence.md`
@@ -78,6 +80,30 @@ actor-model consequence intent
 
 The NPC engine does not validate itself. A delayed consequence that has not matured remains pending; a delayed consequence that claims maturity requires evidence of that maturity condition.
 
+## Player-safe consequence reveal law
+
+```text
+HIDDEN NOW != UNEXPLAINABLE FOREVER
+
+LATENT
+→ EFFECT_VISIBLE
+→ CAUSE_PARTIAL | CAUSE_REVEALED
+→ REVISED only through appended new evidence
+```
+
+`NPCConsequenceRevealEngine` creates a **projection**, not a new authority record. The immutable causal origin remains the originating epistemic receipt/event/actor/rule tuple. Player-visible effect state requires the admitted runtime `MemoryReceipt`; the reveal cannot manufacture its own admission.
+
+Disclosure is state-bounded:
+- `LATENT`: effect and cause stay undisclosed;
+- `EFFECT_VISIBLE`: the effect may be shown while cause remains undisclosed;
+- `CAUSE_PARTIAL`: only actor-observed event evidence is disclosed;
+- `CAUSE_REVEALED`: admitted event, policy and maturity evidence plus the original actor interpretation become inspectable;
+- `REVISED`: later actor evidence appends a new interpretation without deleting or rewriting the earlier one.
+
+The player-safe receipt excludes raw objective fact statements, internal provenance objects and internal policy prose. A revision must come from a new non-canonical actor-model receipt for the same event and actor and must add new actor-observed causal evidence. Changed opinion without new evidence stays unpromoted.
+
+Reveal telemetry (`consequence.reveal.matured`, `consequence.reveal.inspected`, `consequence.reveal.revised`) is evidence that the reveal path executed. It is **not** proof that the consequence was narratively fair, fun, understandable, or satisfying to a human player.
+
 ## Workflow
 1. Resolve current companion/NPC identity/canon and source lineage.
 2. Check source manifests before using visual assets.
@@ -90,10 +116,12 @@ The NPC engine does not validate itself. A delayed consequence that has not matu
 9. Require policy evidence for latent or delayed consequence intents.
 10. Require maturity evidence before delayed consequence runtime admission.
 11. Route consequential mutation through `NPCConsequenceRuntimeGateway` / `poc-foc-runtime-gate`.
-12. Validate player-visible behavior and persistence before claiming runtime POC.
+12. Build player-facing causality only from governed source receipts; never author cause text retrospectively.
+13. Preserve the original interpretation and append later revisions from new evidence.
+14. Validate player-visible behavior and persistence before claiming runtime POC.
 
 ## Asset integrity
 Quarantined pointer payloads are failure evidence, not renderable art. Missing founder-approved binaries remain missing until verified intake.
 
 ## Output
-Return character/companion identifier, source lineage, event/observation boundary where relevant, state before/after, gameplay effect, divergence/convergence disposition, causal evidence, maturity state, runtime-gate/Memory-Receipt state, asset status, persistence/receipt state and validation result.
+Return character/companion identifier, source lineage, event/observation boundary where relevant, state before/after, gameplay effect, divergence/convergence disposition, causal evidence, maturity state, runtime-gate/Memory-Receipt state, reveal state, revision chain, asset status, persistence/receipt state and validation result.
