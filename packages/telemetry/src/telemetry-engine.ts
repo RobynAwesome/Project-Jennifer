@@ -11,7 +11,10 @@ export type TelemetryEventKind =
   | "memory.operation"
   | "validation.result"
   | "npc.action"
-  | "world.event";
+  | "world.event"
+  | "consequence.reveal.matured"
+  | "consequence.reveal.inspected"
+  | "consequence.reveal.revised";
 
 export interface ObjectiveWeightVector {
   personal: number;
