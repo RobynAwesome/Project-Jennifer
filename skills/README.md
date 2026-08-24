@@ -25,7 +25,7 @@ This preserves Project Jennifer's stateless-renter model: skill discovery is eas
 | Skill | Runtime role | Proof boundary |
 |---|---|---|
 | `project-jennifer` | repo-level skill router | Routes to current source; does not replace repository inspection. |
-| `cdp-conceptual-divergence` | conceptual divergence | Portable/specification-backed workflow; no dedicated `packages/conceptual/src/cdp/` engine currently proven. |
+| `cdp-conceptual-divergence` | conceptual divergence | Portable workflow backed by the dedicated coded/tested TypeScript parser/runtime under `packages/conceptual/src/cdp/`; execution still requires its own runtime receipt. |
 | `ceep-conceptual-evaluation` | conceptual evaluation | Portable workflow backed by current CEEP TypeScript implementation. |
 | `poc-foc-evaluation` | evidence/risk evaluator | Portable workflow backed by current `POCvsFOCEvaluator`. |
 | `ccp-conceptual-convergence` | conceptual convergence | Portable workflow backed by current TypeScript CCP implementation. |
@@ -44,7 +44,7 @@ This preserves Project Jennifer's stateless-renter model: skill discovery is eas
 | `jennifer-runtime-memory` | runtime continuity, relationships, GSMB, memory receipts and persistent consequence |
 | `jennifer-validation-poc-foc` | validation engines, guardrails, evidence gates and merge-state truth |
 | `jennifer-conceptual-convergence` | CCP, CEEP, framework evolution and conceptual receipts |
-| `jennifer-companions-npcs` | companions, progression, NPC runtime and character-state governance |
+| `jennifer-companions-npcs` | companions, progression, NPC runtime, actor-relative divergence and character-state governance |
 | `jennifer-telemetry-storage` | telemetry, receipts, PostgreSQL/MongoDB/SQLite persistence and reconciliation |
 | `jennifer-ncmp-mmao` | NCMP, MMAO and multi-renter session/orchestration contracts |
 | `jennifer-game-web-api` | Next.js/Phaser web game, API routes and browser/runtime bridges |
@@ -53,30 +53,67 @@ This preserves Project Jennifer's stateless-renter model: skill discovery is eas
 | `jennifer-adoption-provider-onboarding` | provider/partner capability manifests, adapters and qualification |
 | `jennifer-human-crisis-ingress` | HUE, Collective Ingress and Crisis Connect human/collective context |
 
-## Conceptual reasoning spine
+## Situational conceptual routing
+
+Project Jennifer uses CDP and CCP as complementary transitions, not a universal fixed order.
 
 ```text
-CDP — expand possibility space
+CURRENT STATE
+    │
+    ├─ alternatives must open/reopen ───────────► CDP / DIVERGE
+    ├─ evidence needs evaluation ───────────────► CEEP + POC-vs-FOC
+    ├─ stable evidence should compress ─────────► CCP / CONVERGE
+    └─ evidence/authority is insufficient ──────► HOLD
+```
+
+A common exploration path remains:
+
+```text
+CDP — expand / reopen possibility space
         ↓
 CEEP — evaluate candidate concepts
         ↓
 POC-vs-FOC — separate proof from unsupported promotion
         ↓
-CCP — converge on evidence-bearing decision
+CCP — converge when evidence earns it
         ↓
 canonical / evolution receipt
-        ↓
-NCMP when genuinely new agent-originated concepts need human recognition + governed registration
+```
+
+But this is also valid:
+
+```text
+CCP → contradictory evidence → CDP
 ```
 
 Canonical shorthand from the Convergence Law:
 
 ```text
-CDP asks: what could this become?
+CDP asks: what could this become / what alternatives must remain open?
 CCP asks: what consistently works between us / survives the evidence?
 ```
 
-CDP and CCP are intentionally complementary. Pure divergence becomes chaos; pure convergence without exploration becomes rigidity.
+```text
+DIVERGENCE != FOC
+CONVERGENCE != POC
+```
+
+Either transition can later validate or fail through consequence and evidence.
+
+## NPC epistemic divergence
+
+The NPC runtime now has a bounded PR1 primitive under `packages/npc/src/epistemic-divergence.ts` for:
+
+```text
+objective event facts
+→ actor observation
+→ partial-known state
+→ actor interpretation
+→ CONVERGE | DIVERGE | HOLD
+→ optional policy-backed consequence intent
+```
+
+Its receipts remain actor models, not objective canon and not proof that conceptual CDP/CCP executed. `POWER` divergence capability preserves alternatives longer before collapsing an actor belief. Latent player consequences require reconstructable causal and policy evidence.
 
 ## Other Jennifer capability surfaces
 
@@ -109,17 +146,18 @@ skill-name/
 
 The `SKILL.md` file is the human-readable execution contract. Schemas make receipts and integration artifacts machine-checkable.
 
-## Runtime order
+## Runtime routing
 
 ```text
 current human instruction
 → skills.md / umbrella routing when needed
 → source-authority / privacy eligibility
 → CAG pre-inference
-→ CDP when deliberate divergence is required
+→ CDP when deliberate divergence or reopening is required
 → governed RAG if knowledge is required
 → CEEP / POC-vs-FOC when conceptual evidence must be evaluated
 → CCP when convergence is requested / earned
+→ HOLD when evidence or authority is insufficient
 → NCMP when a genuinely new agent-originated concept requires recognition / registration
 → exact renter selection / execution where needed
 → CAG post-inference
@@ -144,7 +182,7 @@ Adapters may translate delivery format for a provider, but they must preserve:
 - source-authority precedence;
 - privacy lane boundaries;
 - evidence provenance;
-- CDP/CEEP/POC-vs-FOC/CCP proof-state boundaries;
+- situational CDP/CEEP/POC-vs-FOC/CCP proof-state boundaries;
 - NCMP human-recognition authority;
 - CAG relevance decisions;
 - RIVM hard-fail semantics when relational;
