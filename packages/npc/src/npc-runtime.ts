@@ -10,6 +10,15 @@ import { generateId, now, clamp } from "@jennifer/shared";
 import type { IMemoryStore } from "@jennifer/memory";
 import type { TelemetryCollector } from "@jennifer/telemetry";
 
+import { EpistemicDivergenceEngine } from "./epistemic-divergence.js";
+import type {
+  ActorObservation,
+  ConsequenceRule,
+  DivergenceCapability,
+  DivergenceEvent,
+  EpistemicDivergenceReceipt,
+} from "./epistemic-divergence.js";
+
 // ─── NPC Goal ─────────────────────────────────────────────────────────────────
 
 export interface NPCGoal {
@@ -106,6 +115,38 @@ export class RelationshipGraph {
   }
 }
 
+// ─── Epistemic Tick Inputs ────────────────────────────────────────────────────
+
+/**
+ * One actor-local view of a shared world event.
+ *
+ * The event facts remain common/objective input to the deterministic engine;
+ * observations, relationship state, goal state, and awareness remain actor
+ * relative. A queued input never grants consequence-mutation authority.
+ */
+export interface NPCQueuedEpistemicEvent {
+  event: DivergenceEvent;
+  observations: readonly ActorObservation[];
+  capability?: DivergenceCapability;
+  relationshipTargetId?: ID;
+  consequenceRules?: readonly ConsequenceRule[];
+}
+
+export interface NPCTickDecision {
+  action: string;
+  epistemicReceipts: readonly EpistemicDivergenceReceipt[];
+}
+
+export interface NPCBroadcastEpistemicInput {
+  event: DivergenceEvent;
+  actorInputs: Readonly<
+    Record<
+      ID,
+      Omit<NPCQueuedEpistemicEvent, "event">
+    >
+  >;
+}
+
 // ─── NPC Agent ────────────────────────────────────────────────────────────────
 
 /**
@@ -114,21 +155,29 @@ export class RelationshipGraph {
  * - Personal memory (episodic + semantic)
  * - Individual goals (priority-ordered, tracked over time)
  * - Relationship graph (trust-weighted, evolving)
+ * - Epistemic divergence receipts for actor-relative event interpretation
  * - Telemetry emission (all actions are observable)
  *
  * NPCs are NOT scripted. Behaviour emerges from goal prioritisation,
- * memory context, and environmental signals.
+ * memory context, environmental signals, and evidence-bound interpretation.
+ *
+ * Important governance boundary: this class may produce a consequence INTENT,
+ * but it does not apply consequential world mutation by itself. Admission of a
+ * consequence is owned by the runtime POC/FOC + Memory Receipt gate.
  */
 export class NPCAgent {
   readonly profile: NPCProfile;
   private goals: NPCGoal[] = [];
+  private readonly epistemicQueue: NPCQueuedEpistemicEvent[] = [];
+  private lastEpistemicReceipts: EpistemicDivergenceReceipt[] = [];
 
   constructor(
     profile: Omit<NPCProfile, "id" | "createdAt">,
     private readonly memory: IMemoryStore,
     private readonly telemetry: TelemetryCollector,
     private readonly awareness: AwarenessEngine,
-    private readonly relationships: RelationshipGraph
+    private readonly relationships: RelationshipGraph,
+    private readonly divergence: EpistemicDivergenceEngine = new EpistemicDivergenceEngine()
   ) {
     this.profile = {
       ...profile,
@@ -186,20 +235,137 @@ export class NPCAgent {
     return this.memory.query({ subject: this.profile.id, tags, limit: 10 });
   }
 
+  // ─── Epistemic event intake ─────────────────────────────────────────────────
+
+  queueEpistemicEvent(input: NPCQueuedEpistemicEvent): void {
+    this.epistemicQueue.push({
+      ...input,
+      observations: [...input.observations],
+      consequenceRules: input.consequenceRules ? [...input.consequenceRules] : undefined,
+    });
+  }
+
+  getQueuedEpistemicEventCount(): number {
+    return this.epistemicQueue.length;
+  }
+
+  getLastEpistemicReceipts(): readonly EpistemicDivergenceReceipt[] {
+    return [...this.lastEpistemicReceipts];
+  }
+
+  /**
+   * Interpret one world event using current actor state and persist the
+   * reconstructable actor-model receipt. This method does not mutate the world
+   * consequence described by `receipt.consequence`.
+   */
+  async interpretEvent(input: NPCQueuedEpistemicEvent): Promise<EpistemicDivergenceReceipt> {
+    const goal = this.getCurrentGoal();
+    const awareness = this.awareness.getAwareness(this.profile.id);
+    const relationship = input.relationshipTargetId
+      ? this.relationships.getRelationship(this.profile.id, input.relationshipTargetId)
+      : undefined;
+
+    const receipt = this.divergence.evaluate({
+      event: input.event,
+      actor: {
+        actorId: this.profile.id,
+        capability: input.capability ?? "STANDARD",
+        observations: input.observations,
+        relationship,
+        currentGoal: goal
+          ? {
+              goalId: goal.id,
+              description: goal.description,
+              priority: goal.priority,
+            }
+          : undefined,
+        awareness: awareness
+          ? {
+              nearbyNpcIds: awareness.nearbyNpcIds,
+              recentEvents: awareness.recentEvents,
+              environmentalTone: awareness.environmentalTone,
+            }
+          : undefined,
+      },
+      consequenceRules: input.consequenceRules,
+    });
+
+    await this.remember(
+      {
+        type: "epistemic-divergence-receipt",
+        receipt,
+      },
+      [
+        "epistemic",
+        "divergence",
+        `event:${receipt.eventId}`,
+        `disposition:${receipt.disposition.toLowerCase()}`,
+        ...(receipt.consequence ? ["consequence-intent"] : []),
+      ]
+    );
+
+    await this.telemetry.emit(
+      "world.event",
+      `npc:${this.profile.id}`,
+      {
+        eventId: receipt.eventId,
+        actorId: receipt.actorId,
+        epistemicReceiptId: receipt.receiptId,
+        disposition: receipt.disposition,
+        actorBelief: receipt.actorBelief,
+        knownFactIds: receipt.knownFactIds,
+        unknownFactIds: receipt.unknownFactIds,
+        evidenceRefs: receipt.evidenceRefs,
+        consequenceIntent: receipt.consequence,
+        proofState: receipt.proofState,
+        validationState: receipt.validationState,
+        canonical: receipt.canonical,
+        mutationApplied: false,
+      }
+    );
+
+    return receipt;
+  }
+
+  private async drainEpistemicQueue(): Promise<EpistemicDivergenceReceipt[]> {
+    const receipts: EpistemicDivergenceReceipt[] = [];
+    while (this.epistemicQueue.length > 0) {
+      const input = this.epistemicQueue.shift();
+      if (!input) break;
+      receipts.push(await this.interpretEvent(input));
+    }
+    this.lastEpistemicReceipts = receipts;
+    return receipts;
+  }
+
   // ─── Tick (simulation step) ──────────────────────────────────────────────────
 
   /**
-   * Called each simulation tick. The NPC evaluates its current goal,
-   * environment, and relationships to determine its next action.
-   * Returns a human-readable description of what the NPC did.
+   * Called each simulation tick. The NPC first interprets queued world events,
+   * then evaluates its current goal and environment. Consequence intents can
+   * affect the NPC's action description/telemetry, but no world mutation is
+   * applied here without the external governed runtime gate.
    */
-  async tick(): Promise<string> {
+  async tickDetailed(): Promise<NPCTickDecision> {
+    const epistemicReceipts = await this.drainEpistemicQueue();
     const goal = this.getCurrentGoal();
     const awareness = this.awareness.getAwareness(this.profile.id);
+    const latestReceipt = epistemicReceipts.at(-1);
 
-    const action = goal
+    const baseAction = goal
       ? `${this.profile.name} works toward: "${goal.description}" (${Math.round(goal.progress * 100)}%)`
       : `${this.profile.name} is idle in ${this.profile.district}`;
+
+    let epistemicAction = "";
+    if (latestReceipt?.disposition === "CONVERGE") {
+      epistemicAction = `; actor-model converged on ${latestReceipt.actorBelief ?? "unknown"} for ${latestReceipt.eventId}`;
+    } else if (latestReceipt?.disposition === "DIVERGE") {
+      epistemicAction = `; preserves ${latestReceipt.alternatives.length} interpretations for ${latestReceipt.eventId}`;
+    } else if (latestReceipt?.disposition === "HOLD") {
+      epistemicAction = `; holds judgment on ${latestReceipt.eventId} pending evidence`;
+    }
+
+    const action = `${baseAction}${epistemicAction}`;
 
     await this.telemetry.emit(
       "npc.action",
@@ -210,11 +376,28 @@ export class NPCAgent {
         goalId: goal?.id,
         district: this.profile.district,
         nearbyNpcs: awareness?.nearbyNpcIds ?? [],
+        epistemicReceiptIds: epistemicReceipts.map((receipt) => receipt.receiptId),
+        epistemicDispositions: epistemicReceipts.map((receipt) => receipt.disposition),
+        consequenceIntentRuleIds: epistemicReceipts
+          .flatMap((receipt) => receipt.consequence?.ruleId ? [receipt.consequence.ruleId] : []),
+        consequenceMutationApplied: false,
       }
     );
 
-    await this.remember({ action, tick: now() }, ["tick"]);
-    return action;
+    await this.remember(
+      {
+        action,
+        tick: now(),
+        epistemicReceiptIds: epistemicReceipts.map((receipt) => receipt.receiptId),
+      },
+      ["tick"]
+    );
+
+    return { action, epistemicReceipts };
+  }
+
+  async tick(): Promise<string> {
+    return (await this.tickDetailed()).action;
   }
 }
 
@@ -242,6 +425,24 @@ export class NPCRegistry {
 
   getByDistrict(district: DistrictName): NPCAgent[] {
     return this.getAll().filter((a) => a.profile.district === district);
+  }
+
+  /**
+   * Broadcast one objective event to multiple actor-local observation packets.
+   * Actors not present in `actorInputs` receive nothing; absence remains absence.
+   */
+  broadcastEpistemicEvent(input: NPCBroadcastEpistemicInput): ID[] {
+    const queued: ID[] = [];
+    for (const [actorId, actorInput] of Object.entries(input.actorInputs)) {
+      const agent = this.agents.get(actorId);
+      if (!agent) continue;
+      agent.queueEpistemicEvent({
+        event: input.event,
+        ...actorInput,
+      });
+      queued.push(actorId);
+    }
+    return queued;
   }
 
   /**
