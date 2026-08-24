@@ -10,3 +10,5 @@ export * from "./ncmp.js";
 export * from "./pern-foundation.js";
 export * from "./forge-role.js";
 export * from "./zodiac.js";
+export * from "./player-convergence.js";
+export * from "./mmao-witnesses.js";

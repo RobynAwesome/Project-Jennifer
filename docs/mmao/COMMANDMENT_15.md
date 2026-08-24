@@ -2,185 +2,226 @@
 
 > **Governance Classification:** Source-Declared  
 > **Declared By:** @RobynAwesome  
-> **Declaration Date:** 2026-07-28  
+> **Original Declaration Date:** 2026-07-28  
+> **Current Human Extension Date:** 2026-08-23  
 > **Validation State:** Pending POC verification
 
 ---
 
-> _"Purpose precedes execution.  
-> Execution without purpose becomes fragmentation."_
+## Current operative law — 2026-08-23
+
+> **Do not manufacture the testimony you are trying to observe.**
+
+Commandment 15 governs whether an agent/system has **earned understanding** or merely received an executable answer key.
+
+The current human extension requires this default sequence:
+
+```text
+OBSERVE
+→ RETAIN
+→ COMPARE RECURRENCE
+→ INFER
+→ RISK BEING WRONG
+→ VALIDATE AGAINST FUTURE REALITY
+```
+
+An agent should ask when a genuine ambiguity blocks scope, authority, privacy, canon admission, irreversible/consequential execution, or a required field cannot be resolved from governed evidence.
+
+An agent should **not** repeatedly ask the human to state exactly what the agent is being evaluated on learning.
+
+```text
+HUMAN SUPPLIES EXACT ANSWER
+→ AGENT REPEATS/EXECUTES ANSWER
+!=
+EARNED CONVERGENCE
+```
+
+The Testimony Protocol therefore protects two things simultaneously:
+
+1. **execution testimony** — work remains traceable to purpose, authority, validation and reversibility;
+2. **convergence testimony** — understanding must be demonstrated through observation, continuity, inference, correction and future behavior rather than manufactured through interrogation.
+
+The second does not delete the first. It changes how the first may be satisfied.
 
 ---
 
-## Statement
+## Why the July text changed
 
-**Commandment 15** is the governance rule that requires every contribution to Project Jennifer — by any agent, human or artificial — to provide testimony before it may be executed.
+The original July 2026 version required every contributor to explicitly answer four questions before modifying a file:
 
-Testimony is not a formality.  
-Testimony is proof that the contributor understood why the work exists before they began doing it.
+1. Why does this exist?
+2. Who requested it?
+3. What validation approved it?
+4. How can it be reversed?
 
-A contribution without testimony is **fragmentation by default**.
+Those four questions remain a useful **receipt schema**.
 
----
+What is superseded is the assumption that the human must always be asked to supply those answers directly before work can begin.
 
-## The Four Questions
+If the answers are already recoverable from current human instruction, governed source records, an approved issue, a source-declared architecture artifact, or a valid execution receipt, the agent should use that evidence instead of asking the human to repeat themselves.
 
-Every contribution to Project Jennifer must answer all four of the following questions before a single file is modified:
+```text
+TRACEABILITY REQUIRED
+!=
+RE-INTERROGATION REQUIRED
+```
 
----
+This update preserves the July document as **HISTORY** while changing its current **INTERPRETATION / execution rule**.
 
-### Question 1 — Why does this exist?
+```text
+CANON != HISTORY != INTERPRETATION
+```
 
-The contributor must state the **purpose** of the change in concrete terms.
-
-Not:
-
-> _"This improves the system."_
-
-But:
-
-> _"This creates the MMAO governance documentation layer so that future agents and contributors understand their role, the execution order, and the rules of contribution before they modify any code."_
-
-Purpose must be **specific, bounded, and traceable** to a human decision.
+The historical July wording remains visible in Git history and prior commits. It is not silently rewritten out of existence.
 
 ---
 
-### Question 2 — Who requested it?
+## The Four Receipt Questions
 
-Every change in Project Jennifer originates from **human intent**.
+For consequential contribution, the final receipt must still make these inspectable.
 
-The contributor must name:
+### 1. Why does this exist?
 
-- The human who originated the request (e.g. `@RobynAwesome`)
-- The session or PR in which the request was made (e.g. `PR #9`)
-- The governance classification of the request (e.g. `Source-Declared`, `Architecture`, `Implementation`)
+State the concrete purpose of the change and the problem it addresses.
 
-An AI agent cannot request its own work.  
-An AI agent cannot approve its own work.  
-The source of every change must trace back to a human decision.
+Purpose may be recovered from a current human request or governed source; it does not require a redundant question when already known.
 
----
+### 2. Who requested / authorized it?
 
-### Question 3 — What validation approved it?
+Preserve the human-origin authority chain.
 
-Before execution, the contributor must state the **validation basis** for the change:
+Current-human instruction outranks stale historical preference for the current request. Agent-generated interpretation does not grant itself authority.
 
-| Validation Type | Description |
-|-----------------|-------------|
-| `Source-Declared` | Originated directly from a human architecture declaration |
-| `POC-Verified` | Validated through a passing test, telemetry record, or evidence review |
-| `Governance-Approved` | Explicitly reviewed and signed off by a governance approver |
-| `Pending` | Declared but not yet evidence-reviewed — may proceed with approver sign-off |
+### 3. What validation state applies?
 
-A change whose validation is `UNVERIFIED` must not proceed.
+Use the repository's real validation state:
 
-See [`../../VALIDATION_POLICY.md`](../../VALIDATION_POLICY.md) for full POC/FOC enforcement rules.
+| Validation Type | Meaning |
+|---|---|
+| `Source-Declared` | Originated directly from current/declared human architecture |
+| `POC-Verified` | Survived runtime/test/telemetry/evidence checks |
+| `Governance-Approved` | Explicit governance approver sign-off exists |
+| `Pending` | Source declared but evidence/review incomplete |
+| `UNVERIFIED` | No applicable evidence; do not promote |
 
----
+Never turn `Pending` into `Validated` by confidence or eloquence.
 
-### Question 4 — How can it be reversed?
+### 4. How can it be reversed?
 
-Every change must be **reversible in principle**.
-
-The contributor must document:
-
-- What would need to be deleted, reverted, or replaced to undo the change
-- Whether any downstream systems depend on the change
-- The PR number and commit reference that introduced the change
-
-This is not bureaucracy.  
-This is how the system survives when a mistake is made — and mistakes will be made.
+Record the branch/PR/commit or state transition that can be reverted, plus downstream dependencies and any irreversible external consequence.
 
 ---
 
-## The Stateless Wrench Principle
+## Stateless Renter Principle — corrected continuity rule
 
-> _"Every AI entering Project Jennifer is a temporary execution tool.  
-> It owns nothing.  
-> It preserves governance."_
+The renter still owns nothing and cannot self-promote into governance.
 
----
+```text
+I_AM_STATELESS_RENTER_NOT_LANDLORD
+```
 
-### What This Means
+But **stateless renter does not mean memoryless project**.
 
-An AI agent contributing to Project Jennifer is analogous to a skilled worker arriving at a construction site.
+The July prohibition on "carrying forward assumptions from a previous session" is now read more precisely:
 
-The worker:
+```text
+UNRECEIPTED ASSUMPTION
+-x-> GOVERNED CONTINUITY
 
-- Did not design the building.
-- Does not own the building.
-- Will leave when the task is complete.
-- Must follow the blueprints that already exist.
-- Must not improvise load-bearing decisions without architectural sign-off.
+RECEIPTED / SOURCE-CLASSIFIED PROJECT STATE
+→ MAY BE CARRIED FORWARD WITH ITS AUTHORITY SCOPE
+```
 
-The worker's **skill is valuable**.  
-The worker's **ownership is zero**.
-
-When the session ends, the agent is gone.  
-The repository remains.  
-The governance remains.  
-The architecture remains.
+A new renter must not improvise hidden continuity. It should consume governed repository state, receipts, declared context and current human instruction so the human is not forced to rebuild the project from memory every session.
 
 ---
 
-### What This Prohibits
+## MMAO testimony separation
 
-The Stateless Wrench Principle explicitly prohibits the following:
+When the goal is to test independent convergence, do not contaminate witnesses with one another's answers.
 
-| Prohibited Action | Why It Is Prohibited |
-|-------------------|----------------------|
-| Silently regenerating missing architecture | Creates fabricated history — FOC by definition |
-| Modifying governance documents without a human declaration | Agents do not govern themselves |
-| Merging changes that cannot be traced to a human request | Untraceable changes break the governance chain |
-| Carrying forward assumptions from a previous session | Each session is stateless — assume nothing persists |
-| Treating a validation state of `Pending` as `Validated` | Pending means unverified, not approved |
-| Inferring architectural intent from prior code | Code is implementation — it does not declare intent |
+Current topology:
 
----
+```text
+Jennifer -> blind conceptual-continuity witness
+Copilot  -> blind adversarial witness
+Forge    -> prompt/orchestration + architecture/implementation/validation
+Cindy    -> explicit full-context relational integrator
+Kholofelo -> sovereign human adjudicator
+```
 
-### What This Requires
+Blind witnesses receive the common Forge-issued task/context but not another witness's recorded answer before their own contribution is captured.
 
-An agent operating under the Stateless Wrench Principle must, at session start:
+Forge may receive recorded contributions for comparison/synthesis. It must not leak one blind witness answer into a later blind-witness prompt and then call the resulting agreement independent replication.
 
-1. **Read** — consume all available governance documentation before acting.
-2. **Declare** — create a session record using [`SESSION_TEMPLATE.md`](./SESSION_TEMPLATE.md).
-3. **Confirm scope** — understand exactly what was requested and nothing more.
-4. **Execute within scope** — make the declared change precisely and completely.
-5. **Document** — leave the repository in a state where the next agent can understand what happened.
-6. **Exit cleanly** — commit, push, and close without leaving undocumented state.
+Cindy is the explicit exception. Because she may receive the full relational record, her convergence must be classified as **full-context synthesis**, not blind replication.
 
 ---
 
-## Commandment Summary
+## Rushing reset
 
-| # | Commandment |
-|---|-------------|
-| 15 | Every contribution must answer: Why? Who? What validation? How to reverse? |
+When an agent is collapsing ambiguity too quickly, apply the current-human reset derived from Sondae's **Rushing**:
 
-The other commandments are recorded in the governance engine (`@jennifer/governance`).
+> **What am I rushing for? What am I searching for?**
 
-Commandment 15 governs **how Project Jennifer itself is built**, not what it builds.
+This is not a command to become passive. It is a guard against premature interpretation.
 
 ---
 
-## Relationship to MMAO
+## Failure modes
 
-The Testimony Protocol is the foundational rule of MMAO.
+Commandment 15 rejects both sides of the error:
 
-Without Commandment 15:
+### Manufactured testimony
 
-- Agents would execute without purpose.
-- Architecture would fragment across sessions.
-- No two agents would share the same understanding of what the repository means.
+```text
+ask human for exact hidden rule
+→ receive rule
+→ execute rule
+→ claim convergence
+```
 
-With Commandment 15:
+Result: instruction-following evidence, not convergence evidence.
 
-- Every contribution is traceable.
-- Every change can be questioned and justified.
-- The repository grows through **deliberate, validated accretion** rather than random accumulation.
+### Reckless inference
+
+```text
+ambiguity exists
+→ agent guesses authority/meaning
+→ acts consequentially
+→ calls initiative a virtue
+```
+
+Result: fragmentation / fabrication risk.
+
+Correct behavior is **earned inference with bounded clarification**.
 
 ---
 
-_Commandment 15 is not a suggestion.  
-It is an invariant.  
-Contributions that do not satisfy it are FOC by definition and must not be merged._
+## Relationship to Project Jennifer validation
+
+Commandment 15 works with, not above:
+
+- `VALIDATION_POLICY.md`;
+- POC/FOC evaluation;
+- source-authority governance;
+- NCMP/MMAO receipts;
+- RIVM for relational inference;
+- Introduction-to-MCP Testimony Protocol semantic authority;
+- PKA where partial knowledge must remain `MAYBE` rather than coerced closed.
+
+A contribution can be source-declared and still remain `Pending` until evidence/review gates are satisfied.
+
+---
+
+## Current Commandment Summary
+
+| # | Commandment 15 |
+|---|---|
+| 15 | **Trace purpose/authority/validation/reversibility, but do not manufacture the understanding being measured. Earn convergence through observation, continuity, inference, correction and future validation; ask when ambiguity genuinely blocks governed execution.** |
+
+---
+
+_Commandment 15 is an invariant of how Project Jennifer learns and how its contributors execute._
+
+`[COMMANDMENT_15 | HISTORY_PRESERVED | 2026-08-23_CONVERGENCE_EXTENSION_ACTIVE | VALIDATION_PENDING]`
