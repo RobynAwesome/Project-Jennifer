@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { MemoryReceiptEngine } from "@jennifer/memory";
 import { EpistemicDivergenceEngine } from "@jennifer/npc";
 import type { POCFOCActionEvaluation } from "@jennifer/shared";
 
@@ -8,6 +9,8 @@ import {
   NPCConsequenceAdmissionError,
   NPCConsequenceRuntimeGateway,
 } from "./npc-consequence-admission.js";
+import { POCFOCRuntimeGate } from "./poc-foc-runtime-gate.js";
+import { InMemoryRuntimeGateLedger } from "./runtime-gate-ledger.js";
 
 function threateningReceipt() {
   return new EpistemicDivergenceEngine().evaluate({
@@ -74,6 +77,12 @@ const verifiedRetrieval = {
   retrievalRoots: ["telemetry:event-runtime-gate:1", "policy:npc-social:withhold-sponsorship"],
 } as const;
 
+const matured = {
+  satisfied: true,
+  evidenceRefs: ["telemetry:player-requested-sponsorship:1"],
+  note: "Sponsorship request observed after the originating event.",
+} as const;
+
 test("latent NPC consequence stays pending until maturity evidence exists, then mutates exactly once through runtime gate", async () => {
   const receipt = threateningReceipt();
   const gateway = new NPCConsequenceRuntimeGateway();
@@ -98,11 +107,7 @@ test("latent NPC consequence stays pending until maturity evidence exists, then 
     receipt,
     evaluation: acceptedEvaluation,
     retrieval: verifiedRetrieval,
-    maturity: {
-      satisfied: true,
-      evidenceRefs: ["telemetry:player-requested-sponsorship:1"],
-      note: "Sponsorship request observed after the originating event.",
-    },
+    maturity: matured,
     applyMutation: () => {
       mutations += 1;
       return { supportAvailable: false };
@@ -122,10 +127,7 @@ test("latent NPC consequence stays pending until maturity evidence exists, then 
     receipt,
     evaluation: acceptedEvaluation,
     retrieval: verifiedRetrieval,
-    maturity: {
-      satisfied: true,
-      evidenceRefs: ["telemetry:player-requested-sponsorship:1"],
-    },
+    maturity: matured,
     applyMutation: () => {
       mutations += 1;
       return { supportAvailable: false };
@@ -136,6 +138,58 @@ test("latent NPC consequence stays pending until maturity evidence exists, then 
   if (duplicate.status !== "GATED") return;
   assert.equal(duplicate.gate.duplicate, true);
   assert.equal(duplicate.gate.mutationApplied, true);
+  assert.equal(mutations, 1);
+});
+
+test("recreated NPC consequence gateway reuses the action ledger and does not replay an applied mutation", async () => {
+  const receipt = threateningReceipt();
+  const sharedLedger = new InMemoryRuntimeGateLedger();
+  let mutations = 0;
+
+  const firstGateway = new NPCConsequenceRuntimeGateway(
+    new POCFOCRuntimeGate(new MemoryReceiptEngine(), sharedLedger),
+  );
+
+  const first = await firstGateway.admit({
+    receipt,
+    evaluation: acceptedEvaluation,
+    retrieval: verifiedRetrieval,
+    maturity: matured,
+    applyMutation: () => {
+      mutations += 1;
+      return { supportAvailable: false, mutationNumber: mutations };
+    },
+  });
+
+  assert.equal(first.status, "GATED");
+  if (first.status !== "GATED") return;
+  assert.equal(first.gate.duplicate, false);
+  assert.equal(first.gate.mutationApplied, true);
+  assert.equal(mutations, 1);
+
+  // Simulated process/runtime recreation: the gateway and receipt engine are
+  // new objects, while the action ledger remains the continuity authority.
+  const recreatedGateway = new NPCConsequenceRuntimeGateway(
+    new POCFOCRuntimeGate(new MemoryReceiptEngine(), sharedLedger),
+  );
+
+  const replay = await recreatedGateway.admit({
+    receipt,
+    evaluation: acceptedEvaluation,
+    retrieval: verifiedRetrieval,
+    maturity: matured,
+    applyMutation: () => {
+      mutations += 1;
+      return { supportAvailable: false, mutationNumber: mutations };
+    },
+  });
+
+  assert.equal(replay.status, "GATED");
+  if (replay.status !== "GATED") return;
+  assert.equal(replay.gate.duplicate, true);
+  assert.equal(replay.gate.mutationApplied, true);
+  assert.deepEqual(replay.gate.output, { supportAvailable: false, mutationNumber: 1 });
+  assert.equal(replay.gate.memoryReceipt.id, first.gate.memoryReceipt.id);
   assert.equal(mutations, 1);
 });
 
