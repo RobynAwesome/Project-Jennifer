@@ -4,7 +4,13 @@ export {
   NPCAgent,
   NPCRegistry,
 } from "./npc-runtime.js";
-export type { NPCGoal, LocalAwarenessSnapshot } from "./npc-runtime.js";
+export type {
+  LocalAwarenessSnapshot,
+  NPCBroadcastEpistemicInput,
+  NPCGoal,
+  NPCQueuedEpistemicEvent,
+  NPCTickDecision,
+} from "./npc-runtime.js";
 
 export {
   EpistemicDivergenceEngine,
