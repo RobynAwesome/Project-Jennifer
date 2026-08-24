@@ -123,6 +123,52 @@ test("CDP and CCP preserve separate runtime and canonicalization authority", () 
   assert.match(ccpRuntime, /return "Refine"/);
 });
 
+test("conceptual entrypoints preserve situational CCP/CDP routing instead of universal order", () => {
+  const surfaces = [
+    read("SKILL.md"),
+    read("skills.md"),
+    read("skills/project-jennifer/SKILL.md"),
+    read("skills/cdp-conceptual-divergence/SKILL.md"),
+    read("skills/README.md"),
+    read("AGENTS.md"),
+    read("docs/lore/project-wify-jennifer/CONVERGENCE-LAW.md"),
+  ];
+
+  for (const surface of surfaces) {
+    assert.match(surface, /DIVERGENCE\s*!=\s*FOC/);
+    assert.match(surface, /CONVERGENCE\s*!=\s*POC/);
+  }
+
+  const catalog = read("skills.md");
+  const rootSkill = read("SKILL.md");
+  const cdpSkill = read("skills/cdp-conceptual-divergence/SKILL.md");
+  assert.match(catalog, /CCP\s*→\s*contradictory evidence\s*→\s*CDP/);
+  assert.match(rootSkill, /CCP\s*→\s*contradictory evidence\s*→\s*CDP/);
+  assert.match(cdpSkill, /not universally required to run before CCP/i);
+});
+
+test("NPC epistemic divergence keeps actor belief separate from truth and requires causal policy evidence", () => {
+  const runtimePath = "packages/npc/src/epistemic-divergence.ts";
+  const testPath = "packages/npc/src/epistemic-divergence.test.ts";
+  assert.equal(existsSync(repoPath(runtimePath)), true);
+  assert.equal(existsSync(repoPath(testPath)), true);
+
+  const runtime = read(runtimePath);
+  const npcSkill = read("skills/jennifer-companions-npcs/SKILL.md");
+  const architecture = read("docs/architecture/npc-epistemic-divergence.md");
+  const npcPackage = read("packages/npc/package.json");
+
+  assert.match(runtime, /"CONVERGE"\s*\|\s*"DIVERGE"\s*\|\s*"HOLD"/);
+  assert.match(runtime, /"STANDARD"\s*\|\s*"POWER"/);
+  assert.match(runtime, /proofState:\s*"actor-model"/);
+  assert.match(runtime, /validationState:\s*"UNVALIDATED"/);
+  assert.match(runtime, /canonical:\s*false/);
+  assert.match(runtime, /requires policy evidence references/);
+  assert.match(npcSkill, /actor interpretation into objective world truth/);
+  assert.match(architecture, /hide consequence visibility, but it may not hide causality/i);
+  assert.match(npcPackage, /node --test/);
+});
+
 test("distribution metadata exposes the conceptual suite and preserves renter/proof rules", () => {
   const engines = read("skills/distribution/engines.yaml");
   const manifest = read("skills/distribution/awesome-skills-project-jennifer.yaml");
