@@ -67,3 +67,14 @@ test("consequence journal keeps a mobile-first layout contract", () => {
   assert.match(component, /grid gap-3 sm:grid-cols-2/);
   assert.match(component, /flex flex-col gap-4 sm:flex-row/);
 });
+
+test("game-web skill keeps consequence journal authority and fairness boundaries explicit", () => {
+  const skill = read("skills/jennifer-game-web-api/SKILL.md");
+
+  assert.match(skill, /ConsequenceRevealReceipt/);
+  assert.match(skill, /visibly labelled non-authoritative/i);
+  assert.match(skill, /requires runtime admission evidence/i);
+  assert.match(skill, /preserves origin \+ interpretation history \+ revisions/i);
+  assert.match(skill, /may not invent retrospective cause prose/i);
+  assert.match(skill, /Causal legibility is not narrative fairness/i);
+});
