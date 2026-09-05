@@ -37,7 +37,8 @@ envMonitor.setMetadata("projectionMode", persistence.projectionMode);
 
 const app: Express = express();
 
-app.use(helmet());
+const helmetMiddleware = typeof helmet === "function" ? helmet : (helmet as unknown as { default: typeof helmet }).default;
+app.use(helmetMiddleware());
 app.use(cors());
 app.use(express.json());
 app.use(telemetryMiddleware(telemetry));
