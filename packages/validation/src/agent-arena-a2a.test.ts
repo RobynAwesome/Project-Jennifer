@@ -55,13 +55,15 @@ test("mission separates FOC pattern from human identity and preserves non-coerci
   assert.match(mission, /must be refreshed from an authoritative source before publication/);
 });
 
-test("Vercel preview may default to disposable persistence without weakening production fail-closed law", () => {
+test("unconfigured Vercel deployment is explicitly POC while configured durable mode still wins", () => {
   const server = read("apps/api/src/server.ts");
   const persistence = read("apps/api/src/persistence.ts");
 
-  assert.match(server, /VERCEL_ENV === "preview"/);
+  assert.match(server, /process\.env\.VERCEL === "1"/);
   assert.match(server, /!process\.env\.JENNIFER_PERSISTENCE_MODE/);
   assert.match(server, /JENNIFER_PERSISTENCE_MODE:\s*"in-memory"/);
+  assert.match(server, /Any supplied mode wins/);
+  assert.match(server, /vercelPocPersistenceDefaulted/);
   assert.match(persistence, /NODE_ENV\?\.trim\(\)\.toLowerCase\(\) === "production"/);
   assert.match(persistence, /JENNIFER_PERSISTENCE_MODE must be explicit in production/);
 });
