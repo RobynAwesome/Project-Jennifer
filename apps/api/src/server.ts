@@ -35,20 +35,23 @@ const telemetry = new TelemetryCollector(bus);
 const timeTracker = new TimeTracker();
 const envMonitor = new EnvironmentMonitor();
 
-// Vercel executes preview deployments with NODE_ENV=production. Jennifer's
-// durable production contract correctly fails closed when persistence mode is
-// not explicit, but a Git preview is a disposable POC surface rather than
-// production authority. Select in-memory only for Vercel previews when no mode
-// was supplied; real production remains fail-closed and explicit.
-const runtimeEnv: NodeJS.ProcessEnv =
-  process.env.VERCEL_ENV === "preview" && !process.env.JENNIFER_PERSISTENCE_MODE
-    ? {
-        ...process.env,
-        JENNIFER_PERSISTENCE_MODE: "in-memory",
-        JENNIFER_PROJECTION_MODE:
-          process.env.JENNIFER_PROJECTION_MODE ?? "in-memory",
-      }
-    : process.env;
+// The public Vercel project is a disposable demonstration surface unless its
+// operator explicitly binds durable persistence in Vercel environment config.
+// Vercel sets NODE_ENV=production even for previews, and the current public
+// project had no JENNIFER_PERSISTENCE_MODE configured, so module startup failed
+// before any route could answer. Preserve persistence.ts' general production
+// fail-closed law, but classify an otherwise-unconfigured Vercel deployment as
+// an explicit in-memory POC at the composition root. Any supplied mode wins.
+const vercelPocPersistenceDefaulted =
+  process.env.VERCEL === "1" && !process.env.JENNIFER_PERSISTENCE_MODE;
+const runtimeEnv: NodeJS.ProcessEnv = vercelPocPersistenceDefaulted
+  ? {
+      ...process.env,
+      JENNIFER_PERSISTENCE_MODE: "in-memory",
+      JENNIFER_PROJECTION_MODE:
+        process.env.JENNIFER_PROJECTION_MODE ?? "in-memory",
+    }
+  : process.env;
 
 const persistence = await initializePersistence({
   env: runtimeEnv,
@@ -58,8 +61,8 @@ const persistence = await initializePersistence({
 envMonitor.setMetadata("persistenceMode", persistence.mode);
 envMonitor.setMetadata("projectionMode", persistence.projectionMode);
 envMonitor.setMetadata(
-  "previewPersistenceDefaulted",
-  process.env.VERCEL_ENV === "preview" && !process.env.JENNIFER_PERSISTENCE_MODE,
+  "vercelPocPersistenceDefaulted",
+  vercelPocPersistenceDefaulted,
 );
 
 // ─── Express app ─────────────────────────────────────────────────────────────
