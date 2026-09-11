@@ -8,6 +8,7 @@ import {
   TimeTracker,
 } from "@jennifer/telemetry";
 
+import { registerCitadelA2A } from "./a2a/routes.js";
 import { errorHandler, telemetryMiddleware } from "./middleware/index.js";
 import { initializePersistence } from "./persistence.js";
 import { crisisRouter } from "./routes/crisis.js";
@@ -33,13 +34,36 @@ const bus = new InMemoryEventBus();
 const telemetry = new TelemetryCollector(bus);
 const timeTracker = new TimeTracker();
 const envMonitor = new EnvironmentMonitor();
+
+// The public Vercel project is a disposable demonstration surface unless its
+// operator explicitly binds durable persistence in Vercel environment config.
+// Vercel sets NODE_ENV=production even for previews, and the current public
+// project had no JENNIFER_PERSISTENCE_MODE configured, so module startup failed
+// before any route could answer. Preserve persistence.ts' general production
+// fail-closed law, but classify an otherwise-unconfigured Vercel deployment as
+// an explicit in-memory POC at the composition root. Any supplied mode wins.
+const vercelPocPersistenceDefaulted =
+  process.env.VERCEL === "1" && !process.env.JENNIFER_PERSISTENCE_MODE;
+const runtimeEnv: NodeJS.ProcessEnv = vercelPocPersistenceDefaulted
+  ? {
+      ...process.env,
+      JENNIFER_PERSISTENCE_MODE: "in-memory",
+      JENNIFER_PROJECTION_MODE:
+        process.env.JENNIFER_PROJECTION_MODE ?? "in-memory",
+    }
+  : process.env;
+
 const persistence = await initializePersistence({
-  env: process.env,
+  env: runtimeEnv,
   telemetry,
 });
 
 envMonitor.setMetadata("persistenceMode", persistence.mode);
 envMonitor.setMetadata("projectionMode", persistence.projectionMode);
+envMonitor.setMetadata(
+  "vercelPocPersistenceDefaulted",
+  vercelPocPersistenceDefaulted,
+);
 
 // ─── Express app ─────────────────────────────────────────────────────────────
 
@@ -49,6 +73,11 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(telemetryMiddleware(telemetry));
+
+// Public A2A renter surface. It is deliberately registered before Jennifer's
+// canonical API routers and can exercise bounded capabilities only; it does not
+// receive authority to mutate Jennifer canon, memory or identity.
+registerCitadelA2A(app);
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
