@@ -14,6 +14,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "asset-integrity": "node tools/verify-companion-assets.mjs",
+    "ffp-validation": "node tools/verify-ffp.mjs",
     "governance-validation": "turbo run governance-validation",
     "clean": "turbo run clean && rm -rf node_modules"
   },

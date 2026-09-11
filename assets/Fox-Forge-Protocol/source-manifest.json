@@ -1,0 +1,68 @@
+{
+  "protocol": "FFP",
+  "title": "Fox Forge Protocol Visual Source Manifest",
+  "version": "0.1.0",
+  "authorityLaw": "A render may suggest; only a governed receipt may promote canon.",
+  "entries": [
+    {
+      "id": "ffp-dossier-001",
+      "semanticPath": "assets/Fox-Forge-Protocol/visuals/ffp-dossier-001.png",
+      "role": "dossier",
+      "sceneMode": null,
+      "authority": "VISUAL_DERIVATIVE",
+      "admissionState": "PENDING_BINARY_INTAKE",
+      "canonEffect": "NONE",
+      "dimensions": null,
+      "sha256": null,
+      "provenance": "Generated in ChatGPT image workflow on 2026-09-11; binary not writable through current GitHub text connector."
+    },
+    {
+      "id": "ffp-work-mode-001",
+      "semanticPath": "assets/Fox-Forge-Protocol/visuals/ffp-work-mode-001.png",
+      "role": "wallpaper",
+      "sceneMode": "work",
+      "authority": "VISUAL_DERIVATIVE",
+      "admissionState": "PENDING_BINARY_INTAKE",
+      "canonEffect": "NONE",
+      "dimensions": null,
+      "sha256": null,
+      "provenance": "Generated in ChatGPT image workflow on 2026-09-11; binary pending verified intake."
+    },
+    {
+      "id": "ffp-cloud-mode-001",
+      "semanticPath": "assets/Fox-Forge-Protocol/visuals/ffp-cloud-mode-001.png",
+      "role": "wallpaper",
+      "sceneMode": "cloud",
+      "authority": "VISUAL_DERIVATIVE",
+      "admissionState": "PENDING_BINARY_INTAKE",
+      "canonEffect": "NONE",
+      "dimensions": null,
+      "sha256": null,
+      "provenance": "Generated in ChatGPT image workflow on 2026-09-11; binary pending verified intake."
+    },
+    {
+      "id": "ffp-healing-mode-001",
+      "semanticPath": "assets/Fox-Forge-Protocol/visuals/ffp-healing-mode-001.png",
+      "role": "wallpaper",
+      "sceneMode": "healing",
+      "authority": "VISUAL_DERIVATIVE",
+      "admissionState": "PENDING_BINARY_INTAKE",
+      "canonEffect": "NONE",
+      "dimensions": null,
+      "sha256": null,
+      "provenance": "Generated in ChatGPT image workflow on 2026-09-11; binary pending verified intake."
+    },
+    {
+      "id": "ffp-mission-mode-001",
+      "semanticPath": "assets/Fox-Forge-Protocol/visuals/ffp-mission-mode-001.png",
+      "role": "wallpaper",
+      "sceneMode": "mission",
+      "authority": "VISUAL_DERIVATIVE",
+      "admissionState": "PENDING_BINARY_INTAKE",
+      "canonEffect": "NONE",
+      "dimensions": null,
+      "sha256": null,
+      "provenance": "Generated in ChatGPT image workflow on 2026-09-11; binary pending verified intake."
+    }
+  ]
+}

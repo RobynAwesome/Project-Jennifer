@@ -1,6 +1,6 @@
-import express, { type Express } from "express";
+import express, { type Express, type RequestHandler } from "express";
 import cors from "cors";
-import helmet from "helmet";
+import helmetImport from "helmet";
 import { getPernFoundationStatus, InMemoryEventBus } from "@jennifer/shared";
 import {
   EnvironmentMonitor,
@@ -18,6 +18,14 @@ import { createRelationshipAuthorityRouter } from "./routes/relationships.js";
 import { runtimeRouter } from "./routes/runtime.js";
 
 const PORT = process.env.PORT ?? 3001;
+
+type HelmetFactory = () => RequestHandler;
+
+// Helmet 7 is a CommonJS callable export. Under TypeScript 6 + NodeNext its
+// default import can be typed as a module namespace even though Node resolves
+// the runtime default to the callable factory. Normalize the type explicitly at
+// this boundary instead of spreading module-interop casts through the app.
+const helmet = helmetImport as unknown as HelmetFactory;
 
 // ─── Shared infrastructure ───────────────────────────────────────────────────
 
@@ -37,8 +45,7 @@ envMonitor.setMetadata("projectionMode", persistence.projectionMode);
 
 const app: Express = express();
 
-const helmetMiddleware = typeof helmet === "function" ? helmet : (helmet as unknown as { default: typeof helmet }).default;
-app.use(helmetMiddleware());
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(telemetryMiddleware(telemetry));
