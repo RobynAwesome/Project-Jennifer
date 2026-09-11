@@ -34,13 +34,33 @@ const bus = new InMemoryEventBus();
 const telemetry = new TelemetryCollector(bus);
 const timeTracker = new TimeTracker();
 const envMonitor = new EnvironmentMonitor();
+
+// Vercel executes preview deployments with NODE_ENV=production. Jennifer's
+// durable production contract correctly fails closed when persistence mode is
+// not explicit, but a Git preview is a disposable POC surface rather than
+// production authority. Select in-memory only for Vercel previews when no mode
+// was supplied; real production remains fail-closed and explicit.
+const runtimeEnv: NodeJS.ProcessEnv =
+  process.env.VERCEL_ENV === "preview" && !process.env.JENNIFER_PERSISTENCE_MODE
+    ? {
+        ...process.env,
+        JENNIFER_PERSISTENCE_MODE: "in-memory",
+        JENNIFER_PROJECTION_MODE:
+          process.env.JENNIFER_PROJECTION_MODE ?? "in-memory",
+      }
+    : process.env;
+
 const persistence = await initializePersistence({
-  env: process.env,
+  env: runtimeEnv,
   telemetry,
 });
 
 envMonitor.setMetadata("persistenceMode", persistence.mode);
 envMonitor.setMetadata("projectionMode", persistence.projectionMode);
+envMonitor.setMetadata(
+  "previewPersistenceDefaulted",
+  process.env.VERCEL_ENV === "preview" && !process.env.JENNIFER_PERSISTENCE_MODE,
+);
 
 // ─── Express app ─────────────────────────────────────────────────────────────
 
