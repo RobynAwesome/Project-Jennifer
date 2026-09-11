@@ -1,4 +1,4 @@
-import type { Express, Request } from "express";
+import type { Express, Request, Response } from "express";
 
 import { createAgentMessage, executeCitadelTurn } from "./citadel-agent.js";
 
@@ -126,7 +126,7 @@ export function registerCitadelA2A(app: Express): void {
     });
   });
 
-  const handleJsonRpc = (req: Request, res: Parameters<Express["post"]>[1] extends never ? never : any) => {
+  const handleJsonRpc = (req: Request, res: Response): void => {
     const body = (req.body ?? {}) as A2ARequestBody;
     const method = typeof body.method === "string" ? body.method : "";
 
