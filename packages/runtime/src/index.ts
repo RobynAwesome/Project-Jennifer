@@ -88,6 +88,16 @@ export {
 export type { ConsequenceRevealSource } from "./npc-consequence-reveal.js";
 
 export {
+  ConsequenceRevealJournalError,
+  InMemoryConsequenceRevealJournal,
+  PostgresConsequenceRevealJournal,
+} from "./consequence-reveal-journal.js";
+export type {
+  ConsequenceRevealJournalVersion,
+  IConsequenceRevealJournal,
+} from "./consequence-reveal-journal.js";
+
+export {
   InMemoryRuntimeGateLedger,
   createRuntimeGateLedgerRecord,
 } from "./runtime-gate-ledger.js";
