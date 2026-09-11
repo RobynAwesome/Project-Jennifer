@@ -8,6 +8,7 @@ import {
   TimeTracker,
 } from "@jennifer/telemetry";
 
+import { registerCitadelA2A } from "./a2a/routes.js";
 import { errorHandler, telemetryMiddleware } from "./middleware/index.js";
 import { initializePersistence } from "./persistence.js";
 import { crisisRouter } from "./routes/crisis.js";
@@ -49,6 +50,11 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(telemetryMiddleware(telemetry));
+
+// Public A2A renter surface. It is deliberately registered before Jennifer's
+// canonical API routers and can exercise bounded capabilities only; it does not
+// receive authority to mutate Jennifer canon, memory or identity.
+registerCitadelA2A(app);
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
