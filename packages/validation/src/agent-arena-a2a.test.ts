@@ -67,3 +67,10 @@ test("unconfigured Vercel deployment is explicitly POC while configured durable 
   assert.match(persistence, /NODE_ENV\?\.trim\(\)\.toLowerCase\(\) === "production"/);
   assert.match(persistence, /JENNIFER_PERSISTENCE_MODE must be explicit in production/);
 });
+
+test("Vercel receives the Express app instead of a process-bound listener", () => {
+  const server = read("apps/api/src/server.ts");
+  assert.match(server, /export default app/);
+  assert.match(server, /const server = isVercel[\s\S]*\? undefined[\s\S]*: app\.listen/);
+  assert.match(server, /if \(!server\) return Promise\.resolve\(\)/);
+});
