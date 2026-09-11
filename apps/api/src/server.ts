@@ -42,8 +42,9 @@ const envMonitor = new EnvironmentMonitor();
 // before any route could answer. Preserve persistence.ts' general production
 // fail-closed law, but classify an otherwise-unconfigured Vercel deployment as
 // an explicit in-memory POC at the composition root. Any supplied mode wins.
+const isVercel = process.env.VERCEL === "1";
 const vercelPocPersistenceDefaulted =
-  process.env.VERCEL === "1" && !process.env.JENNIFER_PERSISTENCE_MODE;
+  isVercel && !process.env.JENNIFER_PERSISTENCE_MODE;
 const runtimeEnv: NodeJS.ProcessEnv = vercelPocPersistenceDefaulted
   ? {
       ...process.env,
@@ -134,14 +135,19 @@ app.get("/api/telemetry", (_req, res) => {
 
 app.use(errorHandler);
 
-// ─── Start / governed shutdown ────────────────────────────────────────────────
+// ─── Local process / governed shutdown ────────────────────────────────────────
 
-const server = app.listen(PORT, () => {
-  console.log(`[Jennifer API] Listening on http://localhost:${PORT}`);
-  console.log(`[Jennifer API] Environment: ${envMonitor.snapshot().platform}`);
-  console.log(`[Jennifer API] Persistence: ${persistence.mode}`);
-  console.log(`[Jennifer API] Projection: ${persistence.projectionMode}`);
-});
+// Vercel owns the HTTP listener for serverless Express deployments and requires
+// the Express application as the module's default export. Local/CI process
+// execution still binds PORT exactly as before.
+const server = isVercel
+  ? undefined
+  : app.listen(PORT, () => {
+      console.log(`[Jennifer API] Listening on http://localhost:${PORT}`);
+      console.log(`[Jennifer API] Environment: ${envMonitor.snapshot().platform}`);
+      console.log(`[Jennifer API] Persistence: ${persistence.mode}`);
+      console.log(`[Jennifer API] Projection: ${persistence.projectionMode}`);
+    });
 
 let shuttingDown = false;
 async function shutdown(signal: "SIGINT" | "SIGTERM"): Promise<void> {
@@ -160,6 +166,7 @@ async function shutdown(signal: "SIGINT" | "SIGTERM"): Promise<void> {
 }
 
 function closeServer(): Promise<void> {
+  if (!server) return Promise.resolve();
   return new Promise((resolve, reject) => {
     server.close((error) => {
       if (error) reject(error);
@@ -175,4 +182,5 @@ process.once("SIGTERM", () => {
   void shutdown("SIGTERM");
 });
 
+export default app;
 export { app, persistence, server };
