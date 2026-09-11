@@ -146,3 +146,5 @@ export type {
   WorldTelemetry,
   WorldTelemetryObservation,
 } from "./world-event-heartbeat.js";
+
+export { FoxForgeProtocolEngine } from "./fox-forge-protocol-engine.js";
