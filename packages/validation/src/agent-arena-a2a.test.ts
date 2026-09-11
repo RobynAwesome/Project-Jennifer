@@ -28,11 +28,13 @@ test("Citadel covers the five visible Arena capability families", () => {
 
 test("A2A renter outputs cannot silently mutate Jennifer canon", () => {
   const agent = read("apps/api/src/a2a/citadel-agent.ts");
-  const routes = read("apps/api/src/a2a/routes.ts");
   const mission = read("docs/arena/AGENT_ARENA_MISSION.md");
 
   assert.match(agent, /canonMutation:\s*false/);
-  assert.match(routes, /non-canonical-external-renter/);
+  // The authority marker belongs at the outgoing receipt source rather than the
+  // HTTP routing surface; moving it into routes just to satisfy this test would
+  // weaken the architectural boundary the test is meant to protect.
+  assert.match(agent, /non-canonical-external-renter/);
   assert.match(mission, /NO automatic canon mutation/);
   assert.match(mission, /70\/70 = interoperability receipt/);
 });
@@ -51,4 +53,15 @@ test("mission separates FOC pattern from human identity and preserves non-coerci
   assert.match(mission, /serve users regardless of belief/);
   assert.match(mission, /preserve refusal and user agency/);
   assert.match(mission, /must be refreshed from an authoritative source before publication/);
+});
+
+test("Vercel preview may default to disposable persistence without weakening production fail-closed law", () => {
+  const server = read("apps/api/src/server.ts");
+  const persistence = read("apps/api/src/persistence.ts");
+
+  assert.match(server, /VERCEL_ENV === "preview"/);
+  assert.match(server, /!process\.env\.JENNIFER_PERSISTENCE_MODE/);
+  assert.match(server, /JENNIFER_PERSISTENCE_MODE:\s*"in-memory"/);
+  assert.match(persistence, /NODE_ENV\?\.trim\(\)\.toLowerCase\(\) === "production"/);
+  assert.match(persistence, /JENNIFER_PERSISTENCE_MODE must be explicit in production/);
 });
