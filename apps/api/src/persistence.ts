@@ -6,13 +6,16 @@ import { Pool, type PoolClient } from "pg";
 
 import {
   IdempotencyGuardedRelationshipAuthorityStore,
+  InMemoryConsequenceRevealJournal,
   InMemoryRelationshipAuthorityStore,
   InMemoryRelationshipProjectionStore,
+  PostgresConsequenceRevealJournal,
   PostgresMigrationRunner,
   PostgresRelationshipAuthorityStore,
   PostgresRelationshipProjectionEvidenceStore,
   RelationshipEngine,
   RelationshipProjectionRebuilder,
+  type IConsequenceRevealJournal,
   type PostgresClientPort,
   type PostgresPoolPort,
   type PostgresQueryResult,
@@ -48,6 +51,7 @@ export interface JenniferPersistenceRuntime {
   mode: JenniferPersistenceMode;
   projectionMode: JenniferProjectionMode;
   relationshipEngine: RelationshipEngine;
+  consequenceRevealJournal: IConsequenceRevealJournal;
   health(): Promise<JenniferPersistenceHealth>;
   rebuildRelationshipProjections(): Promise<RelationshipProjectionRebuildResult>;
   close(): Promise<void>;
@@ -74,6 +78,7 @@ export async function initializePersistence(input: {
       authority,
       new InMemoryRelationshipProjectionStore(),
     );
+    const consequenceRevealJournal = new InMemoryConsequenceRevealJournal();
 
     await emitLifecycle(input.telemetry, "persistence.ready", {
       mode,
@@ -86,6 +91,7 @@ export async function initializePersistence(input: {
       mode,
       projectionMode,
       relationshipEngine,
+      consequenceRevealJournal,
       async health() {
         return {
           mode,
@@ -131,6 +137,7 @@ export async function initializePersistence(input: {
       authority,
       projectionStore,
     );
+    const consequenceRevealJournal = new PostgresConsequenceRevealJournal(observed);
     const rebuilder =
       projectionRuntime.mode === "mongodb"
         ? new RelationshipProjectionRebuilder(
@@ -154,6 +161,7 @@ export async function initializePersistence(input: {
       mode,
       projectionMode: projectionRuntime.mode,
       relationshipEngine,
+      consequenceRevealJournal,
       async health() {
         const projection = await projectionRuntime!.health();
         try {
