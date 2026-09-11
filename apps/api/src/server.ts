@@ -10,6 +10,7 @@ import {
 
 import { errorHandler, telemetryMiddleware } from "./middleware/index.js";
 import { initializePersistence } from "./persistence.js";
+import { createConsequenceRevealRouter } from "./routes/consequences.js";
 import { crisisRouter } from "./routes/crisis.js";
 import { governanceRouter } from "./routes/governance.js";
 import { memoryRouter } from "./routes/memory.js";
@@ -78,6 +79,13 @@ app.get("/health", async (_req, res) => {
 app.use("/api/governance", governanceRouter);
 app.use("/api/memory", memoryRouter);
 app.use("/api/crisis", crisisRouter);
+
+// Governed player-safe read-through is mounted before the legacy runtime router
+// so a consequence reveal cannot fall through to an unrelated runtime path.
+app.use(
+  "/api/runtime/consequences",
+  createConsequenceRevealRouter(persistence.consequenceRevealJournal, telemetry),
+);
 
 // Relationship authority is mounted first so the canonical relationship paths
 // cannot fall through to the legacy runtime router.
