@@ -97,6 +97,8 @@ export type {
   IConsequenceRevealJournal,
 } from "./consequence-reveal-journal.js";
 
+export { PersistedNPCConsequenceRevealService } from "./persisted-consequence-reveal-service.js";
+
 export {
   InMemoryRuntimeGateLedger,
   createRuntimeGateLedgerRecord,
