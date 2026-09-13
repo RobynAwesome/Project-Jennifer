@@ -65,6 +65,8 @@ class StatelessRenterRouter:
 
         candidates: list[tuple[float, RenterCapabilityManifest]] = []
         for renter in self._registry.list():
+            if renter.metadata.get("auto_route") is False:
+                continue
             if requirements.allowlist and renter.renter_id not in requirements.allowlist:
                 continue
             if requirements.require_offline and not renter.constraints.offline:

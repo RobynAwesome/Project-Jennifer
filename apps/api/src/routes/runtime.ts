@@ -4,21 +4,29 @@ import {
   DistrictManager,
   ForgeRoleEngine,
   PersonaManager,
+  createDistrictEnterEvent,
+  createDistrictEnterPorts,
+  parseDistrictName,
+  runWorldEventHeartbeat,
 } from "@jennifer/runtime";
 import {
   FORGE_CLAIM_STAGES,
+  districtHasPlayableScene,
   isCompanionId,
   type CompanionRelationshipLane,
   type ForgeBootstrapInput,
   type ForgeClaimPromotionInput,
   type PersonaMode,
 } from "@jennifer/shared";
+import { parseTrustedActorId, VisitRateGate } from "../zero-trust.js";
 
 const router: IRouter = Router();
 const districtManager = new DistrictManager();
 const personaManager = new PersonaManager();
 const companionManager = new CompanionManager();
 const forgeRoleEngine = new ForgeRoleEngine();
+const visitRateGate = new VisitRateGate();
+let lastWorldHeartbeat: unknown = null;
 
 const VALID_PERSONAS: PersonaMode[] = [
   "best-friend",
@@ -37,7 +45,13 @@ const VALID_COMPANION_LANES: CompanionRelationshipLane[] = [
 ];
 
 router.get("/districts", (_req, res) => {
-  res.json({ districts: districtManager.getAllDistricts() });
+  res.json({
+    districts: districtManager.getAllDistricts().map((district) => ({
+      ...district,
+      playableScene: districtHasPlayableScene(district.name),
+    })),
+    sourceMode: "in-memory",
+  });
 });
 
 router.get("/districts/:name", (req, res) => {
@@ -47,6 +61,66 @@ router.get("/districts/:name", (req, res) => {
     return;
   }
   res.json({ district });
+});
+
+router.post("/world-events", async (req, res) => {
+  const body = req.body as {
+    eventType?: string;
+    actorId?: string;
+    district?: string;
+  };
+
+  if (body.eventType !== "district_entered") {
+    res.status(400).json({
+      error: "eventType must be district_entered",
+    });
+    return;
+  }
+
+  const district = parseDistrictName(body.district);
+  if (!district) {
+    res.status(400).json({ error: "district must be a governed DistrictName" });
+    return;
+  }
+
+  const actorId = parseTrustedActorId(body.actorId);
+  if (!actorId) {
+    res.status(400).json({
+      error: "actorId must be 1-64 characters of letters, numbers, . _ : or -",
+    });
+    return;
+  }
+
+  if (!visitRateGate.allow(actorId)) {
+    res.status(429).json({ error: "district enter rate limited" });
+    return;
+  }
+
+  const result = await runWorldEventHeartbeat(
+    createDistrictEnterEvent({
+      eventId: `district-enter-${district}-${Date.now()}`,
+      actorId,
+      district,
+    }),
+    createDistrictEnterPorts(districtManager),
+  );
+
+  lastWorldHeartbeat = {
+    ...result,
+    district: districtManager.getDistrict(district),
+    playableScene: districtHasPlayableScene(district),
+    sourceMode: "in-memory",
+  };
+
+  res.status(result.receipt.status === "EXECUTED" ? 201 : 200).json(lastWorldHeartbeat);
+});
+
+router.get("/world-events/last", (_req, res) => {
+  if (!lastWorldHeartbeat) {
+    res.status(204).end();
+    return;
+  }
+  res.json(lastWorldHeartbeat);
 });
 
 router.get("/personas", (_req, res) => {

@@ -66,6 +66,12 @@ providers:
     runtime_id_required: true
     capability_manifest_required: true
 
+  - alias: nvidia
+    family: NVIDIA-NGC-NIM
+    runtime_id_required: true
+    capability_manifest_required: true
+    note: Cloud renter only after a live chat/completions 200. Until then auto_route is false.
+
   - alias: microsoft-azure-ai
     family: Microsoft
     runtime_id_required: true

@@ -12,6 +12,10 @@ export type ConsequenceTraceSource =
       label: string;
     }
   | {
+      mode: "local";
+      label: string;
+    }
+  | {
       mode: "authoritative";
       label: string;
     };
@@ -134,11 +138,17 @@ export default function ConsequenceTrace({
                 className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] ${
                   source.mode === "authoritative"
                     ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
-                    : "border-amber-400/30 bg-amber-400/10 text-amber-100"
+                    : source.mode === "local"
+                      ? "border-sky-400/30 bg-sky-400/10 text-sky-100"
+                      : "border-amber-400/30 bg-amber-400/10 text-amber-100"
                 }`}
                 data-consequence-authority-badge={source.mode}
               >
-                {source.mode === "authoritative" ? "Governed read" : "POC fixture"}
+                {source.mode === "authoritative"
+                  ? "Governed read"
+                  : source.mode === "local"
+                    ? "Local continuity"
+                    : "POC fixture"}
               </span>
             </div>
 
@@ -169,6 +179,15 @@ export default function ConsequenceTrace({
             <strong>{source.label}.</strong> This trace demonstrates the governed UI
             contract only. It is not live Jennifer world state and does not claim a
             persisted consequence happened to the current player.
+          </div>
+        ) : source.mode === "local" ? (
+          <div
+            className="mt-4 rounded-xl border border-sky-400/25 bg-sky-400/10 p-3 text-sm leading-5 text-sky-100"
+            role="note"
+            data-consequence-local-warning="true"
+          >
+            <strong>{source.label}.</strong> This is your browser/session continuity
+            for the love loop. It is not a claim of hosted production authority.
           </div>
         ) : (
           <p className="mt-4 font-mono text-xs text-emerald-200">

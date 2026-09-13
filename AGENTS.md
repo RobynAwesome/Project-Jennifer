@@ -45,6 +45,12 @@ jennifer-companions-npcs
 jennifer-telemetry-storage
 jennifer-ncmp-mmao
 jennifer-game-web-api
+jennifer-kpgs-three-classroom
+jennifer-city-love-loop
+jennifer-love-loop-reliability
+clear-kpgs-product-gate
+clear-kpgs-zero-trust-gate
+jennifer-canonical-ops-sprints
 jennifer-assets-lore
 jennifer-ci-benchmarks
 jennifer-adoption-provider-onboarding
@@ -131,6 +137,10 @@ Do not collapse those states.
 | Preserve authored relational attention | `skills/authored-relational-attention/SKILL.md` |
 | Enter a repository implementation domain | `skills/SKILL.md` |
 | Build actor-relative NPC divergence / delayed causal consequence | `skills/jennifer-companions-npcs/SKILL.md` |
+| Operate Jennifer City love loop under CLEAR×KPGS×HOLD law | `skills/jennifer-city-love-loop/SKILL.md` |
+| Harden same-browser Continue / Reliability bowl | `skills/jennifer-love-loop-reliability/SKILL.md` |
+| Score CLEAR×KPGS product gate (≥80% before promote) | `skills/clear-kpgs-zero-trust-gate/SKILL.md` |
+| Plan canonical ops sprints from on-route receipts | `skills/jennifer-canonical-ops-sprints/SKILL.md` |
 | Unknown / cross-system Jennifer task | `skills/project-jennifer/SKILL.md` |
 
 > **The skill tells the renter how to work. The repository tells the renter what exists. The receipt tells the renter what passed. The human decides the task.**

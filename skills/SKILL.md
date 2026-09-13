@@ -32,6 +32,11 @@ Load **only the skills required by the task**, but never omit governance that th
 | telemetry / receipts / persistence | `jennifer-telemetry-storage` | telemetry, storage, persistence infra |
 | NCMP / MMAO / sessions | `jennifer-ncmp-mmao` | `NCMP.md`, `docs/mmao/`, shared NCMP contracts |
 | web game / Phaser / API | `jennifer-game-web-api` | `apps/web/`, `apps/api/` |
+| KPGSthree pavilion classroom / Three.js HOLD | `jennifer-kpgs-three-classroom` | `KpgsThreeClassroomScene.ts`, `kpgs-three-hold.ts` |
+| Jennifer City love loop / CLEAR×KPGS product ops | `jennifer-city-love-loop` | charter, continuity, Third Signal, consequence journal |
+| Love-loop Reliability bowl / Continue chaos | `jennifer-love-loop-reliability` | localStorage-first, resolve-continuity, reliability smoke |
+| CLEAR×KPGS on-route product gate | `clear-kpgs-zero-trust-gate` (`clear-kpgs-product-gate` alias) | audits, zero-trust, RTC HOLD-When-You-Love-It |
+| canonical ops sprints after on-route gate | `jennifer-canonical-ops-sprints` | sprint board, RTC workflows, Intro-to-MCP candidates |
 | assets / lore / source manifests | `jennifer-assets-lore` | `assets/`, `docs/lore/`, source registry |
 | tests / CI / benchmarks | `jennifer-ci-benchmarks` | `.github/workflows/`, `tests/`, `benchmarks/` |
 | provider / partner adoption | `jennifer-adoption-provider-onboarding` | `skills/distribution/`, `config/renters/`, adoption docs |

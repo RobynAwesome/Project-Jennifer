@@ -1,11 +1,16 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { BootScene } from "./scenes/BootScene";
 import { StartMenuScene } from "./scenes/StartMenuScene";
 import { PersonaSelectScene } from "./scenes/PersonaSelectScene";
 import { CompanionSelectScene } from "./scenes/CompanionSelectScene";
 import { GovernanceHallScene } from "./scenes/GovernanceHallScene";
 import { MemoryDistrictScene } from "./scenes/MemoryDistrictScene";
+import { TelemetryTowerScene } from "./scenes/TelemetryTowerScene";
+import { ObservationDistrictScene } from "./scenes/ObservationDistrictScene";
 import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
+import { ThirdSignalEpisodeScene } from "./scenes/ThirdSignalEpisodeScene";
+import { KpgsThreeClassroomScene } from "./scenes/KpgsThreeClassroomScene";
+import { KPGS_THREE_HOLD } from "./kpgs-three-hold";
 
 /**
  * createJenniferGame – Phaser.Game factory.
@@ -14,11 +19,15 @@ import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
  * Next.js server-side rendering.
  */
 export function createJenniferGame(parentId: string): Phaser.Game {
-  return new Phaser.Game({
+  const parent = document.getElementById(parentId);
+  const width = parent?.clientWidth || window.innerWidth || 1280;
+  const height = parent?.clientHeight || window.innerHeight || 720;
+
+  const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: parentId,
-    width: 800,
-    height: 600,
+    width,
+    height,
     backgroundColor: "#0f0f1a",
     physics: {
       default: "arcade",
@@ -28,10 +37,10 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       },
     },
     scale: {
-      mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
-      width: 800,
-      height: 600,
+      mode: Phaser.Scale.RESIZE,
+      width,
+      height,
+      autoRound: true,
     },
     scene: [
       BootScene,
@@ -40,7 +49,29 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       CompanionSelectScene,
       GovernanceHallScene,
       MemoryDistrictScene,
+      TelemetryTowerScene,
+      ObservationDistrictScene,
       ValidationDemoScene,
+      ThirdSignalEpisodeScene,
+      KpgsThreeClassroomScene,
     ],
   });
+
+  (
+    window as Window & {
+      __JENNIFER_CITY__?: {
+        renderer: "phaser";
+        kpgsThree: typeof KPGS_THREE_HOLD;
+        game: Phaser.Game;
+        scale: () => { width: number; height: number };
+      };
+    }
+  ).__JENNIFER_CITY__ = {
+    renderer: "phaser",
+    kpgsThree: KPGS_THREE_HOLD,
+    game,
+    scale: () => ({ width: game.scale.width, height: game.scale.height }),
+  };
+
+  return game;
 }

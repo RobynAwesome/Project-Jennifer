@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { SCENE_KEYS } from "../SceneManager";
 import { ASSET_MANIFEST, PALETTE } from "../AssetManifest";
 import type { AssetDefinition } from "../AssetManifest";
@@ -45,8 +45,8 @@ export class BootScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.add
-      .text(cx, cy + 16, "Sovereign Governance Intelligence Runtime", {
+        this.add
+      .text(cx, cy + 16, "THE WORLD REMEMBERS WHAT YOU CHOOSE.", {
         fontSize: "10px",
         color: "#6b7280",
         fontFamily: '"Courier New", monospace',

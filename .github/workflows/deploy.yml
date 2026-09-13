@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      deploy_web:
+        description: "Deploy web to Vercel when secrets are configured"
+        type: boolean
+        default: false
 
 env:
   NODE_VERSION: "20"
@@ -37,16 +42,17 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # ─── Web deployment (Vercel / custom host) ──────────────────────────────
-      # Uncomment and configure when a deployment target is established.
-      #
-      # - name: Deploy Web
-      #   working-directory: apps/web
-      #   run: |
-      #     npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-      #   env:
-      #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      # Hosted play URL: enable via workflow_dispatch deploy_web=true once
+      # VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID exist.
+      # See docs/HOSTING.md and docs/playtesting/LOVE_LOOP_PLAYTEST.md.
+      - name: Deploy Web
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_web }}
+        working-directory: apps/web
+        run: npx vercel --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NEXT_PUBLIC_JENNIFER_API_URL: ${{ vars.NEXT_PUBLIC_JENNIFER_API_URL }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -56,3 +62,9 @@ jobs:
             apps/api/dist
             apps/web/.next
           retention-days: 7
+
+      - name: Love-loop hosting reminder
+        run: |
+          echo "Jennifer City love loop entry: /game"
+          echo "Playtest protocol: docs/playtesting/LOVE_LOOP_PLAYTEST.md"
+          echo "Hosting notes: docs/HOSTING.md"

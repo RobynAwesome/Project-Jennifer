@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { GameEntity, type IComponent } from "./Entity";
 import { TEXTURE_KEYS, PALETTE } from "../AssetManifest";
 

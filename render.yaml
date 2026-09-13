@@ -1,0 +1,23 @@
+# Jennifer City API — Render Blueprint (Sprint A2)
+# Web stays on Vercel (apps/web). Link API URL in NEXT_PUBLIC_JENNIFER_API_URL.
+# After first deploy: set JENNIFER_CORS_ORIGINS to your exact Vercel origin(s).
+
+services:
+  - type: web
+    name: jennifer-city-api
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @jennifer/api build
+    startCommand: node apps/api/dist/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: JENNIFER_PERSISTENCE_MODE
+        value: in-memory
+      - key: JENNIFER_CORS_ORIGINS
+        sync: false

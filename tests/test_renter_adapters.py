@@ -7,6 +7,7 @@ from project_jennifer.adapters import (
     RenterExecutionRequest,
     RenterExecutionResult,
 )
+from project_jennifer.adapters.nvidia_nim import NvidiaNimAdapter
 
 
 class EchoAdapter:
@@ -43,6 +44,18 @@ class RenterAdapterTests(unittest.TestCase):
         registry = RenterAdapterRegistry()
         with self.assertRaises(LookupError):
             registry.require("cloud:missing-runtime")
+
+    def test_nvidia_nim_fail_closed_without_key(self) -> None:
+        adapter = NvidiaNimAdapter(api_key="")
+        with self.assertRaises(PermissionError):
+            adapter.execute(
+                RenterExecutionRequest(
+                    run_id="run-nim-closed",
+                    renter_id=adapter.renter_id,
+                    prompt="should not leave the machine",
+                    subject="fail-closed",
+                )
+            )
 
 
 if __name__ == "__main__":

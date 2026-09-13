@@ -83,6 +83,26 @@ class StatelessRenterRouterTests(unittest.TestCase):
         self.assertTrue(selection.explicit_override)
         self.assertIn("Capability mismatch", selection.reason)
 
+    def test_hold_renter_is_not_auto_selected(self) -> None:
+        from project_jennifer.adapters.nvidia_nim import nvidia_hold_manifest
+
+        self.router.registry.register(nvidia_hold_manifest())
+        selection = self.router.select(
+            RenterTaskRequirements(
+                capabilities=CapabilitySet(reasoning=True, coding=True),
+                benchmark_dimensions=("coding",),
+            )
+        )
+        self.assertNotEqual(selection.renter.provider, "nvidia")
+        explicit = self.router.select(
+            RenterTaskRequirements(
+                capabilities=CapabilitySet(),
+                explicit_renter_id=nvidia_hold_manifest().renter_id,
+            )
+        )
+        self.assertEqual(explicit.renter.provider, "nvidia")
+        self.assertTrue(explicit.explicit_override)
+
 
 if __name__ == "__main__":
     unittest.main()

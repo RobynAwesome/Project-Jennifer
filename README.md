@@ -4,7 +4,8 @@
 
 <h1 align="center">PROJECT JENNIFER</h1>
 <p align="center"><strong>THE WORLD REMEMBERS WHAT YOU CHOOSE.</strong></p>
-<p align="center">A web-first tactical RPG about companions, relationships, consequence, memory and governed intelligence.</p>
+<p align="center">Jennifer City — a web-first companion-consequence RPG about relationships, memory and governed intelligence.</p>
+<p align="center"><em>Tactical combat is a long-term direction. The dedicated product now is one loved continuity loop.</em></p>
 <p align="center"><strong>Built from South Africa by Kopano Labs.</strong></p>
 
 ---
@@ -24,7 +25,9 @@ Your companion can remember how you treated them. A rival can become an ally. A 
 
 That is the heart of **Project Jennifer**.
 
-It is a **2D / 2.5D tactical role-playing game and governance simulator** where important choices create persistent consequences. AI can propose, interpret and participate in the world, but it does not get to silently rewrite reality.
+It is a **web-first companion-consequence RPG and governance simulator** (tactical RPG remains the long-term combat direction) where important choices create persistent consequences. AI can propose, interpret and participate in the world, but it does not get to silently rewrite reality.
+
+➡️ **[Game Dedication Charter](docs/GAME_DEDICATION_CHARTER.md)** — product = Jennifer City; constitution = Project Jennifer / KPGS.
 
 <p align="center">
   <img src="assets/images/backgrounds/file_000000001aec8243955f372a1d0cd4f4.png" alt="Project Jennifer constitutional tactical RPG overview" width="100%" />
@@ -461,11 +464,13 @@ Project Jennifer is in active Proof-of-Concept development. The repository delib
 
 | State | What it means here |
 |---|---|
-| **Implemented / coded POC** | web/API/game runtime surfaces, companion selection, governance and validation contracts, governed relationship events/receipts, Memory Receipt Engine, Free Mode/CAG/RAG/renter scaffolds, SQLite edge continuity and benchmark/test assets |
+| **Dedicated product (in progress)** | Jennifer City love loop: persona → companion → Arc II–flavored Memory District episode → relationship + receipt → return and remember ([Game Dedication Charter](docs/GAME_DEDICATION_CHARTER.md)) |
+| **Implemented / coded POC** | web/API/Phaser city surfaces, companion selection (API + local continuity), governance and validation contracts, governed relationship events/receipts, Memory Receipt Engine, Free Mode/CAG/RAG/renter scaffolds, SQLite edge continuity and benchmark/test assets |
+| **Bounded production-capable** | relationship authority persistence proofs (domain-scoped; see [PERN Roadmap](PERN_ROADMAP.md)) — not a claim that the full game is hosted in production |
 | **Validated asset/source POC** | public `forge-rivm` skill, machine-readable source-authority registry, governed Waifu Forge / Digital Hippocampus source manifests, semantic source paths, pointer-payload quarantine, founder HD binary receipts and public individual HD gallery |
-| **Designed / story direction** | governance city, expanded quests, Project Waifu Forge arcs, Project Wify Jennifer Genesis/Convergence/True One lore, richer companion evolution, character forms, broader world and cinematic presentation |
-| **Next implementation gates** | positive identity promotion for HD sources when evidence exists, production PostgreSQL and MongoDB adapters, full asset-backed scenes, broader persistent quest content, commercial store/economy implementation, exact-runtime provider integrations and production deployment |
-| **Future governed experiments** | token/crypto-mining economy, larger marketplace systems, richer multi-agent/world simulation and mechanics that still require implementation and validation receipts |
+| **Designed / story direction** | governance city expansion, Project Waifu Forge arcs, Project Wify Jennifer Genesis/Convergence/True One lore, richer companion evolution, character forms, cinematic presentation, later tactical combat |
+| **Next implementation gates** | hosted public play URL, positive identity promotion for HD sources when evidence exists, full asset-backed scenes beyond the first episode cast, broader persistent quest content after love/retention evidence |
+| **Held until love loop retains** | commercial store/economy, token/crypto experiments, multiplayer, Steam packaging, True One/RTCP as claimed runtime |
 
 The latest governance work contains tests and CI workflow definitions whose newest run status must be observed before claiming a fresh validation **PASS**. Project Jennifer treats **“code exists”** and **“proof passed”** as different statements.
 
@@ -523,6 +528,11 @@ The root README explains **why the machinery matters**. The implementation belon
 | Project Waifu Forge | **[Storyline Assets](assets/Project-Waifu-Forge/README.md)** |
 | Project Wify Jennifer Genesis / Convergence lore | **[Genesis Lore](docs/lore/project-wify-jennifer/README.md)** |
 | The Third Signal | **[Arc II Lore](docs/lore/arc-ii-third-signal.md)** |
+| game dedication / product law | **[Game Dedication Charter](docs/GAME_DEDICATION_CHARTER.md)** |
+| love-loop playtesting | **[Love Loop Playtest](docs/playtesting/LOVE_LOOP_PLAYTEST.md)** |
+| CLEAR×KPGS on-route eval | **[2026-09-13 CLEAR×KPGS×RTC Eval](docs/audits/2026-09-13-clear-kpgs-rtc-love-loop-evaluation.md)** |
+| canonical ops sprint board | **[Sprint Board](docs/playtesting/CANONICAL_OPS_SPRINT_BOARD.md)** |
+| hosting the playable slice | **[Hosting](docs/HOSTING.md)** |
 | current milestones | **[Roadmap Milestones](docs/roadmap-milestones.md)** |
 | public README audit | **[Public Experience Audit](docs/audits/2026-08-11-public-readme-audit.md)** |
 | source/asset/RIVM intake audit | **[Governed Source Intake Audit](docs/audits/2026-08-11-governed-source-intake-rivm.md)** |

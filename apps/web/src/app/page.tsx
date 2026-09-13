@@ -12,13 +12,19 @@ export default function Home() {
           <div className="rounded-xl border border-jennifer-primary/40 bg-jennifer-primary/10 p-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-bold text-jennifer-primary font-mono">
-                ◆ Jennifer City — Vertical Slice
+                ◆ Jennifer City — Love Loop
               </h2>
               <p className="text-xs text-gray-400 font-mono mt-0.5">
-                Top-down exploration · Persona selection · Live governance validation demo
+                Companion · Third Signal episode · Receipt · Return and remember
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
+              <Link
+                href="/game/consequences"
+                className="rounded-md border border-white/15 bg-black/30 px-4 py-2 text-sm font-semibold text-gray-200 hover:border-jennifer-primary/50 hover:text-jennifer-primary font-mono transition-colors"
+              >
+                ◇ Consequence Journal
+              </Link>
               <Link
                 href="/relationships"
                 className="rounded-md border border-white/15 bg-black/30 px-4 py-2 text-sm font-semibold text-gray-200 hover:border-jennifer-primary/50 hover:text-jennifer-primary font-mono transition-colors"

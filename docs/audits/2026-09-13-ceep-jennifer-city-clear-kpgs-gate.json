@@ -1,0 +1,75 @@
+{
+  "gateLaw": {
+    "academyCLEAR": "Complete·Logical·Evidence·Audience·Relevant",
+    "deliveryCLEAR": "Cost·Latency·Efficacy·Assurance·Reliability",
+    "note": "Neither membrane is an OpenAI product name"
+  },
+  "humanDualMembrane": {
+    "academy": {
+      "Complete": 80,
+      "Logical": 90,
+      "Evidence": 78,
+      "Audience": 72,
+      "Relevant": 92,
+      "mean": 82
+    },
+    "delivery": {
+      "Cost": 90,
+      "Latency": 80,
+      "Efficacy": 82,
+      "Assurance": 86,
+      "Reliability": 88,
+      "mean": 85
+    },
+    "onRouteComposite": 84
+  },
+  "ceepProductGate": {
+    "evaluator": "DualMembraneCLEAR-KPGS",
+    "validation": "PASS",
+    "pocScore": 0.84,
+    "ccpDecision": "Refine",
+    "canonical": false,
+    "evaluationReceiptId": "0c8ffa79-2983-47ec-b5ee-d3bebd886d5a",
+    "frameworkEvolutionReceiptId": "0b2f81c0-bd43-4fe2-b9ff-d473a1358ef5",
+    "focRisks": [
+      {
+        "category": "FandomOfConcept",
+        "riskScore": 3,
+        "rationale": "Affection for the love loop must not graduate to production love."
+      },
+      {
+        "category": "FractionOfConcept",
+        "riskScore": 4,
+        "rationale": "Audience incomplete — no hosted stranger /game URL yet."
+      },
+      {
+        "category": "FragilityOfConcept",
+        "riskScore": 3,
+        "rationale": "API continuity is in-memory; localStorage-first is the Reliability bowl."
+      },
+      {
+        "category": "FabricationOfConcept",
+        "riskScore": 2,
+        "rationale": "Epistemic receipts are actor-model, not world truth."
+      }
+    ],
+    "recommendations": [
+      "Master: Sprint A2 secrets + human LOVE_LOOP_PLAYTEST on live URL",
+      "Master: Recognize / Reject / HOLD product-gate for MAIN-BRAIN pointer",
+      "Keep PERN multi-device HOLD until namespace map admitted"
+    ]
+  },
+  "ceepPocFocDiagnostic": {
+    "evaluator": "POCvsFOC",
+    "validation": "FAIL",
+    "pocScore": 0.28,
+    "ccpDecision": "Rejected",
+    "canonical": false,
+    "note": "Diagnostic FOC inventory. Do not collapse into the dual-membrane product gate."
+  },
+  "holds": [
+    "production love / stranger hosted URL",
+    "MAIN-BRAIN write",
+    "PERN multi-device until Master admits map"
+  ]
+}

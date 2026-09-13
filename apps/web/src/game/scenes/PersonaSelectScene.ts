@@ -1,8 +1,9 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { generateId } from "@jennifer/shared";
 import { PALETTE } from "../AssetManifest";
 import { PERSONA_CONFIGS, REGISTRY_KEYS, type GamePersona } from "../registry";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
+import { restartSceneOnResize } from "../bind-scene-resize";
 
 /**
  * Selects the player's operating persona. Companion selection happens in the
@@ -23,6 +24,11 @@ export class PersonaSelectScene extends Phaser.Scene {
     this.buildHeader(width);
     this.buildCards(width, height);
     this.buildBackLink(width, height);
+    restartSceneOnResize(this);
+    const first = PERSONA_CONFIGS[0];
+    if (first) {
+      this.input.keyboard?.once("keydown-ENTER", () => this.selectPersona(first.id));
+    }
     this.cameras.main.fadeIn(400, 0, 0, 0);
   }
 
