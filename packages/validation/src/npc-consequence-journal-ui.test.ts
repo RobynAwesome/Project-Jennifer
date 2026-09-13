@@ -25,8 +25,10 @@ test("demo consequence journal is visibly non-authoritative and discoverable fro
   const game = read("apps/web/src/app/game/page.tsx");
   const component = read("apps/web/src/components/game/ConsequenceTrace.tsx");
 
-  assert.match(journal, /data-consequence-data-source="demo"/);
+  assert.match(journal, /data-consequence-data-source=\{sourceMode\}/);
+  assert.match(journal, /useState<"authoritative" \| "local" \| "demo">\(\s*"demo"/);
   assert.match(journal, /Non-authoritative POC fixture/);
+  assert.doesNotMatch(journal, /setSourceMode\("authoritative"\)/);
   assert.match(component, /POC fixture/);
   assert.match(component, /not live Jennifer world state/i);
   assert.match(game, /href="\/game\/consequences"/);
