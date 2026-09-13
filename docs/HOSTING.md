@@ -12,15 +12,19 @@
 
 ### Vercel project (the playable URL)
 
-The Git-connected Vercel project (even if named `project-jennifer-api`) must deploy **Next.js**, not Express. Express `listen()` on Vercel is a `FUNCTION_INVOCATION_FAILED` crash.
+A repo-root `framework: nextjs` config will crash: there is no Next app at the repository root, so Vercel invokes an empty serverless function (`text/plain` 500, `FUNCTION_INVOCATION_FAILED`).
 
-In Vercel → Project → Settings → General:
+The Git-connected project (even if named `project-jennifer-api`) must use **Root Directory `apps/web`**.
 
-1. **Root Directory** = `apps/web`
-2. Framework preset = Next.js
-3. Redeploy the latest production deployment
+In Vercel → this project → **Settings → General**:
 
-Do not set a custom Output Directory (Vercel owns `.next`).  
+1. Root Directory → **Edit** → `apps/web` → Save
+2. Framework preset = **Next.js**
+3. Output Directory = **empty** (delete `.next` if set)
+4. Deployments → latest → **Redeploy** (uncheck Ignore Build Step if shown)
+
+A good Next deploy takes minutes, not ~30 seconds. Then open `/game`.
+
 `NEXT_PUBLIC_JENNIFER_API_URL` is optional for a first play — the love loop is localStorage-first. When the API is on Render, set that variable and add `https://project-jennifer-api.vercel.app` to `JENNIFER_CORS_ORIGINS`.
 
 Set `NEXT_PUBLIC_JENNIFER_API_URL` on the web deploy to the public API origin (no trailing slash).

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Jennifer City — wrong Vercel root</title>
+    <style>
+      body { font-family: Consolas, monospace; background: #070b14; color: #e5e7eb; max-width: 42rem; margin: 4rem auto; padding: 0 1.25rem; line-height: 1.5; }
+      h1 { color: #a78bfa; font-size: 1.1rem; }
+      ol { padding-left: 1.2rem; }
+      code { color: #f2c879; }
+    </style>
+  </head>
+  <body>
+    <h1>This Vercel project is pointed at the Express API</h1>
+    <p>Express cannot run as a Vercel serverless function. That is the <code>FUNCTION_INVOCATION_FAILED</code> crash.</p>
+    <p>To play Jennifer City on this URL:</p>
+    <ol>
+      <li>Vercel → this project → <strong>Settings → General → Root Directory → Edit</strong></li>
+      <li>Choose <code>apps/web</code> (Next.js). Save.</li>
+      <li>Deployments → ⋯ on latest → <strong>Redeploy</strong></li>
+      <li>Open <code>/game</code></li>
+    </ol>
+    <p>Leave Output Directory empty. API hosting stays on Render, not Vercel.</p>
+  </body>
+</html>
