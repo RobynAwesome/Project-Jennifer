@@ -146,7 +146,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build packages for membrane gate
-        run: pnpm --filter @jennifer/api build && pnpm --filter @jennifer/conceptual build
+        run: pnpm turbo run build --filter=@jennifer/api --filter=@jennifer/conceptual
 
       - name: Zero-trust origin unit tests
         run: pnpm --filter @jennifer/api test
