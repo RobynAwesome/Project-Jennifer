@@ -8,7 +8,20 @@
 | Service | Path | Notes |
 |---|---|---|
 | Web | `apps/web` (Next.js) | Player enters at `/game` |
-| API | `apps/api` (Express) | Continuity, companions, relationships, memory |
+| API | `apps/api` (Express) | Continuity, companions, relationships, memory. **Not** a Vercel serverless function. |
+
+### Vercel project (the playable URL)
+
+The Git-connected Vercel project (even if named `project-jennifer-api`) must deploy **Next.js**, not Express. Express `listen()` on Vercel is a `FUNCTION_INVOCATION_FAILED` crash.
+
+In Vercel → Project → Settings → General:
+
+1. **Root Directory** = `apps/web`
+2. Framework preset = Next.js
+3. Redeploy the latest production deployment
+
+Do not set a custom Output Directory (Vercel owns `.next`).  
+`NEXT_PUBLIC_JENNIFER_API_URL` is optional for a first play — the love loop is localStorage-first. When the API is on Render, set that variable and add `https://project-jennifer-api.vercel.app` to `JENNIFER_CORS_ORIGINS`.
 
 Set `NEXT_PUBLIC_JENNIFER_API_URL` on the web deploy to the public API origin (no trailing slash).
 
