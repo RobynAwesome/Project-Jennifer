@@ -32,6 +32,8 @@ pnpm smoke:love-loop-reliability
 
 `smoke:love-loop` covers continuity store honesty + Third Signal epistemic actor-model wire (`POST /api/runtime/third-signal/epistemic`). `smoke:love-loop-reliability` proves same-browser Continue keeps the local bowl when the API is dead. Neither claims hosted production love.
 
+CI runs the same membrane sequence on every push/PR (job `love-loop-membrane`): API zero-trust origin unit tests, continuity smoke, reliability smoke, and `ceep:jennifer-city-gate`. Hosted stranger love remains Sprint A2 (Master secrets).
+
 CEEP dual-membrane gate (Refine ≠ canon):
 
 ```bash

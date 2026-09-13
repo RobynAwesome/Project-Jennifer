@@ -14,6 +14,7 @@
 
 - [x] CORS/env scaffolding + Vercel config + receipt template
 - [x] Continuity smoke (`pnpm smoke:love-loop`)
+- [x] CI membrane gate — `.github/workflows/ci.yml` job `love-loop-membrane` + receipt `RECEIPT_2026-09-13_CI_LOVE_LOOP_MEMBRANE.md`
 - [ ] Master secrets + public `/game` + human playtest → **moved to Sprint A2**
 
 ### Sprint B — Reliability bowl

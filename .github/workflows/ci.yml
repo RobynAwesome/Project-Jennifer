@@ -120,3 +120,70 @@ jobs:
 
       - name: Run governance validation suite
         run: pnpm governance-validation
+
+  love-loop-membrane:
+    name: Love Loop Membrane Gate
+    runs-on: ubuntu-latest
+    needs: governance-validation
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages for membrane gate
+        run: pnpm --filter @jennifer/api build && pnpm --filter @jennifer/conceptual build
+
+      - name: Zero-trust origin unit tests
+        run: pnpm --filter @jennifer/api test
+
+      - name: Start Jennifer API (in-memory)
+        run: |
+          pnpm --filter @jennifer/api start &
+          echo $! > /tmp/jennifer-api.pid
+        env:
+          PORT: "3001"
+          JENNIFER_PERSISTENCE_MODE: in-memory
+
+      - name: Wait for API health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:3001/health >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not become healthy in time"
+          exit 1
+
+      - name: Love-loop continuity + epistemic smoke
+        run: pnpm smoke:love-loop
+        env:
+          JENNIFER_API_URL: http://127.0.0.1:3001
+
+      - name: Love-loop reliability smoke
+        run: pnpm smoke:love-loop-reliability
+
+      - name: CEEP Jennifer City product gate (dual membrane)
+        run: pnpm ceep:jennifer-city-gate
+
+      - name: Stop Jennifer API
+        if: always()
+        run: |
+          if [ -f /tmp/jennifer-api.pid ]; then
+            kill "$(cat /tmp/jennifer-api.pid)" || true
+          fi

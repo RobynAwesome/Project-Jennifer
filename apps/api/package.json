@@ -10,6 +10,7 @@
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
+    "test": "pnpm run build && node --test dist/zero-trust.test.js",
     "clean": "rm -rf dist"
   },
   "dependencies": {
