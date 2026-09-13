@@ -12,6 +12,8 @@ export * from "./pern-foundation.js";
 export * from "./forge-role.js";
 export * from "./zodiac.js";
 export * from "./player-convergence.js";
+export * from "./reality-quest.js";
+export * from "./smart-ledger-edge.js";
 export * from "./mmao-witnesses.js";
 export * from "./consequence-reveal.js";
 export * from "./fox-forge-protocol.js";

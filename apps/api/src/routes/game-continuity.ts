@@ -72,6 +72,7 @@ export function createGameContinuityRouter(): IRouter {
     }
 
     const existing = store.get(sessionId);
+    const relationshipId = clipOptional(body.relationshipId);
     const snapshot: GameContinuitySnapshot = {
       schemaVersion: 1,
       sessionId,
@@ -82,8 +83,12 @@ export function createGameContinuityRouter(): IRouter {
       companionLogic: clipOptional(body.companionLogic),
       companionLane: clipOptional(body.companionLane),
       companionRenderMode: clipOptional(body.companionRenderMode),
-      companionReceipt: body.companionReceipt,
-      relationshipId: clipOptional(body.relationshipId),
+      companionReceipt: clipCompanionReceipt(body.companionReceipt),
+      // PERN HOLD: never collapse relationship namespace into sessionId
+      relationshipId:
+        relationshipId && relationshipId !== sessionId
+          ? relationshipId
+          : undefined,
       questInstanceId: clipOptional(body.questInstanceId),
       questComplete: Boolean(body.questComplete),
       questChoice: clipOptional(body.questChoice),
@@ -207,4 +212,16 @@ function clipOptional(value: unknown): string | undefined {
   const trimmed = value.trim();
   if (!trimmed) return undefined;
   return trimmed.slice(0, MAX_STRING);
+}
+
+/** Bound untrusted companion receipt blobs (DoS / memory FOC). */
+function clipCompanionReceipt(value: unknown): unknown | undefined {
+  if (value == null) return undefined;
+  try {
+    const encoded = JSON.stringify(value);
+    if (!encoded || encoded.length > 4_096) return undefined;
+    return JSON.parse(encoded) as unknown;
+  } catch {
+    return undefined;
+  }
 }

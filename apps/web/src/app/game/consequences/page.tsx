@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 
 import ConsequenceTrace from "@/components/game/ConsequenceTrace";
 import { ContinuityBridge } from "@/game/bridge/ContinuityBridge";
-import { readLocalContinuity } from "@/game/continuity/session-store";
+import {
+  readLocalContinuity,
+  readLocalReveals,
+} from "@/game/continuity/session-store";
 import { CONSEQUENCE_REVEAL_DEMO } from "@/lib/consequence-reveal-demo";
 import type { ConsequenceRevealReceipt } from "@jennifer/shared";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 /**
  * Player-facing consequence journal.
@@ -22,6 +22,9 @@ export default function ConsequenceJournalPage() {
     "demo",
   );
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [apiState, setApiState] = useState<"unknown" | "down" | "mirrored">(
+    "unknown",
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -36,21 +39,32 @@ export default function ConsequenceJournalPage() {
         return;
       }
       setSessionId(sid);
-      const bridge = new ContinuityBridge();
-      const loaded = await bridge.loadReveals(sid);
+
+      const localReceipts = readLocalReveals(sid);
+      const localPreferred =
+        localReceipts.find((entry) => entry.revealId === local?.episodeRevealId) ??
+        localReceipts[localReceipts.length - 1];
+      if (localPreferred && !cancelled) {
+        setReceipt(localPreferred);
+        setSourceMode("local");
+      }
+
+      const loaded = await new ContinuityBridge().loadReveals(sid);
+      if (cancelled) return;
+      setApiState(loaded.sourceMode === "unreachable" ? "down" : "mirrored");
+
       const preferred =
         loaded.receipts.find((entry) => entry.revealId === local?.episodeRevealId) ??
-        loaded.receipts[loaded.receipts.length - 1];
-      if (!cancelled) {
-        if (preferred) {
-          setReceipt(preferred);
-          // Love-loop continuity is local / continuity-store — never claim
-          // governed journal authority from the in-memory mirror alone.
-          setSourceMode("local");
-        } else {
-          setReceipt(CONSEQUENCE_REVEAL_DEMO);
-          setSourceMode("demo");
-        }
+        loaded.receipts[loaded.receipts.length - 1] ??
+        localPreferred;
+      if (preferred) {
+        setReceipt(preferred);
+        // Love-loop continuity is local / continuity-store — never claim
+        // governed journal authority from the in-memory mirror alone.
+        setSourceMode("local");
+      } else {
+        setReceipt(CONSEQUENCE_REVEAL_DEMO);
+        setSourceMode("demo");
       }
     }
     void load();
@@ -72,7 +86,10 @@ export default function ConsequenceJournalPage() {
           }
         : {
             mode: "local" as const,
-            label: `Local continuity reveal · session ${sessionId?.slice(0, 8) ?? "…"}`,
+            label:
+              apiState === "down"
+                ? `Local bowl · API down · session ${sessionId?.slice(0, 8) ?? "…"}`
+                : `Local continuity reveal · session ${sessionId?.slice(0, 8) ?? "…"}`,
           };
 
   return (
@@ -80,6 +97,7 @@ export default function ConsequenceJournalPage() {
       className="min-h-screen city-grid px-3 py-5 text-gray-100 sm:px-6 sm:py-8"
       data-consequence-journal="love-loop"
       data-consequence-data-source={sourceMode}
+      data-continuity-api-state={apiState}
     >
       <div className="mx-auto max-w-5xl space-y-4 sm:space-y-6">
         <nav

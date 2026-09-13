@@ -253,12 +253,21 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
       selectedOption: choice,
     });
 
+    const epistemic = await relBridge.evaluateThirdSignalEpistemic({
+      sessionId,
+      companionId,
+      companionName,
+      choice,
+    });
+
     const reveal = buildThirdSignalReveal({
       sessionId,
+      companionId,
       companionName,
       choice,
       memoryReceiptId:
         decision.decisionReceiptId ?? `continuity-memory:${sessionId}:${choice}`,
+      epistemic: epistemic.companion,
     });
 
     this.registry.set(REGISTRY_KEYS.RELATIONSHIP_ID, bond.relationshipId);

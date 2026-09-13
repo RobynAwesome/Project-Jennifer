@@ -1,4 +1,5 @@
 import type { ConsequenceRevealReceipt } from "@jennifer/shared";
+import { resolveContinuitySnapshot } from "../continuity/resolve-continuity";
 import {
   readLocalContinuity,
   readLocalReveals,
@@ -8,6 +9,8 @@ import {
   type JenniferCityContinuitySnapshot,
 } from "../continuity/session-store";
 import { readGameApiBaseUrl } from "./WorldBridge";
+
+const CONTINUITY_FETCH_MS = 1500;
 
 export interface ContinuityPersistResult {
   sourceMode: ContinuitySourceMode;
@@ -43,6 +46,7 @@ export class ContinuityBridge {
             Accept: "application/json",
           },
           body: JSON.stringify(snapshot),
+          signal: AbortSignal.timeout(CONTINUITY_FETCH_MS),
         },
       );
       if (!response.ok) {
@@ -70,39 +74,37 @@ export class ContinuityBridge {
   async load(sessionId: string): Promise<{
     sourceMode: ContinuitySourceMode;
     snapshot: JenniferCityContinuitySnapshot | null;
+    reason?: string;
   }> {
     const local = readLocalContinuity();
     try {
       const response = await fetch(
         `${this.apiBaseUrl}/api/runtime/game-continuity/${encodeURIComponent(sessionId)}`,
-        { headers: { Accept: "application/json" } },
+        {
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(CONTINUITY_FETCH_MS),
+        },
       );
-      if (response.status === 404) {
-        return {
-          sourceMode: local ? "local" : "unreachable",
-          snapshot: local,
-        };
-      }
       if (!response.ok) {
-        return { sourceMode: "local", snapshot: local };
+        return resolveContinuitySnapshot(local, null, false);
       }
       const body = (await response.json()) as {
         snapshot?: JenniferCityContinuitySnapshot;
-        sourceMode?: ContinuitySourceMode;
       };
-      if (body.snapshot) {
-        writeLocalContinuity(body.snapshot);
-        return {
-          sourceMode: body.sourceMode === "continuity-store" ? "continuity-store" : "continuity-store",
-          snapshot: body.snapshot,
-        };
+      const resolved = resolveContinuitySnapshot(
+        local,
+        body.snapshot ?? null,
+        true,
+      );
+      if (
+        resolved.snapshot &&
+        resolved.sourceMode === "continuity-store"
+      ) {
+        writeLocalContinuity(resolved.snapshot);
       }
-      return { sourceMode: "local", snapshot: local };
+      return resolved;
     } catch {
-      return {
-        sourceMode: local ? "local" : "unreachable",
-        snapshot: local,
-      };
+      return resolveContinuitySnapshot(local, null, false);
     }
   }
 
@@ -121,6 +123,7 @@ export class ContinuityBridge {
             Accept: "application/json",
           },
           body: JSON.stringify({ receipt }),
+          signal: AbortSignal.timeout(CONTINUITY_FETCH_MS),
         },
       );
       return {
@@ -139,7 +142,10 @@ export class ContinuityBridge {
     try {
       const response = await fetch(
         `${this.apiBaseUrl}/api/runtime/game-continuity/${encodeURIComponent(sessionId)}/reveals`,
-        { headers: { Accept: "application/json" } },
+        {
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(CONTINUITY_FETCH_MS),
+        },
       );
       if (!response.ok) {
         return { sourceMode: local.length ? "local" : "unreachable", receipts: local };

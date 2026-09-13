@@ -146,8 +146,19 @@ export class StartMenuScene extends Phaser.Scene {
         continueBtn.setStyle({ color: "#f2c879" }),
       );
       continueBtn.on("pointerdown", () => {
-        void this.continueFromSnapshot(saved.sessionId);
+        this.continueFromLocalBowl(saved);
       });
+      this.input.keyboard?.once("keydown-C", () => {
+        this.continueFromLocalBowl(saved);
+      });
+
+      this.add
+        .text(cx, cy + 108, "same browser · API down still continues", {
+          fontSize: "9px",
+          color: "#6b7280",
+          fontFamily: '"Courier New", monospace',
+        })
+        .setOrigin(0.5);
     }
 
     this.add
@@ -161,8 +172,10 @@ export class StartMenuScene extends Phaser.Scene {
     this.add
       .text(
         cx,
-        cy + 130,
-        "Enter / Space to start  ·  WASD and [E] in the city",
+        cy + 148,
+        saved?.companionId
+          ? "Enter / Space to start  ·  C to continue  ·  WASD and [E] in the city"
+          : "Enter / Space to start  ·  WASD and [E] in the city",
         {
           fontSize: "10px",
           color: "#4b5563",
@@ -174,23 +187,40 @@ export class StartMenuScene extends Phaser.Scene {
     this.cameras.main.fadeIn(400, 0, 0, 0);
   }
 
-  private async continueFromSnapshot(sessionId: string): Promise<void> {
-    const bridge = new ContinuityBridge();
-    const loaded = await bridge.load(sessionId);
-    if (!loaded.snapshot?.companionId) {
+  /**
+   * Reliability bowl: Continue hydrates from localStorage immediately.
+   * Soft API refresh may win during the fade only — never blocks return-tomorrow.
+   */
+  private continueFromLocalBowl(
+    saved: NonNullable<ReturnType<typeof readLocalContinuity>>,
+  ): void {
+    if (!saved.companionId) {
       this.sceneManager.goTo(SCENE_KEYS.PERSONA_SELECT);
       return;
     }
 
-    applyContinuityToRegistry(
-      this.registry,
-      loaded.snapshot,
-      loaded.sourceMode,
-    );
+    let bowl = saved;
+    let sourceMode = "local";
+    applyContinuityToRegistry(this.registry, bowl, sourceMode);
+
+    void new ContinuityBridge()
+      .load(saved.sessionId)
+      .then((resolved) => {
+        if (
+          resolved.snapshot &&
+          resolved.snapshot.sessionId === saved.sessionId &&
+          resolved.snapshot.companionId
+        ) {
+          bowl = resolved.snapshot;
+          sourceMode = resolved.sourceMode;
+        }
+      })
+      .catch(() => undefined);
 
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
-      const next = loaded.snapshot?.questComplete
+      applyContinuityToRegistry(this.registry, bowl, sourceMode);
+      const next = bowl.questComplete
         ? SCENE_KEYS.MEMORY_DISTRICT
         : SCENE_KEYS.GOVERNANCE_HALL;
       this.sceneManager.goTo(next);

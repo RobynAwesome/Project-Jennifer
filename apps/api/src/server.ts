@@ -19,6 +19,7 @@ import { memoryRouter } from "./routes/memory.js";
 import { ncmpRouter } from "./routes/ncmp.js";
 import { createRelationshipAuthorityRouter } from "./routes/relationships.js";
 import { createGameContinuityRouter } from "./routes/game-continuity.js";
+import { createThirdSignalEpisodeRouter } from "./routes/third-signal-episode.js";
 import { runtimeRouter } from "./routes/runtime.js";
 
 const PORT = process.env.PORT ?? 3001;
@@ -112,6 +113,7 @@ app.use(
   }),
 );
 app.use("/api/runtime/game-continuity", createGameContinuityRouter());
+app.use("/api/runtime/third-signal", createThirdSignalEpisodeRouter());
 app.use("/api/runtime", runtimeRouter);
 app.use("/api/ncmp", ncmpRouter);
 

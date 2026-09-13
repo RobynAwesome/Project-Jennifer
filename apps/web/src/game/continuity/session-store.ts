@@ -34,14 +34,32 @@ export type ContinuitySourceMode =
 
 const LOCAL_KEY = "jennifer.city.continuity.v1";
 
+/**
+ * Keep sessionId and relationshipId as distinct namespaces (PERN HOLD).
+ * Never let a collapsed id silently become "admitted relationship authority."
+ */
+export function sanitizeContinuitySnapshot(
+  snapshot: JenniferCityContinuitySnapshot | null | undefined,
+): JenniferCityContinuitySnapshot | null {
+  if (!snapshot || snapshot.schemaVersion !== 1 || !snapshot.sessionId) {
+    return null;
+  }
+  if (
+    snapshot.relationshipId &&
+    snapshot.relationshipId === snapshot.sessionId
+  ) {
+    return { ...snapshot, relationshipId: undefined };
+  }
+  return snapshot;
+}
+
 export function readLocalContinuity(): JenniferCityContinuitySnapshot | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(LOCAL_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as JenniferCityContinuitySnapshot;
-    if (parsed?.schemaVersion !== 1 || !parsed.sessionId) return null;
-    return parsed;
+    return sanitizeContinuitySnapshot(parsed);
   } catch {
     return null;
   }
@@ -51,8 +69,10 @@ export function writeLocalContinuity(
   snapshot: JenniferCityContinuitySnapshot,
 ): void {
   if (typeof window === "undefined") return;
+  const safe = sanitizeContinuitySnapshot(snapshot);
+  if (!safe) return;
   try {
-    window.localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
+    window.localStorage.setItem(LOCAL_KEY, JSON.stringify(safe));
   } catch {
     // Quota / private mode — continuity falls back to API when available.
   }

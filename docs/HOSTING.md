@@ -23,6 +23,36 @@ pnpm --filter @jennifer/web start
 
 Open `http://localhost:3000/game` and run [LOVE_LOOP_PLAYTEST.md](playtesting/LOVE_LOOP_PLAYTEST.md).
 
+Membrane smoke (API must already be on `:3001`):
+
+```bash
+pnpm smoke:love-loop
+pnpm smoke:love-loop-reliability
+```
+
+`smoke:love-loop` covers continuity store honesty + Third Signal epistemic actor-model wire (`POST /api/runtime/third-signal/epistemic`). `smoke:love-loop-reliability` proves same-browser Continue keeps the local bowl when the API is dead. Neither claims hosted production love.
+
+CEEP dual-membrane gate (Refine ≠ canon):
+
+```bash
+pnpm --filter @jennifer/conceptual build
+pnpm ceep:jennifer-city-gate
+```
+
+Return-tomorrow in one browser is **localStorage-first**. PERN relationship ids stay a separate namespace; do not map `sessionId` onto `relationshipId` for multi-device continuity until that sprint is admitted.
+
+### CORS / Origin honesty
+
+| Env | Behavior |
+|---|---|
+| `JENNIFER_CORS_ORIGINS` | Allowlist (required in production) |
+| Missing `Origin` in **production** | **Rejected** by default (curl is not browser identity) |
+| Missing `Origin` in **development** | Allowed (local probes) |
+| `JENNIFER_CORS_REQUIRE_ORIGIN=1` | Force require Origin even in dev |
+| `JENNIFER_CORS_ALLOW_MISSING_ORIGIN=1` | Ops escape hatch only — do not set on stranger-facing prod |
+
+Master hosting checklist: [SPRINT_A2_HOSTING_PREP.md](playtesting/SPRINT_A2_HOSTING_PREP.md).
+
 ## GitHub Actions
 
 [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml):

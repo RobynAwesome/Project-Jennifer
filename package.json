@@ -15,6 +15,9 @@
     "typecheck": "turbo run typecheck",
     "asset-integrity": "node tools/verify-companion-assets.mjs",
     "ffp-validation": "node tools/verify-ffp.mjs",
+    "smoke:love-loop": "node tools/smoke-love-loop-continuity.mjs",
+    "smoke:love-loop-reliability": "node tools/smoke-love-loop-reliability.mjs",
+    "ceep:jennifer-city-gate": "node tools/ceep-jennifer-city-gate.mjs",
     "governance-validation": "turbo run governance-validation",
     "clean": "turbo run clean && rm -rf node_modules"
   },

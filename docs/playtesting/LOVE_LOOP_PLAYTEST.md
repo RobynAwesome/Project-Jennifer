@@ -26,7 +26,7 @@ CI proof PASS is engineering honesty. It is **not** this protocol's love metric.
 | 4 | Talk to Archivist; approach amber **Signal Breach** | Episode invitation is clear |
 | 5 | Play Third Signal beats; pick one choice | Choice feels relational (jealousy / agency / recognition) |
 | 6 | Return to district; note companion still present in continuity | Episode marked complete |
-| 7 | Open `/game/consequences` | Journal shows **local** or **authoritative** player reveal — not only demo fixture |
+| 7 | Open `/game/consequences` | Journal shows **local** player reveal (or labelled demo if no episode) — never fake authoritative from continuity-store |
 | 8 | Reload `/game`, press **Continue** | Companion + episode state restore |
 | 9 | Ask aloud: “Why did the world change?” | Player points at receipt / choice language |
 
