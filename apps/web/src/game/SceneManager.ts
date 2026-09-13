@@ -17,6 +17,7 @@ export const SCENE_KEYS = {
   TELEMETRY_TOWER: "TelemetryTower",
   OBSERVATION_DISTRICT: "ObservationDistrict",
   VALIDATION_DEMO: "ValidationDemo",
+  THIRD_SIGNAL_EPISODE: "ThirdSignalEpisode",
 } as const;
 
 export type SceneKey = (typeof SCENE_KEYS)[keyof typeof SCENE_KEYS];

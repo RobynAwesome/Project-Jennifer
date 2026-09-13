@@ -95,6 +95,15 @@ export class GovernanceHallScene extends Phaser.Scene {
       this.scale.off("resize", this.fitHallCamera, this);
     });
 
+    this.input.keyboard?.on("keydown", (event: KeyboardEvent) => {
+      const index = Number(event.key);
+      if (!Number.isInteger(index) || index < 1 || index > PORTAL_LAYOUT.length) {
+        return;
+      }
+      const portal = PORTAL_LAYOUT[index - 1];
+      if (portal) void this.enterDistrict(portal.id);
+    });
+
     this.cameras.main?.fadeIn(400, 0, 0, 0);
   }
 
@@ -214,10 +223,10 @@ export class GovernanceHallScene extends Phaser.Scene {
         x: this.worldW / 2 + 120,
         y: this.worldH / 2,
         dialog: [
-          `Welcome, ${persona}!`,
-          "All nine portals open. Boards read the API or stay empty.",
-          "The bottom ribbon is the heartbeat: PKA then KPGS.",
-          "It is observation. It is not canon.",
+          `Welcome, ${persona}.`,
+          "Start in Memory District — the amber Signal Breach is the love loop.",
+          "Choose with your companion. Come back: the receipt stays.",
+          "Other portals are observation boards. They are not the whole game.",
         ],
       },
       () => ({
@@ -285,7 +294,7 @@ export class GovernanceHallScene extends Phaser.Scene {
     botBar.setStrokeStyle(1, PALETTE.BORDER);
 
     this.hudHint = this.add
-      .text(width / 2, height - 12, "All nine portals are open · Arrow keys / WASD · [E] enter", {
+      .text(width / 2, height - 12, "1-9 enter a portal · WASD walk · [E] enter when close", {
         fontSize: "10px",
         color: "#4b5563",
         fontFamily: '"Courier New", monospace',
@@ -350,8 +359,10 @@ export class GovernanceHallScene extends Phaser.Scene {
       return;
     }
 
-    fadeToIfLive(this, () => {
-      this.sceneManager.goTo(sceneKey, { district: districtId });
+    this.time.delayedCall(800, () => {
+      fadeToIfLive(this, () => {
+        this.sceneManager.goTo(sceneKey, { district: districtId });
+      });
     });
   }
 }

@@ -6,6 +6,7 @@ import { Player } from "../entities/Player";
 import { DialogNPC, OBSERVER_NPC_CONFIG } from "../entities/DialogNPC";
 import { TelemetryBridge, type TowerSignalBoard } from "../bridge/TelemetryBridge";
 import { fadeToIfLive, sceneIsLive } from "../scene-lifecycle";
+import { attachHeartbeatLine } from "../hud/OrchestrationRibbon";
 
 const WORLD_W = 900;
 const WORLD_H = 700;
@@ -190,6 +191,8 @@ export class TelemetryTowerScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(51);
+
+    attachHeartbeatLine(this, this.registry.get(REGISTRY_KEYS.LAST_WORLD_RECEIPT));
   }
 
   private setupCamera(): void {

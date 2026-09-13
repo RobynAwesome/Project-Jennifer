@@ -1,5 +1,16 @@
 # Redesign Roadmap Milestones
 
+## Game dedication (product sequencing)
+
+- [x] Publish [Game Dedication Charter](GAME_DEDICATION_CHARTER.md) — Jennifer City is the product; KPGS/Jennifer remains constitution
+- [x] Close love-loop continuity membrane (companion API + local/API continuity + consequence journal current-player path)
+- [x] Author Third Signal Memory District episode (relational stakes; combat deferred)
+- [x] Document cast presentation gates + playtest + hosting path
+- [ ] Host public `/game` URL and run [LOVE_LOOP_PLAYTEST.md](playtesting/LOVE_LOOP_PLAYTEST.md) against it
+- [ ] Expand second companion/district quest only after return-retention evidence
+
+Governance milestones below continue, but items that do not serve the hosted love loop stay sequenced behind playable continuity.
+
 ## Foundation checklist
 - [x] Publish a multi-framework architecture RFC
 - [x] Add a minimal Python boundary scaffold for Free Mode, contracts, plugins, validation, evaluation, simulation, and telemetry

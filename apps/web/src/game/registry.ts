@@ -32,6 +32,18 @@ export const REGISTRY_KEYS = {
   MEMORY_ENTRY_COUNT: "jennifer.game.memoryEntryCount",
   /** Last world-event heartbeat receipt serialised as JSON */
   LAST_WORLD_RECEIPT: "jennifer.game.lastWorldReceipt",
+  /** Authoritative/local continuity source mode */
+  CONTINUITY_SOURCE: "jennifer.game.continuitySource",
+  /** Relationship id for the love-loop episode */
+  RELATIONSHIP_ID: "jennifer.game.relationshipId",
+  /** Third Signal quest instance id */
+  QUEST_INSTANCE_ID: "jennifer.game.questInstanceId",
+  /** Whether the Third Signal episode is complete */
+  EPISODE_COMPLETE: "jennifer.game.episodeComplete",
+  /** Player choice in the Third Signal episode */
+  EPISODE_CHOICE: "jennifer.game.episodeChoice",
+  /** Last episode consequence reveal id */
+  EPISODE_REVEAL_ID: "jennifer.game.episodeRevealId",
 } as const;
 
 export type RegistryKey = (typeof REGISTRY_KEYS)[keyof typeof REGISTRY_KEYS];

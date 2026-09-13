@@ -7,7 +7,12 @@ const ACTOR_ID = /^[A-Za-z0-9._:-]{1,64}$/;
 
 export function allowedBrowserOrigins(): string[] {
   const configured = process.env.JENNIFER_CORS_ORIGINS?.trim();
-  if (!configured) return DEFAULT_ORIGINS;
+  if (!configured) {
+    if (process.env.NODE_ENV?.trim().toLowerCase() === "production") {
+      return [];
+    }
+    return DEFAULT_ORIGINS;
+  }
   return configured
     .split(",")
     .map((origin) => origin.trim())

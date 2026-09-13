@@ -8,6 +8,9 @@ import {
   type CompanionRelationshipLane,
   type CompanionValidationReceipt,
 } from "@jennifer/shared";
+import { CompanionBridge } from "../bridge/CompanionBridge";
+import { ContinuityBridge } from "../bridge/ContinuityBridge";
+import { readContinuityFromRegistry } from "../continuity/apply-continuity";
 import { PALETTE } from "../AssetManifest";
 import { REGISTRY_KEYS } from "../registry";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
@@ -35,8 +38,8 @@ const CORE_GLYPHS = {
  * session before entering Jennifer City.
  *
  * The player selects the kind of intelligence that will walk beside them, not
- * only a cosmetic avatar. Every selection emits a local validation receipt;
- * the API exposes the same contract for persistent runtime use.
+ * only a cosmetic avatar. Selection posts to the companion API when reachable
+ * and always mirrors a continuity snapshot locally for return play.
  */
 export class CompanionSelectScene extends Phaser.Scene {
   private sceneManager!: SceneManager;
@@ -60,6 +63,10 @@ export class CompanionSelectScene extends Phaser.Scene {
     this.buildCards(width);
     this.buildFooter(width, height);
     restartSceneOnResize(this);
+    const first = COMPANION_CATALOG[0];
+    if (first) {
+      this.input.keyboard?.once("keydown-ENTER", () => this.selectCompanion(first));
+    }
 
     this.cameras.main.fadeIn(350, 0, 0, 0);
   }
@@ -325,10 +332,13 @@ export class CompanionSelectScene extends Phaser.Scene {
     );
     const passed = supportedLane && dependencyRisk <= 0.25 && sycophancyResistance >= 0.75;
 
+    const sessionId =
+      (this.registry.get(REGISTRY_KEYS.SESSION_ID) as string) ?? "local-session";
+
     const receipt: CompanionValidationReceipt = {
       id: generateId(),
       selectionId: generateId(),
-      userId: (this.registry.get(REGISTRY_KEYS.SESSION_ID) as string) ?? "local-session",
+      userId: sessionId,
       companionId: companion.id,
       relationshipLane: DEFAULT_LANE,
       logicMatch: companion.baseLogic,
@@ -351,15 +361,49 @@ export class CompanionSelectScene extends Phaser.Scene {
       return;
     }
 
+    this.statusText?.setText(`Linking ${companion.name} through governance…`);
+    this.statusText?.setStyle({ color: "#f2c879" });
+
+    void this.commitSelection(companion, receipt, sessionId);
+  }
+
+  private async commitSelection(
+    companion: CompanionDefinition,
+    localReceipt: CompanionValidationReceipt,
+    sessionId: string,
+  ): Promise<void> {
+    const bridge = new CompanionBridge();
+    const continuity = new ContinuityBridge();
+    const result = await bridge.select({
+      userId: sessionId,
+      companionId: companion.id,
+      relationshipLane: DEFAULT_LANE,
+      renderMode: this.renderMode,
+      localReceipt,
+    });
+
+    const receipt = result.receipt.result === "PASSED" ? result.receipt : localReceipt;
+    if (receipt.result !== "PASSED") {
+      this.statusText?.setText(receipt.reasons[0] ?? "Selection failed.");
+      this.statusText?.setStyle({ color: "#ef4444" });
+      return;
+    }
+
     this.registry.set(REGISTRY_KEYS.COMPANION_ID, companion.id);
     this.registry.set(REGISTRY_KEYS.COMPANION_NAME, companion.name);
     this.registry.set(REGISTRY_KEYS.COMPANION_LOGIC, companion.baseLogic);
     this.registry.set(REGISTRY_KEYS.COMPANION_LANE, DEFAULT_LANE);
     this.registry.set(REGISTRY_KEYS.COMPANION_RENDER_MODE, this.renderMode);
     this.registry.set(REGISTRY_KEYS.LAST_COMPANION_RECEIPT, JSON.stringify(receipt));
+    this.registry.set(REGISTRY_KEYS.CONTINUITY_SOURCE, result.sourceMode);
+
+    const snapshot = readContinuityFromRegistry(this.registry);
+    if (snapshot) {
+      await continuity.save(snapshot);
+    }
 
     this.statusText?.setText(
-      `${companion.name} linked · ${LOGIC_LABELS[companion.baseLogic]} · receipt ${receipt.id.slice(0, 8)}`
+      `${companion.name} linked · ${result.sourceMode} · ${LOGIC_LABELS[companion.baseLogic]}`,
     );
     this.statusText?.setStyle({ color: "#10b981" });
 

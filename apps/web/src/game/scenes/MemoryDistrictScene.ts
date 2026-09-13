@@ -1,6 +1,7 @@
 import Phaser from "@/game/phaser-runtime";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
 import { fadeToIfLive } from "../scene-lifecycle";
+import { attachHeartbeatLine } from "../hud/OrchestrationRibbon";
 import { REGISTRY_KEYS } from "../registry";
 import { TEXTURE_KEYS, PALETTE } from "../AssetManifest";
 import { Player } from "../entities/Player";
@@ -40,6 +41,10 @@ export class MemoryDistrictScene extends Phaser.Scene {
   private terminalY = WORLD_H / 2;
   private terminalHint!: Phaser.GameObjects.Text;
   private isNearTerminal = false;
+  private breachX = 780;
+  private breachY = 320;
+  private breachHint!: Phaser.GameObjects.Text;
+  private isNearBreach = false;
 
   constructor() {
     super({ key: SCENE_KEYS.MEMORY_DISTRICT });
@@ -57,6 +62,7 @@ export class MemoryDistrictScene extends Phaser.Scene {
     this.buildWorld();
     this.buildMemoryNodes();
     this.buildTerminal();
+    this.buildBreachNode();
     this.buildNPC(persona);
     this.buildPlayer(persona);
     this.buildHUD(persona);
@@ -69,6 +75,7 @@ export class MemoryDistrictScene extends Phaser.Scene {
     this.player.update(delta);
     this.npc.update(delta);
     this.checkTerminalProximity();
+    this.checkBreachProximity();
   }
 
   // ─── World ──────────────────────────────────────────────────────────────
@@ -241,32 +248,108 @@ export class MemoryDistrictScene extends Phaser.Scene {
   }
 
   private handleTerminalInteract(): void {
+    if (this.isNearBreach) {
+      this.sceneManager.pauseAndLaunch(SCENE_KEYS.THIRD_SIGNAL_EPISODE, {
+        returnScene: SCENE_KEYS.MEMORY_DISTRICT,
+      });
+      return;
+    }
     if (!this.isNearTerminal) return;
     this.sceneManager.pauseAndLaunch(SCENE_KEYS.VALIDATION_DEMO, {
       returnScene: SCENE_KEYS.MEMORY_DISTRICT,
     });
   }
 
+  private buildBreachNode(): void {
+    const x = this.breachX;
+    const y = this.breachY;
+
+    const glow = this.add
+      .ellipse(x, y, 100, 100, 0xf59e0b, 0.18)
+      .setDepth(3);
+    this.tweens.add({
+      targets: glow,
+      scaleX: 1.25,
+      scaleY: 1.25,
+      alpha: 0.08,
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
+    this.add.image(x, y, TEXTURE_KEYS.TERMINAL).setTint(0xf2c879).setDepth(4);
+
+    const episodeDone = Boolean(this.registry.get(REGISTRY_KEYS.EPISODE_COMPLETE));
+    this.add
+      .text(x, y + 34, episodeDone ? "Signal Breach · receipted" : "Signal Breach · episode", {
+        fontSize: "10px",
+        color: "#f2c879",
+        fontFamily: '"Courier New", monospace',
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(5);
+
+    this.breachHint = this.add
+      .text(x, y - 38, episodeDone ? "[E] Revisit the frame" : "[E] Enter the Third Signal", {
+        fontSize: "10px",
+        color: "#f2c879",
+        fontFamily: '"Courier New", monospace',
+        backgroundColor: "#060d1a",
+        padding: { x: 5, y: 3 },
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(6)
+      .setAlpha(0);
+  }
+
+  private checkBreachProximity(): void {
+    const dist = Phaser.Math.Distance.Between(
+      this.player.sprite.x,
+      this.player.sprite.y,
+      this.breachX,
+      this.breachY,
+    );
+    const near = dist < 72;
+
+    if (near && !this.isNearBreach) {
+      this.tweens.add({ targets: this.breachHint, alpha: 1, duration: 200 });
+    } else if (!near && this.isNearBreach) {
+      this.tweens.add({ targets: this.breachHint, alpha: 0, duration: 200 });
+    }
+    this.isNearBreach = near;
+  }
+
   // ─── NPC ───────────────────────────────────────────────────────────────
 
   private buildNPC(persona: string): void {
+    const companion =
+      (this.registry.get(REGISTRY_KEYS.COMPANION_NAME) as string) ?? "your companion";
+    const episodeDone = Boolean(this.registry.get(REGISTRY_KEYS.EPISODE_COMPLETE));
     this.npc = new DialogNPC(
       this,
       {
         ...ARCHIVIST_NPC_CONFIG,
         x: 350,
         y: 380,
-        dialog: [
-          `${persona}, the GSMB stores 4 memories.`,
-          "Approach the Validation Terminal.",
-          "Choose POC or FOC to test a claim.",
-          "POC = passes all 3 pipeline stages.",
-        ],
+        dialog: episodeDone
+          ? [
+              `${persona}, the Third Signal receipt is filed.`,
+              `${companion} still knows what you chose in the frame.`,
+              "Open the Consequence Journal when you leave the city.",
+              "Validation Terminal remains for POC-vs-FOC practice.",
+            ]
+          : [
+              `${persona}, a breach packet is waiting.`,
+              `Walk with ${companion} to the amber Signal Breach node.`,
+              "One choice will leave a receipt the world can show later.",
+              "The Validation Terminal is still here for claim practice.",
+            ],
       },
       () => ({
         x: this.player.sprite.x,
         y: this.player.sprite.y,
-      })
+      }),
     );
     this.npc.create();
   }
@@ -346,7 +429,7 @@ export class MemoryDistrictScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 12,
-        "Arrow keys / WASD · [E] Interact · Walk to terminal to validate a claim",
+        "WASD · [E] Interact · Amber node = Third Signal episode · Cyan = validation",
         {
           fontSize: "10px",
           color: "#1d4ed8",
@@ -356,6 +439,8 @@ export class MemoryDistrictScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(51);
+
+    attachHeartbeatLine(this, this.registry.get(REGISTRY_KEYS.LAST_WORLD_RECEIPT));
   }
 
   // ─── Camera ───────────────────────────────────────────────────────────

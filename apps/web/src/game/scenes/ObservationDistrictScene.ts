@@ -11,6 +11,7 @@ import {
   type ObservationRoomSpec,
 } from "../district-rooms";
 import { fadeToIfLive, sceneIsLive } from "../scene-lifecycle";
+import { attachHeartbeatLine } from "../hud/OrchestrationRibbon";
 
 /**
  * Shared walkable room for admitted districts that expose a live API board.
@@ -212,5 +213,7 @@ export class ObservationDistrictScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(51);
+
+    attachHeartbeatLine(this, this.registry.get(REGISTRY_KEYS.LAST_WORLD_RECEIPT));
   }
 }

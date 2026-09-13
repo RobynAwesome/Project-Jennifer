@@ -25,6 +25,10 @@ export class PersonaSelectScene extends Phaser.Scene {
     this.buildCards(width, height);
     this.buildBackLink(width, height);
     restartSceneOnResize(this);
+    const first = PERSONA_CONFIGS[0];
+    if (first) {
+      this.input.keyboard?.once("keydown-ENTER", () => this.selectPersona(first.id));
+    }
     this.cameras.main.fadeIn(400, 0, 0, 0);
   }
 

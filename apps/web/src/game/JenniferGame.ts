@@ -8,6 +8,7 @@ import { MemoryDistrictScene } from "./scenes/MemoryDistrictScene";
 import { TelemetryTowerScene } from "./scenes/TelemetryTowerScene";
 import { ObservationDistrictScene } from "./scenes/ObservationDistrictScene";
 import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
+import { ThirdSignalEpisodeScene } from "./scenes/ThirdSignalEpisodeScene";
 import { KPGS_THREE_HOLD } from "./kpgs-three-hold";
 
 /**
@@ -50,6 +51,7 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       TelemetryTowerScene,
       ObservationDistrictScene,
       ValidationDemoScene,
+      ThirdSignalEpisodeScene,
     ],
   });
 
