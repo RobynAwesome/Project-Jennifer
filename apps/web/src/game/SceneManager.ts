@@ -14,10 +14,17 @@ export const SCENE_KEYS = {
   COMPANION_SELECT: "CompanionSelect",
   GOVERNANCE_HALL: "GovernanceHall",
   MEMORY_DISTRICT: "MemoryDistrict",
+  TELEMETRY_TOWER: "TelemetryTower",
   VALIDATION_DEMO: "ValidationDemo",
 } as const;
 
 export type SceneKey = (typeof SCENE_KEYS)[keyof typeof SCENE_KEYS];
+
+/** Only districts with an admitted Phaser scene belong here. */
+export const DISTRICT_SCENE_KEYS: Record<string, SceneKey> = {
+  "memory-district": SCENE_KEYS.MEMORY_DISTRICT,
+  "telemetry-tower": SCENE_KEYS.TELEMETRY_TOWER,
+};
 
 export class SceneManager {
   constructor(private readonly scene: Phaser.Scene) {}

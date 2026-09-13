@@ -120,6 +120,11 @@ export {
   runWorldEventHeartbeat,
   validateStructuredWorldEvent,
 } from "./world-event-heartbeat.js";
+export {
+  createDistrictEnterEvent,
+  createDistrictEnterPorts,
+  parseDistrictName,
+} from "./world-event-district-enter.js";
 export type {
   CDPCandidate,
   CCPSelection,

@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { SCENE_KEYS } from "../SceneManager";
 import { ASSET_MANIFEST, PALETTE } from "../AssetManifest";
 import type { AssetDefinition } from "../AssetManifest";

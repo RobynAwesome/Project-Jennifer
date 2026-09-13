@@ -4,9 +4,14 @@ import {
   DistrictManager,
   ForgeRoleEngine,
   PersonaManager,
+  createDistrictEnterEvent,
+  createDistrictEnterPorts,
+  parseDistrictName,
+  runWorldEventHeartbeat,
 } from "@jennifer/runtime";
 import {
   FORGE_CLAIM_STAGES,
+  districtHasPlayableScene,
   isCompanionId,
   type CompanionRelationshipLane,
   type ForgeBootstrapInput,
@@ -37,7 +42,13 @@ const VALID_COMPANION_LANES: CompanionRelationshipLane[] = [
 ];
 
 router.get("/districts", (_req, res) => {
-  res.json({ districts: districtManager.getAllDistricts() });
+  res.json({
+    districts: districtManager.getAllDistricts().map((district) => ({
+      ...district,
+      playableScene: districtHasPlayableScene(district.name),
+    })),
+    sourceMode: "in-memory",
+  });
 });
 
 router.get("/districts/:name", (req, res) => {
@@ -47,6 +58,49 @@ router.get("/districts/:name", (req, res) => {
     return;
   }
   res.json({ district });
+});
+
+router.post("/world-events", async (req, res) => {
+  const body = req.body as {
+    eventType?: string;
+    actorId?: string;
+    district?: string;
+  };
+
+  if (body.eventType !== "district_entered") {
+    res.status(400).json({
+      error: "eventType must be district_entered",
+    });
+    return;
+  }
+
+  const district = parseDistrictName(body.district);
+  if (!district) {
+    res.status(400).json({ error: "district must be a governed DistrictName" });
+    return;
+  }
+
+  const actorId = body.actorId?.trim();
+  if (!actorId) {
+    res.status(400).json({ error: "actorId is required" });
+    return;
+  }
+
+  const result = await runWorldEventHeartbeat(
+    createDistrictEnterEvent({
+      eventId: `district-enter-${district}-${Date.now()}`,
+      actorId,
+      district,
+    }),
+    createDistrictEnterPorts(districtManager),
+  );
+
+  res.status(result.receipt.status === "EXECUTED" ? 201 : 200).json({
+    ...result,
+    district: districtManager.getDistrict(district),
+    playableScene: districtHasPlayableScene(district),
+    sourceMode: "in-memory",
+  });
 });
 
 router.get("/personas", (_req, res) => {

@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import {
   COMPANION_CATALOG,
   generateId,

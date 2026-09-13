@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { generateId } from "@jennifer/shared";
 import { PALETTE } from "../AssetManifest";
 import { PERSONA_CONFIGS, REGISTRY_KEYS, type GamePersona } from "../registry";

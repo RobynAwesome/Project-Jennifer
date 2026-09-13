@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
 import { REGISTRY_KEYS } from "../registry";
 import { TEXTURE_KEYS, PALETTE } from "../AssetManifest";

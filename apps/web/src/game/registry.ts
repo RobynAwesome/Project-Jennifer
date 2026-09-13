@@ -30,6 +30,8 @@ export const REGISTRY_KEYS = {
   MISSION_COMPLETE: "jennifer.game.missionComplete",
   /** How many memory entries have been stored during this session */
   MEMORY_ENTRY_COUNT: "jennifer.game.memoryEntryCount",
+  /** Last world-event heartbeat receipt serialised as JSON */
+  LAST_WORLD_RECEIPT: "jennifer.game.lastWorldReceipt",
 } as const;
 
 export type RegistryKey = (typeof REGISTRY_KEYS)[keyof typeof REGISTRY_KEYS];

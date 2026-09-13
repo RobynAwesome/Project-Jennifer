@@ -1,10 +1,11 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { BootScene } from "./scenes/BootScene";
 import { StartMenuScene } from "./scenes/StartMenuScene";
 import { PersonaSelectScene } from "./scenes/PersonaSelectScene";
 import { CompanionSelectScene } from "./scenes/CompanionSelectScene";
 import { GovernanceHallScene } from "./scenes/GovernanceHallScene";
 import { MemoryDistrictScene } from "./scenes/MemoryDistrictScene";
+import { TelemetryTowerScene } from "./scenes/TelemetryTowerScene";
 import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
 
 /**
@@ -40,6 +41,7 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       CompanionSelectScene,
       GovernanceHallScene,
       MemoryDistrictScene,
+      TelemetryTowerScene,
       ValidationDemoScene,
     ],
   });

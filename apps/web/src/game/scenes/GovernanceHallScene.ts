@@ -1,11 +1,13 @@
-import Phaser from "phaser";
-import { SCENE_KEYS, SceneManager } from "../SceneManager";
+import Phaser from "@/game/phaser-runtime";
+import { districtHasPlayableScene, isDistrictName } from "@jennifer/shared";
+import { DISTRICT_SCENE_KEYS, SCENE_KEYS, SceneManager } from "../SceneManager";
 import { REGISTRY_KEYS } from "../registry";
 import { PALETTE } from "../AssetManifest";
 import { Player } from "../entities/Player";
 import { DistrictPortal } from "../entities/DistrictPortal";
 import type { DistrictPortalConfig } from "../entities/DistrictPortal";
 import { DialogNPC, GUIDE_NPC_CONFIG } from "../entities/DialogNPC";
+import { WorldBridge } from "../bridge/WorldBridge";
 
 // ─── World dimensions ────────────────────────────────────────────────────────
 
@@ -14,20 +16,21 @@ const WORLD_H = 1200;
 
 // ─── District portal layout ───────────────────────────────────────────────────
 
-const PORTAL_CONFIGS: DistrictPortalConfig[] = [
-  // Row 1
-  { id: "memory-district",               displayName: "Memory District",              emoji: "🧠", x: 280,  y: 280,  status: "active"      },
-  { id: "telemetry-tower",               displayName: "Telemetry Tower",              emoji: "📡", x: 640,  y: 240,  status: "coming-soon" },
-  { id: "crisis-connect-hq",             displayName: "Crisis Connect HQ",            emoji: "🆘", x: 1000, y: 280,  status: "coming-soon" },
-  { id: "collective-ingress-observatory",displayName: "Collective Ingress",           emoji: "🌍", x: 1320, y: 240,  status: "coming-soon" },
-  // Row 2
-  { id: "hue-institute",                 displayName: "HUE Institute",                emoji: "💙", x: 280,  y: 600,  status: "coming-soon" },
-  { id: "financial-exchange",            displayName: "Financial Exchange",           emoji: "💹", x: 640,  y: 640,  status: "coming-soon" },
-  { id: "training-grounds",              displayName: "Training Grounds",             emoji: "⚔️", x: 1000, y: 600,  status: "coming-soon" },
-  { id: "knowledge-library",             displayName: "Knowledge Library",            emoji: "📚", x: 1320, y: 640,  status: "coming-soon" },
-  // Row 3
-  { id: "agent-workshop",                displayName: "Agent Workshop",               emoji: "🤖", x: 800,  y: 960,  status: "coming-soon" },
+const PORTAL_LAYOUT: Array<Omit<DistrictPortalConfig, "status" | "onEnter">> = [
+  { id: "memory-district", displayName: "Memory District", emoji: "🧠", x: 280, y: 280 },
+  { id: "telemetry-tower", displayName: "Telemetry Tower", emoji: "📡", x: 640, y: 240 },
+  { id: "crisis-connect-hq", displayName: "Crisis Connect HQ", emoji: "🆘", x: 1000, y: 280 },
+  { id: "collective-ingress-observatory", displayName: "Collective Ingress", emoji: "🌍", x: 1320, y: 240 },
+  { id: "hue-institute", displayName: "HUE Institute", emoji: "💙", x: 280, y: 600 },
+  { id: "financial-exchange", displayName: "Financial Exchange", emoji: "💹", x: 640, y: 640 },
+  { id: "training-grounds", displayName: "Training Grounds", emoji: "⚔️", x: 1000, y: 600 },
+  { id: "knowledge-library", displayName: "Knowledge Library", emoji: "📚", x: 1320, y: 640 },
+  { id: "agent-workshop", displayName: "Agent Workshop", emoji: "🤖", x: 800, y: 960 },
 ];
+
+function portalStatus(id: string): DistrictPortalConfig["status"] {
+  return isDistrictName(id) && districtHasPlayableScene(id) ? "active" : "coming-soon";
+}
 
 /**
  * GovernanceHallScene – the central hub of Jennifer City.
@@ -36,12 +39,13 @@ const PORTAL_CONFIGS: DistrictPortalConfig[] = [
  *   - Top-down exploration with Arcade Physics
  *   - Player spawns at world centre
  *   - Camera follows the player (lerp)
- *   - Nine district portals; Memory District is the only active one
+ *   - Nine district portals; Memory District and Telemetry Tower are playable
  *   - One NPC guide
  *   - Fixed-to-viewport HUD showing persona, district, interaction hint
  */
 export class GovernanceHallScene extends Phaser.Scene {
   private sceneManager!: SceneManager;
+  private worldBridge = new WorldBridge();
   private player!: Player;
   private portals: DistrictPortal[] = [];
   private npcs: DialogNPC[] = [];
@@ -154,14 +158,18 @@ export class GovernanceHallScene extends Phaser.Scene {
   }
 
   private buildPortals(): void {
-    this.portals = PORTAL_CONFIGS.map((cfg) => {
+    this.portals = PORTAL_LAYOUT.map((cfg) => {
+      const status = portalStatus(cfg.id);
       const portal = new DistrictPortal(
         this,
         {
           ...cfg,
+          status,
           onEnter:
-            cfg.status === "active"
-              ? () => this.enterDistrict(cfg.id)
+            status === "active"
+              ? () => {
+                  void this.enterDistrict(cfg.id);
+                }
               : undefined,
         },
         () => ({
@@ -183,8 +191,8 @@ export class GovernanceHallScene extends Phaser.Scene {
         y: WORLD_H / 2,
         dialog: [
           `Welcome, ${persona}!`,
-          "The Memory District portal is to the north-west.",
-          "Walk close and press [E] to enter.",
+          "Memory District is north-west. Telemetry Tower is north.",
+          "Walk close and press [E] to enter an open portal.",
           "Governance before Intelligence.",
         ],
       },
@@ -273,12 +281,27 @@ export class GovernanceHallScene extends Phaser.Scene {
 
   // ─── Transitions ─────────────────────────────────────────────────────────
 
-  private enterDistrict(districtId: string): void {
-    if (districtId === "memory-district") {
-      this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once("camerafadeoutcomplete", () => {
-        this.sceneManager.goTo(SCENE_KEYS.MEMORY_DISTRICT);
-      });
+  private async enterDistrict(districtId: string): Promise<void> {
+    if (!isDistrictName(districtId) || !districtHasPlayableScene(districtId)) {
+      return;
     }
+
+    const actorId =
+      (this.registry.get(REGISTRY_KEYS.PLAYER_NAME) as string) ?? "player";
+    const receipt = await this.worldBridge.enterDistrict(actorId, districtId);
+    this.registry.set(REGISTRY_KEYS.LAST_WORLD_RECEIPT, JSON.stringify(receipt));
+    this.hudHint.setText(
+      `${receipt.status} · ${receipt.sourceMode} · ${receipt.summary}`,
+    );
+
+    const sceneKey = DISTRICT_SCENE_KEYS[districtId];
+    if (!sceneKey) {
+      return;
+    }
+
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once("camerafadeoutcomplete", () => {
+      this.sceneManager.goTo(sceneKey);
+    });
   }
 }

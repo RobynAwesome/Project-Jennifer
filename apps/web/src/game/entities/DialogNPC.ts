@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "@/game/phaser-runtime";
 import { GameEntity, PingPongPatrolComponent } from "./Entity";
 import { PALETTE } from "../AssetManifest";
 
@@ -143,11 +143,23 @@ export const GUIDE_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
   role: "City Guide",
   dialog: [
     "Welcome to Jennifer City.",
-    "Head to the Memory District portal.",
-    "Walk close and press [E] to enter.",
-    "Governance before Intelligence.",
+    "Two rooms are real: Memory District and Telemetry Tower.",
+    "The other portals stay coming-soon until a scene exists.",
+    "Walk close and press [E] to enter a live room.",
   ],
   patrolRange: 50,
+};
+
+export const OBSERVER_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
+  textureKey: TEXTURE_KEYS.NPC_GUIDE,
+  name: "Sable",
+  role: "Signal Observer",
+  dialog: [
+    "The tower reads. It does not rule.",
+    "A live number is not a memory receipt.",
+    "Ask the board what the API actually said.",
+  ],
+  patrolRange: 36,
 };
 
 export const ARCHIVIST_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
