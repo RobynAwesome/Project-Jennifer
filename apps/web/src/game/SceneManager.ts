@@ -18,6 +18,7 @@ export const SCENE_KEYS = {
   OBSERVATION_DISTRICT: "ObservationDistrict",
   VALIDATION_DEMO: "ValidationDemo",
   THIRD_SIGNAL_EPISODE: "ThirdSignalEpisode",
+  KPGS_THREE_CLASSROOM: "KpgsThreeClassroom",
 } as const;
 
 export type SceneKey = (typeof SCENE_KEYS)[keyof typeof SCENE_KEYS];

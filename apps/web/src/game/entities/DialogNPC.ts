@@ -157,9 +157,32 @@ export const OBSERVER_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
   dialog: [
     "The tower reads. It does not rule.",
     "A live number is not a memory receipt.",
+    "Towers is teaching the KPGSthree classroom through that door.",
     "Ask the board what the API actually said.",
   ],
   patrolRange: 36,
+};
+
+export const TOWERS_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
+  textureKey: TEXTURE_KEYS.NPC_ARCHIVIST,
+  name: "Towers",
+  role: "Teacher",
+  dialog: [
+    "Walk foundation, columns, beams, roof.",
+    "Those names are the pavilion handoff. Not a second renderer.",
+  ],
+  patrolRange: 28,
+};
+
+export const KAGE_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
+  textureKey: TEXTURE_KEYS.NPC_GUIDE,
+  name: "Kage",
+  role: "Fellow renter",
+  dialog: [
+    "Hold the second WebGL root.",
+    "We complete the room. We do not steal the city renderer.",
+  ],
+  patrolRange: 24,
 };
 
 export const ARCHIVIST_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {

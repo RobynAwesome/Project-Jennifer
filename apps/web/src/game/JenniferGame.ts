@@ -9,6 +9,7 @@ import { TelemetryTowerScene } from "./scenes/TelemetryTowerScene";
 import { ObservationDistrictScene } from "./scenes/ObservationDistrictScene";
 import { ValidationDemoScene } from "./scenes/ValidationDemoScene";
 import { ThirdSignalEpisodeScene } from "./scenes/ThirdSignalEpisodeScene";
+import { KpgsThreeClassroomScene } from "./scenes/KpgsThreeClassroomScene";
 import { KPGS_THREE_HOLD } from "./kpgs-three-hold";
 
 /**
@@ -52,6 +53,7 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       ObservationDistrictScene,
       ValidationDemoScene,
       ThirdSignalEpisodeScene,
+      KpgsThreeClassroomScene,
     ],
   });
 
@@ -60,12 +62,14 @@ export function createJenniferGame(parentId: string): Phaser.Game {
       __JENNIFER_CITY__?: {
         renderer: "phaser";
         kpgsThree: typeof KPGS_THREE_HOLD;
+        game: Phaser.Game;
         scale: () => { width: number; height: number };
       };
     }
   ).__JENNIFER_CITY__ = {
     renderer: "phaser",
     kpgsThree: KPGS_THREE_HOLD,
+    game,
     scale: () => ({ width: game.scale.width, height: game.scale.height }),
   };
 

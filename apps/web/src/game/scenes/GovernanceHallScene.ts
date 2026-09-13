@@ -7,6 +7,8 @@ import { Player } from "../entities/Player";
 import { DistrictPortal } from "../entities/DistrictPortal";
 import type { DistrictPortalConfig } from "../entities/DistrictPortal";
 import { DialogNPC, GUIDE_NPC_CONFIG } from "../entities/DialogNPC";
+import { CompanionPresence } from "../entities/CompanionPresence";
+import { openConsequenceJournal } from "../open-consequence-journal";
 import { WorldBridge } from "../bridge/WorldBridge";
 import { fadeToIfLive, sceneIsLive } from "../scene-lifecycle";
 import {
@@ -68,6 +70,7 @@ export class GovernanceHallScene extends Phaser.Scene {
   private hudHint!: Phaser.GameObjects.Text;
   private ribbon!: OrchestrationRibbon;
   private entering = false;
+  private companion?: CompanionPresence;
 
   constructor() {
     super({ key: SCENE_KEYS.GOVERNANCE_HALL });
@@ -88,7 +91,13 @@ export class GovernanceHallScene extends Phaser.Scene {
     this.buildPortals();
     this.buildNPCs(persona);
     this.buildPlayer(persona);
+    this.companion = new CompanionPresence(this, () => ({
+      x: this.player.sprite.x,
+      y: this.player.sprite.y,
+    }));
+    this.companion.create(this.player.sprite.x - 36, this.player.sprite.y + 28);
     this.buildHUD(persona);
+    this.input.keyboard?.on("keydown-J", () => openConsequenceJournal());
     this.setupCamera();
     this.scale.on("resize", this.fitHallCamera, this);
     this.events.once("shutdown", () => {
@@ -112,6 +121,7 @@ export class GovernanceHallScene extends Phaser.Scene {
     this.player.update(delta);
     for (const portal of this.portals) portal.update(delta);
     for (const npc of this.npcs) npc.update(delta);
+    this.companion?.update();
   }
 
   // ─── World rendering ────────────────────────────────────────────────────
@@ -225,7 +235,7 @@ export class GovernanceHallScene extends Phaser.Scene {
         dialog: [
           `Welcome, ${persona}.`,
           "Start in Memory District — the amber Signal Breach is the love loop.",
-          "Choose with your companion. Come back: the receipt stays.",
+          "Your companion walks with you. J opens the consequence journal.",
           "Other portals are observation boards. They are not the whole game.",
         ],
       },
@@ -294,7 +304,7 @@ export class GovernanceHallScene extends Phaser.Scene {
     botBar.setStrokeStyle(1, PALETTE.BORDER);
 
     this.hudHint = this.add
-      .text(width / 2, height - 12, "1-9 enter a portal · WASD walk · [E] enter when close", {
+      .text(width / 2, height - 12, "1-9 enter a portal · WASD · [E] enter · J journal", {
         fontSize: "10px",
         color: "#4b5563",
         fontFamily: '"Courier New", monospace',

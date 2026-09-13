@@ -14,11 +14,15 @@ const WORLD_H = 700;
 /**
  * Telemetry Tower – expose live API signals. Observation only.
  */
+const CLASSROOM_DOOR = { x: 720, y: 480 };
+
 export class TelemetryTowerScene extends Phaser.Scene {
   private sceneManager!: SceneManager;
   private player!: Player;
   private npc!: DialogNPC;
   private boardText!: Phaser.GameObjects.Text;
+  private classroomHint!: Phaser.GameObjects.Text;
+  private nearClassroom = false;
   private telemetryBridge = new TelemetryBridge();
 
   constructor() {
@@ -33,10 +37,15 @@ export class TelemetryTowerScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H);
     this.buildWorld();
     this.buildSignalBoard();
+    this.buildClassroomDoor();
     this.buildNPC(persona);
     this.buildPlayer(persona);
     this.buildHUD(persona);
     this.setupCamera();
+    this.events.on("player:interact", this.handleClassroomInteract, this);
+    this.events.once("shutdown", () => {
+      this.events.off("player:interact", this.handleClassroomInteract, this);
+    });
     void this.refreshBoard();
     this.cameras.main.fadeIn(400, 0, 0, 0);
   }
@@ -44,6 +53,7 @@ export class TelemetryTowerScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     this.player.update(delta);
     this.npc.update(delta);
+    this.checkClassroomProximity();
   }
 
   private buildWorld(): void {
@@ -104,6 +114,70 @@ export class TelemetryTowerScene extends Phaser.Scene {
     this.boardText.setText(formatBoard(board));
   }
 
+  private buildClassroomDoor(): void {
+    const door = this.add
+      .rectangle(CLASSROOM_DOOR.x, CLASSROOM_DOOR.y, 130, 90, 0x163024, 0.95)
+      .setStrokeStyle(2, PALETTE.EMERALD, 0.6)
+      .setDepth(4)
+      .setInteractive({ useHandCursor: true });
+    door.on("pointerdown", () => this.enterClassroom());
+    this.add
+      .text(CLASSROOM_DOOR.x, CLASSROOM_DOOR.y - 8, "CLASSROOM", {
+        fontSize: "11px",
+        color: "#34d399",
+        fontFamily: '"Courier New", monospace',
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
+    this.add
+      .text(CLASSROOM_DOOR.x, CLASSROOM_DOOR.y + 12, "KPGSthree", {
+        fontSize: "10px",
+        color: "#6ee7b7",
+        fontFamily: '"Courier New", monospace',
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
+
+    this.classroomHint = this.add
+      .text(CLASSROOM_DOOR.x, CLASSROOM_DOOR.y - 58, "[E] Towers is teaching", {
+        fontSize: "10px",
+        color: "#6ee7b7",
+        fontFamily: '"Courier New", monospace',
+        backgroundColor: "#120c08",
+        padding: { x: 5, y: 3 },
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(6)
+      .setAlpha(0);
+  }
+
+  private checkClassroomProximity(): void {
+    const dist = Phaser.Math.Distance.Between(
+      this.player.sprite.x,
+      this.player.sprite.y,
+      CLASSROOM_DOOR.x,
+      CLASSROOM_DOOR.y,
+    );
+    const near = dist < 72;
+    if (near && !this.nearClassroom) {
+      this.tweens.add({ targets: this.classroomHint, alpha: 1, duration: 200 });
+    } else if (!near && this.nearClassroom) {
+      this.tweens.add({ targets: this.classroomHint, alpha: 0, duration: 200 });
+    }
+    this.nearClassroom = near;
+  }
+
+  private enterClassroom(): void {
+    fadeToIfLive(this, () => {
+      this.sceneManager.goTo(SCENE_KEYS.KPGS_THREE_CLASSROOM);
+    });
+  }
+
+  private handleClassroomInteract(): void {
+    if (!this.nearClassroom) return;
+    this.enterClassroom();
+  }
+
   private buildNPC(persona: string): void {
     this.npc = new DialogNPC(
       this,
@@ -115,6 +189,7 @@ export class TelemetryTowerScene extends Phaser.Scene {
           `${persona}, this tower watches the runtime.`,
           "Numbers here are observations.",
           "They do not become canon because they appeared.",
+          "Towers is teaching the KPGSthree classroom through that door.",
           "Return to the Hall when you have seen enough.",
         ],
       },
@@ -183,7 +258,7 @@ export class TelemetryTowerScene extends Phaser.Scene {
       .setStrokeStyle(1, PALETTE.AMBER, 0.3);
 
     this.add
-      .text(width / 2, height - 12, "Arrow keys / WASD · [E] talk to the observer", {
+      .text(width / 2, height - 12, "WASD · [E] talk or enter Towers' classroom", {
         fontSize: "10px",
         color: "#b45309",
         fontFamily: '"Courier New", monospace',

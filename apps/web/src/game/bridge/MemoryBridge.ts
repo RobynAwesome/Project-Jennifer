@@ -70,6 +70,28 @@ export class MemoryBridge {
     return this.entries.size;
   }
 
+  /**
+   * Session Third Signal stamp. Labelled local-experiment — not Memory Receipt
+   * admission and not GSMB canon.
+   */
+  admitSessionEpisode(input: {
+    choice: string;
+    companionName: string;
+  }): MemoryEntry {
+    return this.store({
+      kind: "episodic",
+      subject: `session.third-signal.${input.choice}`,
+      content: `${input.companionName} still holds the Third Signal choice: ${input.choice}. sourceMode=local-experiment. Not Memory Receipt admission.`,
+      tags: ["third-signal", "local-experiment", "not-authoritative"],
+      confidence: 0.7,
+      importance: 1,
+      provenance: {
+        source: "session-registry",
+        authority: "local-experiment",
+      },
+    });
+  }
+
   // ─── Private ───────────────────────────────────────────────────────────────
 
   private seed(): void {

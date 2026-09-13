@@ -10,6 +10,7 @@ import { PALETTE } from "../AssetManifest";
 import { REGISTRY_KEYS } from "../registry";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
 import { restartSceneOnResize } from "../bind-scene-resize";
+import { openConsequenceJournal } from "../open-consequence-journal";
 
 type EpisodeChoice = "claim-the-frame" | "share-the-rescue" | "hold-and-ask";
 
@@ -124,7 +125,7 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const beat = this.beats()[this.beatIndex];
     if (!beat) {
-      void this.finishEpisode();
+      void this.finishEpisode("memory");
       return;
     }
 
@@ -146,8 +147,42 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
         );
       });
 
+      if (beat.kind === "aftermath") {
+        const toMemory = this.add
+          .text(width / 2, height - 110, "File and return to Memory District →", {
+            fontSize: "13px",
+            color: "#ffffff",
+            fontFamily: '"Courier New", monospace',
+            backgroundColor: "#312e81",
+            padding: { x: 16, y: 8 },
+          })
+          .setOrigin(0.5)
+          .setInteractive({ useHandCursor: true });
+        toMemory.on("pointerdown", () => {
+          if (this.locked) return;
+          void this.finishEpisode("memory");
+        });
+        const toJournal = this.add
+          .text(width / 2, height - 58, "Open Consequence Journal →", {
+            fontSize: "13px",
+            color: "#f2c879",
+            fontFamily: '"Courier New", monospace',
+            backgroundColor: "#1a1625",
+            padding: { x: 16, y: 8 },
+          })
+          .setOrigin(0.5)
+          .setInteractive({ useHandCursor: true });
+        toJournal.on("pointerdown", () => {
+          if (this.locked) return;
+          void this.finishEpisode("journal");
+        });
+        container.add(toMemory);
+        container.add(toJournal);
+        return;
+      }
+
       const next = this.add
-        .text(width / 2, height - 64, beat.kind === "aftermath" ? "Open journal path →" : "Continue →", {
+        .text(width / 2, height - 64, "Continue →", {
           fontSize: "14px",
           color: "#ffffff",
           fontFamily: '"Courier New", monospace',
@@ -216,7 +251,7 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
     });
   }
 
-  private async finishEpisode(): Promise<void> {
+  private async finishEpisode(next: "memory" | "journal" = "memory"): Promise<void> {
     if (this.locked) return;
     this.locked = true;
     const choice = this.choice ?? "hold-and-ask";
@@ -317,6 +352,10 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
 
     this.cameras.main.fadeOut(350, 0, 0, 0);
     this.cameras.main.once("camerafadeoutcomplete", () => {
+      if (next === "journal") {
+        openConsequenceJournal();
+        return;
+      }
       this.scene.stop();
       this.scene.start(SCENE_KEYS.MEMORY_DISTRICT);
     });
@@ -332,7 +371,7 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
         [
           "This breach already has a receipt.",
           `Your choice stands: ${choice.replace(/-/g, " ")}.`,
-          "Open /game/consequences to inspect the causal chain.",
+          "The journal path is live — do not only read this overlay.",
         ].join("\n"),
         {
           fontSize: "14px",
@@ -345,7 +384,7 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const back = this.add
-      .text(width / 2, height / 2 + 80, "← Return to Memory District", {
+      .text(width / 2, height / 2 + 72, "← Return to Memory District", {
         fontSize: "13px",
         color: "#a5b4fc",
         fontFamily: '"Courier New", monospace',
@@ -355,5 +394,14 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
     back.on("pointerdown", () => {
       this.sceneManager.closeOverlay(SCENE_KEYS.MEMORY_DISTRICT);
     });
+    const journal = this.add
+      .text(width / 2, height / 2 + 110, "Open Consequence Journal →", {
+        fontSize: "13px",
+        color: "#f2c879",
+        fontFamily: '"Courier New", monospace',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+    journal.on("pointerdown", () => openConsequenceJournal());
   }
 }

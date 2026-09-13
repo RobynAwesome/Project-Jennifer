@@ -44,6 +44,8 @@ export const REGISTRY_KEYS = {
   EPISODE_CHOICE: "jennifer.game.episodeChoice",
   /** Last episode consequence reveal id */
   EPISODE_REVEAL_ID: "jennifer.game.episodeRevealId",
+  /** KPGSthree classroom experiment receipt (local, not renderer admission) */
+  KPGS_THREE_CLASSROOM: "jennifer.game.kpgsThreeClassroom",
 } as const;
 
 export type RegistryKey = (typeof REGISTRY_KEYS)[keyof typeof REGISTRY_KEYS];
