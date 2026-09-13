@@ -12,7 +12,7 @@
 
 ### Vercel project (the playable URL)
 
-A repo-root `framework: nextjs` config will crash: there is no Next app at the repository root, so Vercel invokes an empty serverless function (`text/plain` 500, `FUNCTION_INVOCATION_FAILED`).
+A repo-root `framework: nextjs` config will crash: there is no Next app at the repository root, so Vercel invokes an empty serverless function (`text/plain` 500, `FUNCTION_INVOCATION_FAILED`). The current repo-root `vercel.json` is **static only** (the how-to page under `apps/api/public`) so a wrong root stops crashing instead of inventing a Next function.
 
 The Git-connected project (even if named `project-jennifer-api`) must use **Root Directory `apps/web`**.
 
