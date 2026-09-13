@@ -39,12 +39,18 @@ export default function PhaserCanvas() {
   return (
     <div
       ref={containerRef}
-      className="flex items-center justify-center bg-jennifer-dark"
-      style={{ minHeight: "100vh" }}
+      className="bg-jennifer-dark"
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100dvh",
+        overflow: "hidden",
+      }}
     >
       <div
         id="jennifer-phaser-game"
-        style={{ width: 800, height: 600, maxWidth: "100%", aspectRatio: "4/3" }}
+        style={{ width: "100%", height: "100%" }}
       />
     </div>
   );

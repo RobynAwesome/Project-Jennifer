@@ -1,0 +1,43 @@
+provider: nvidia
+model_id: nvidia/mistral-nemo-minitron-8b-8k-instruct
+execution: cloud
+
+capabilities:
+  reasoning: false
+  coding: false
+  multimodal: false
+  tool_use: false
+  structured_output: false
+  retrieval: false
+  long_context: false
+
+governance:
+  cag: required
+  rag: optional
+  rivm: conditional
+  receipts: required
+  memory_write: gated
+
+constraints:
+  data_egress: nvidia-cloud
+  offline: false
+  private_lane_allowed: false
+  notes:
+    - NGC personal key in .env.local only
+    - Fail-closed without NVIDIA_API_KEY
+    - Current wire receipt is HOLD_INVOKE_FORBIDDEN
+
+benchmarks:
+  extraction: null
+  planning: null
+  retrieval_grounding: null
+  coding: null
+  communication_attention: null
+
+metadata:
+  auto_route: false
+  invoke_state: HOLD
+  renter_id: nvidia:nvidia/mistral-nemo-minitron-8b-8k-instruct
+  base_url: https://integrate.api.nvidia.com/v1
+  verified_at: null
+  source: NGC developer program personal key

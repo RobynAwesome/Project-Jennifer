@@ -5,6 +5,7 @@ import { PALETTE } from "../AssetManifest";
 import { Player } from "../entities/Player";
 import { DialogNPC, OBSERVER_NPC_CONFIG } from "../entities/DialogNPC";
 import { TelemetryBridge, type TowerSignalBoard } from "../bridge/TelemetryBridge";
+import { fadeToIfLive, sceneIsLive } from "../scene-lifecycle";
 
 const WORLD_W = 900;
 const WORLD_H = 700;
@@ -98,6 +99,7 @@ export class TelemetryTowerScene extends Phaser.Scene {
 
   private async refreshBoard(): Promise<void> {
     const board = await this.telemetryBridge.readBoard();
+    if (!sceneIsLive(this) || !this.boardText.active) return;
     this.boardText.setText(formatBoard(board));
   }
 
@@ -167,8 +169,7 @@ export class TelemetryTowerScene extends Phaser.Scene {
     returnBtn.on("pointerover", () => returnBtn.setStyle({ color: "#6b7280" }));
     returnBtn.on("pointerout", () => returnBtn.setStyle({ color: "#374151" }));
     returnBtn.on("pointerdown", () => {
-      this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once("camerafadeoutcomplete", () => {
+      fadeToIfLive(this, () => {
         this.sceneManager.goTo(SCENE_KEYS.GOVERNANCE_HALL);
       });
     });

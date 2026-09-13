@@ -1,0 +1,44 @@
+# Exact runtime. Not auto-routed until a live chat/completions 200 is receipted.
+provider: nvidia
+model_id: nvidia/mistral-nemo-minitron-8b-8k-instruct
+execution: cloud
+
+capabilities:
+  reasoning: false
+  coding: false
+  multimodal: false
+  tool_use: false
+  structured_output: false
+  retrieval: false
+  long_context: false
+
+governance:
+  cag: required
+  rag: optional
+  rivm: conditional
+  receipts: required
+  memory_write: gated
+
+constraints:
+  data_egress: nvidia-cloud
+  offline: false
+  private_lane_allowed: false
+  notes:
+    - NGC org identity is not NIM invoke
+    - auto_route stays false until a 200 receipt
+    - Betterment path is bounded cloud renter, then optional self-hosted NIM
+
+benchmarks:
+  extraction: null
+  planning: null
+  retrieval_grounding: null
+  coding: null
+  communication_attention: null
+
+metadata:
+  auto_route: false
+  invoke_state: HOLD
+  verified_at: null
+  verified_by: null
+  renter_id: nvidia:nvidia/mistral-nemo-minitron-8b-8k-instruct
+  base_url: https://integrate.api.nvidia.com/v1

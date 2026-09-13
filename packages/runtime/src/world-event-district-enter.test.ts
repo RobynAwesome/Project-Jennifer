@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { DISTRICT_NAMES, districtHasPlayableScene } from "@jennifer/shared";
 import { DistrictManager } from "./jennifer-runtime.js";
 import { runWorldEventHeartbeat } from "./world-event-heartbeat.js";
 import {
@@ -25,29 +26,37 @@ test("playable district entry receipts a visit without inventing world weather",
   assert.equal(districts.getDistrict("memory-district")?.lastEvent, "entered:evt-enter-memory-001");
 });
 
-test("playable telemetry tower entry receipts a visit", async () => {
+test("every admitted district room receipts a visit", async () => {
   const districts = new DistrictManager();
-  const result = await runWorldEventHeartbeat(
-    createDistrictEnterEvent({
-      eventId: "evt-enter-tower-001",
-      actorId: "player-test",
-      district: "telemetry-tower",
-      occurredAt: "2026-09-13T06:00:00.000Z",
-    }),
-    createDistrictEnterPorts(districts),
-  );
+  const playable = DISTRICT_NAMES.filter(districtHasPlayableScene);
 
-  assert.equal(result.receipt.status, "EXECUTED");
-  assert.equal(districts.getDistrict("telemetry-tower")?.lastEvent, "entered:evt-enter-tower-001");
+  assert.equal(playable.length, 9);
+
+  for (const district of playable) {
+    const result = await runWorldEventHeartbeat(
+      createDistrictEnterEvent({
+        eventId: `evt-enter-${district}-001`,
+        actorId: "player-test",
+        district,
+        occurredAt: "2026-09-13T06:00:00.000Z",
+      }),
+      createDistrictEnterPorts(districts),
+    );
+    assert.equal(result.receipt.status, "EXECUTED", district);
+    assert.equal(
+      districts.getDistrict(district)?.lastEvent,
+      `entered:evt-enter-${district}-001`,
+    );
+  }
 });
 
-test("unimplemented district portals hold instead of mutating world state", async () => {
+test("the hall hub holds as a portal because it is already the hub scene", async () => {
   const districts = new DistrictManager();
   const result = await runWorldEventHeartbeat(
     createDistrictEnterEvent({
-      eventId: "evt-enter-hue-001",
+      eventId: "evt-enter-hall-001",
       actorId: "player-test",
-      district: "hue-institute",
+      district: "central-governance-hall",
       occurredAt: "2026-09-13T06:00:00.000Z",
     }),
     createDistrictEnterPorts(districts),
@@ -55,5 +64,5 @@ test("unimplemented district portals hold instead of mutating world state", asyn
 
   assert.equal(result.receipt.status, "HELD_BY_PKA");
   assert.deepEqual(result.receipt.epTrace, ["📍", "🔔"]);
-  assert.equal(districts.getDistrict("hue-institute")?.lastEvent, undefined);
+  assert.equal(districts.getDistrict("central-governance-hall")?.lastEvent, undefined);
 });

@@ -24,7 +24,7 @@ const PhaserCanvas = dynamic(
 
 export default function GamePage() {
   return (
-    <main className="relative bg-jennifer-dark">
+    <main className="relative h-screen overflow-hidden bg-jennifer-dark">
       <div className="pointer-events-none fixed inset-x-0 top-0 z-30 flex justify-end p-3 sm:p-4">
         <Link
           href="/game/consequences"

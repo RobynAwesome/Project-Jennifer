@@ -15,6 +15,7 @@ export const SCENE_KEYS = {
   GOVERNANCE_HALL: "GovernanceHall",
   MEMORY_DISTRICT: "MemoryDistrict",
   TELEMETRY_TOWER: "TelemetryTower",
+  OBSERVATION_DISTRICT: "ObservationDistrict",
   VALIDATION_DEMO: "ValidationDemo",
 } as const;
 
@@ -24,6 +25,13 @@ export type SceneKey = (typeof SCENE_KEYS)[keyof typeof SCENE_KEYS];
 export const DISTRICT_SCENE_KEYS: Record<string, SceneKey> = {
   "memory-district": SCENE_KEYS.MEMORY_DISTRICT,
   "telemetry-tower": SCENE_KEYS.TELEMETRY_TOWER,
+  "crisis-connect-hq": SCENE_KEYS.OBSERVATION_DISTRICT,
+  "collective-ingress-observatory": SCENE_KEYS.OBSERVATION_DISTRICT,
+  "hue-institute": SCENE_KEYS.OBSERVATION_DISTRICT,
+  "financial-exchange": SCENE_KEYS.OBSERVATION_DISTRICT,
+  "training-grounds": SCENE_KEYS.OBSERVATION_DISTRICT,
+  "knowledge-library": SCENE_KEYS.OBSERVATION_DISTRICT,
+  "agent-workshop": SCENE_KEYS.OBSERVATION_DISTRICT,
 };
 
 export class SceneManager {

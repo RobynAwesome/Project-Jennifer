@@ -11,6 +11,7 @@ import {
 import { PALETTE } from "../AssetManifest";
 import { REGISTRY_KEYS } from "../registry";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
+import { restartSceneOnResize } from "../bind-scene-resize";
 
 const DEFAULT_LANE: CompanionRelationshipLane = "co-builder";
 
@@ -58,6 +59,7 @@ export class CompanionSelectScene extends Phaser.Scene {
     this.buildHeader(width);
     this.buildCards(width);
     this.buildFooter(width, height);
+    restartSceneOnResize(this);
 
     this.cameras.main.fadeIn(350, 0, 0, 0);
   }

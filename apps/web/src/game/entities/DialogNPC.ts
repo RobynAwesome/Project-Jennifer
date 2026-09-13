@@ -143,9 +143,9 @@ export const GUIDE_NPC_CONFIG: Omit<DialogNPCConfig, "x" | "y"> = {
   role: "City Guide",
   dialog: [
     "Welcome to Jennifer City.",
-    "Two rooms are real: Memory District and Telemetry Tower.",
-    "The other portals stay coming-soon until a scene exists.",
-    "Walk close and press [E] to enter a live room.",
+    "Every portal opens. Boards read the API or stay empty.",
+    "Empty is honest. Do not invent weather.",
+    "Walk close and press [E] to enter.",
   ],
   patrolRange: 50,
 };

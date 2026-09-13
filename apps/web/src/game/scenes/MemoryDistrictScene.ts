@@ -1,5 +1,6 @@
 import Phaser from "@/game/phaser-runtime";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
+import { fadeToIfLive } from "../scene-lifecycle";
 import { REGISTRY_KEYS } from "../registry";
 import { TEXTURE_KEYS, PALETTE } from "../AssetManifest";
 import { Player } from "../entities/Player";
@@ -327,8 +328,7 @@ export class MemoryDistrictScene extends Phaser.Scene {
       returnBtn.setStyle({ color: "#374151" })
     );
     returnBtn.on("pointerdown", () => {
-      this.cameras.main.fadeOut(300, 0, 0, 0);
-      this.cameras.main.once("camerafadeoutcomplete", () => {
+      fadeToIfLive(this, () => {
         this.events.off("player:interact", this.handleTerminalInteract, this);
         this.sceneManager.goTo(SCENE_KEYS.GOVERNANCE_HALL);
       });

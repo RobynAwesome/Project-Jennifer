@@ -1,6 +1,7 @@
 import Phaser from "@/game/phaser-runtime";
 import { SCENE_KEYS, SceneManager } from "../SceneManager";
 import { PALETTE } from "../AssetManifest";
+import { restartSceneOnResize } from "../bind-scene-resize";
 
 /**
  * StartMenuScene – title screen.
@@ -25,6 +26,7 @@ export class StartMenuScene extends Phaser.Scene {
     this.drawBackground(width, height);
     this.drawGrid(width, height);
     this.buildUI(cx, cy, width);
+    restartSceneOnResize(this);
   }
 
   // ─── Private helpers ────────────────────────────────────────────────────

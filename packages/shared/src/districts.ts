@@ -14,21 +14,20 @@ export const DISTRICT_NAMES = [
 ] as const satisfies readonly DistrictName[];
 
 /**
- * Phaser scenes that currently exist. Defined districts stay visible as
- * coming-soon until a scene is admitted. Do not flip these to true to
- * decorate an empty room.
+ * Phaser scenes that currently exist. The hall is the hub, not a portal room.
+ * Observation rooms may show empty boards. Do not invent weather to fill them.
  */
 export const PLAYABLE_DISTRICT_SCENES: Readonly<Record<DistrictName, boolean>> = {
   "central-governance-hall": false,
   "memory-district": true,
   "telemetry-tower": true,
-  "crisis-connect-hq": false,
-  "collective-ingress-observatory": false,
-  "hue-institute": false,
-  "financial-exchange": false,
-  "training-grounds": false,
-  "knowledge-library": false,
-  "agent-workshop": false,
+  "crisis-connect-hq": true,
+  "collective-ingress-observatory": true,
+  "hue-institute": true,
+  "financial-exchange": true,
+  "training-grounds": true,
+  "knowledge-library": true,
+  "agent-workshop": true,
 };
 
 export function isDistrictName(value: string): value is DistrictName {

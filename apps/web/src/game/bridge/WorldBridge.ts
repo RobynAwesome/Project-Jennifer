@@ -12,6 +12,12 @@ export interface DistrictEnterReceiptView {
   playableScene: boolean;
   status: string;
   epTrace: readonly string[];
+  pkaDisposition?: string;
+  pkaState?: string;
+  kpgsStatus?: string;
+  kpgsAuthority?: string;
+  glmSummary?: string;
+  ccpReason?: string;
   summary: string;
 }
 
@@ -35,9 +41,12 @@ export class WorldBridge {
         playableScene: false,
         status: "BLOCKED_LOCAL",
         epTrace: [],
+        pkaDisposition: "BLOCK",
         summary: "Portal id is not a governed DistrictName.",
       };
     }
+
+    const trustedActorId = toTrustedActorId(actorId);
 
     try {
       const response = await fetch(`${this.apiBaseUrl}/api/runtime/world-events`, {
@@ -45,24 +54,43 @@ export class WorldBridge {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           eventType: "district_entered",
-          actorId,
+          actorId: trustedActorId,
           district: districtId,
         }),
       });
       const body = (await response.json()) as {
-        receipt?: { status?: string; epTrace?: string[]; execution?: { effectSummary?: string } };
+        receipt?: {
+          status?: string;
+          epTrace?: string[];
+          pka?: { disposition?: string; state?: string };
+          kpgs?: { status?: string; authority?: string };
+          glm?: { summary?: string };
+          ccp?: { reason?: string };
+          execution?: { effectSummary?: string };
+        };
         playableScene?: boolean;
       };
-      return {
+      const receipt = body.receipt;
+      const view: DistrictEnterReceiptView = {
         sourceMode: "in-memory",
         district: districtId,
         playableScene: body.playableScene === true,
-        status: body.receipt?.status ?? `HTTP_${response.status}`,
-        epTrace: body.receipt?.epTrace ?? [],
+        status: receipt?.status ?? `HTTP_${response.status}`,
+        epTrace: receipt?.epTrace ?? [],
+        pkaDisposition: receipt?.pka?.disposition,
+        pkaState: receipt?.pka?.state,
+        kpgsStatus: receipt?.kpgs?.status,
+        kpgsAuthority: receipt?.kpgs?.authority,
+        glmSummary: receipt?.glm?.summary,
+        ccpReason: receipt?.ccp?.reason,
         summary:
-          body.receipt?.execution?.effectSummary ??
-          `World heartbeat returned ${body.receipt?.status ?? response.status}.`,
+          receipt?.execution?.effectSummary ??
+          `World heartbeat returned ${receipt?.status ?? response.status}.`,
       };
+      if (view.status === "EXECUTED") {
+        void rememberVisit(this.apiBaseUrl, trustedActorId, districtId);
+      }
+      return view;
     } catch {
       return {
         sourceMode: "unreachable",
@@ -73,6 +101,43 @@ export class WorldBridge {
         summary: "Jennifer API unreachable. Scene travel is presentation only.",
       };
     }
+  }
+}
+
+function toTrustedActorId(raw: string): string {
+  const compact = raw
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^A-Za-z0-9._:-]/g, "")
+    .slice(0, 64);
+  return compact || "player";
+}
+
+async function rememberVisit(
+  apiBaseUrl: string,
+  actorId: string,
+  districtId: DistrictName,
+): Promise<void> {
+  try {
+    await fetch(`${apiBaseUrl}/api/memory/store`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        kind: "episodic",
+        subject: `district-visit:${districtId}`,
+        content: {
+          actorId,
+          district: districtId,
+          admission: "observed-gameplay",
+          note: "Visit memory is observation, not canon.",
+        },
+        tags: ["jennifer-city", "district-visit", "observation"],
+        confidence: 0.4,
+        importance: 0.2,
+      }),
+    });
+  } catch {
+    // Scene travel continues. A missed GSMB write is not a successful mutation.
   }
 }
 

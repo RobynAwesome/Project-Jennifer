@@ -10,8 +10,11 @@ import {
 
 import { errorHandler, telemetryMiddleware } from "./middleware/index.js";
 import { initializePersistence } from "./persistence.js";
+import { isAllowedBrowserOrigin } from "./zero-trust.js";
 import { crisisRouter } from "./routes/crisis.js";
 import { governanceRouter } from "./routes/governance.js";
+import { hueRouter } from "./routes/hue.js";
+import { ingressRouter } from "./routes/ingress.js";
 import { memoryRouter } from "./routes/memory.js";
 import { ncmpRouter } from "./routes/ncmp.js";
 import { createRelationshipAuthorityRouter } from "./routes/relationships.js";
@@ -19,7 +22,7 @@ import { runtimeRouter } from "./routes/runtime.js";
 
 const PORT = process.env.PORT ?? 3001;
 
-type HelmetFactory = () => RequestHandler;
+type HelmetFactory = (options?: Record<string, unknown>) => RequestHandler;
 
 // Helmet 7 is a CommonJS callable export. Under TypeScript 6 + NodeNext its
 // default import can be typed as a module namespace even though Node resolves
@@ -45,8 +48,23 @@ envMonitor.setMetadata("projectionMode", persistence.projectionMode);
 
 const app: Express = express();
 
-app.use(helmet());
-app.use(cors());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  }),
+);
+app.use(
+  cors({
+    origin(origin, callback) {
+      callback(null, isAllowedBrowserOrigin(origin));
+    },
+    credentials: false,
+    methods: ["GET", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Accept"],
+    maxAge: 600,
+  }),
+);
 app.use(express.json());
 app.use(telemetryMiddleware(telemetry));
 
@@ -78,6 +96,8 @@ app.get("/health", async (_req, res) => {
 app.use("/api/governance", governanceRouter);
 app.use("/api/memory", memoryRouter);
 app.use("/api/crisis", crisisRouter);
+app.use("/api/hue", hueRouter);
+app.use("/api/ingress", ingressRouter);
 
 // Relationship authority is mounted first so the canonical relationship paths
 // cannot fall through to the legacy runtime router.

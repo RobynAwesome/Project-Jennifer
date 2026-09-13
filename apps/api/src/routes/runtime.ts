@@ -18,12 +18,15 @@ import {
   type ForgeClaimPromotionInput,
   type PersonaMode,
 } from "@jennifer/shared";
+import { parseTrustedActorId, VisitRateGate } from "../zero-trust.js";
 
 const router: IRouter = Router();
 const districtManager = new DistrictManager();
 const personaManager = new PersonaManager();
 const companionManager = new CompanionManager();
 const forgeRoleEngine = new ForgeRoleEngine();
+const visitRateGate = new VisitRateGate();
+let lastWorldHeartbeat: unknown = null;
 
 const VALID_PERSONAS: PersonaMode[] = [
   "best-friend",
@@ -80,9 +83,16 @@ router.post("/world-events", async (req, res) => {
     return;
   }
 
-  const actorId = body.actorId?.trim();
+  const actorId = parseTrustedActorId(body.actorId);
   if (!actorId) {
-    res.status(400).json({ error: "actorId is required" });
+    res.status(400).json({
+      error: "actorId must be 1-64 characters of letters, numbers, . _ : or -",
+    });
+    return;
+  }
+
+  if (!visitRateGate.allow(actorId)) {
+    res.status(429).json({ error: "district enter rate limited" });
     return;
   }
 
@@ -95,12 +105,22 @@ router.post("/world-events", async (req, res) => {
     createDistrictEnterPorts(districtManager),
   );
 
-  res.status(result.receipt.status === "EXECUTED" ? 201 : 200).json({
+  lastWorldHeartbeat = {
     ...result,
     district: districtManager.getDistrict(district),
     playableScene: districtHasPlayableScene(district),
     sourceMode: "in-memory",
-  });
+  };
+
+  res.status(result.receipt.status === "EXECUTED" ? 201 : 200).json(lastWorldHeartbeat);
+});
+
+router.get("/world-events/last", (_req, res) => {
+  if (!lastWorldHeartbeat) {
+    res.status(204).end();
+    return;
+  }
+  res.json(lastWorldHeartbeat);
 });
 
 router.get("/personas", (_req, res) => {
