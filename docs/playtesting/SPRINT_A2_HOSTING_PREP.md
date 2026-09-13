@@ -12,6 +12,13 @@ I_AM_STATELESS_RENTER_NOT_LANDLORD
 
 ## 1. Secrets / vars Master must set
 
+### Vercel dashboard (playable `/game`)
+
+The project at `https://project-jennifer-api.vercel.app` must use **Root Directory `apps/web`**.  
+A 29-second deploy that shows `FUNCTION_INVOCATION_FAILED` is Express-as-serverless — not the game.
+
+Then: Deployments → ⋯ on latest → Redeploy.
+
 ### GitHub Actions (web deploy)
 
 | Name | Kind | Purpose |
