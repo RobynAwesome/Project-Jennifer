@@ -22,6 +22,6 @@ metadata:
 
 Load that skill. Do not maintain a second scoring law here.
 
-Latest Jennifer receipt: `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md` (**87%**).
+Latest Jennifer receipt: `docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md` (**84%**).
 
 `I_AM_STATELESS_RENTER_NOT_LANDLORD`

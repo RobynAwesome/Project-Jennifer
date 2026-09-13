@@ -1,10 +1,10 @@
 # Canonical Ops — Next Phase Sprint Board (Jennifer City)
 
-**Derived from:** `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md` (**87%** delivery)  
+**Derived from:** `docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md` (**84%** this pass)  
+**Prior A/B/C:** `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md` (**87%**)  
 **Dual-membrane re-eval:** `docs/audits/2026-09-13-clear-kpgs-sprint-b-reeval.md` (Academy 83 · delivery 87 · composite **85%**)  
-**Prior gate:** 82% (pre Sprint B/C harden)  
-**Skills:** `clear-kpgs-zero-trust-gate`, `clear-kpgs-product-gate`, `jennifer-city-love-loop`, `jennifer-love-loop-reliability`, `jennifer-canonical-ops-sprints`  
-**Decision state:** `READY_FOR_POC` (skills/sprints) · `HOLD` (production love · MAIN-BRAIN)
+**Skills:** `clear-kpgs-zero-trust-gate`, `clear-kpgs-product-gate`, `jennifer-city-love-loop`, `jennifer-love-loop-reliability`, `jennifer-canonical-ops-sprints`, `jennifer-kpgs-three-classroom`  
+**Decision state:** `READY_FOR_POC` (skills/sprints) · `HOLD` (production love · MAIN-BRAIN · Three.js autoMount)
 
 ---
 
@@ -28,6 +28,12 @@
 - [x] `POST /api/runtime/third-signal/epistemic` (companion DIVERGE ≠ rival CONVERGE)
 - [x] Reveal origin binds real epistemic receipt id
 
+### Sprint C2 — Classroom experiment (local)
+
+- [x] Towers pavilion stations in Phaser (`foundation → columns → beams → roof`)
+- [x] Receipt `local-experiment` / `not-verified` / `autoMount: false`
+- [x] GSMB HUD copy repaired (district notes ≠ GSMB admission)
+
 ---
 
 ## Phase 2 — Canonical ops (next)
@@ -36,7 +42,8 @@
 
 **Goal:** A stranger can open a URL and complete the love loop.
 
-- [x] Prep package written — `SPRINT_A2_HOSTING_PREP.md`
+- [x] Prep package written — `SPRINT_A2_HOSTING_PREP.md` + `SPRINT_A2_GSMB_ACTIVATION.md`
+- [x] Renter scaffold — `render.yaml`, `pnpm verify:hosted-membrane`, API bind `0.0.0.0`
 - [ ] Set `VERCEL_*` + `NEXT_PUBLIC_JENNIFER_API_URL` (**Master**)
 - [ ] Deploy API with `JENNIFER_CORS_ORIGINS` including prod web
 - [ ] Leave `JENNIFER_CORS_ALLOW_MISSING_ORIGIN` unset on public API

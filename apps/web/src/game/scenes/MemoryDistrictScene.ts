@@ -70,7 +70,7 @@ export class MemoryDistrictScene extends Phaser.Scene {
     const companionName =
       (this.registry.get(REGISTRY_KEYS.COMPANION_NAME) as string) ?? "companion";
     if (typeof episodeChoice === "string" && episodeChoice) {
-      this.memoryBridge.admitSessionEpisode({
+      this.memoryBridge.stampSessionEpisode({
         choice: episodeChoice,
         companionName,
       });
@@ -156,7 +156,7 @@ export class MemoryDistrictScene extends Phaser.Scene {
     // Memory count display
     const count = this.memoryBridge.size();
     this.add
-      .text(WORLD_W / 2, WORLD_H - 72, `${count} memories stored in GSMB`, {
+      .text(WORLD_W / 2, WORLD_H - 72, `${count} local district notes · not GSMB admission`, {
         fontSize: "10px",
         color: "#1d4ed8",
         fontFamily: '"Courier New", monospace',

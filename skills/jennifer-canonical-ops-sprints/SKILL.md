@@ -40,7 +40,7 @@ SPRINT GOAL (one love metric)
 → PROMOTION RULE (what may enter README / Schematics / skills.md)
 ```
 
-Latest gate: `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md` (**87%** on-route). Phase 1 local membranes landed. Sprint A2 hosted URL remains Master-owned.
+Latest gate: `docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md` (**84%** on-route). Phase 1 local membranes + classroom experiment landed. Sprint A2 hosted URL remains Master-owned.
 
 ## Current admitted sequence (post 2026-09-13 Sprint A/B/C re-eval)
 
@@ -51,6 +51,7 @@ Latest gate: `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md`
 | A Hosted honesty (local half) | Scaffold + smoke PASS · URL HOLD | Sprint A continuity smoke |
 | B Reliability bowl | PASS | `smoke:love-loop-reliability` |
 | C Epistemic feel | PASS | Sprint C epistemic (DIVERGE≠CONVERGE) |
+| C2 Classroom experiment | PASS (Phaser only) | `kpgs-three-hold.ts` · autoMount HOLD |
 
 ### Phase 2 — Canonical ops (next)
 

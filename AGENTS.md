@@ -45,6 +45,7 @@ jennifer-companions-npcs
 jennifer-telemetry-storage
 jennifer-ncmp-mmao
 jennifer-game-web-api
+jennifer-kpgs-three-classroom
 jennifer-city-love-loop
 jennifer-love-loop-reliability
 clear-kpgs-product-gate

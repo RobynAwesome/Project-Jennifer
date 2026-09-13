@@ -53,7 +53,7 @@ current human instruction
 → kpgs-authority / zero-trust when mutation or hosting claims arise
 → clear-kpgs-zero-trust-gate for the scoring gate (`clear-kpgs-product-gate` is alias)
 → jennifer-love-loop-reliability when Continue / API-death work arises
-→ docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md for latest route score
+→ docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md for latest route score
 ```
 
 ## CLEAR membranes
@@ -65,7 +65,7 @@ Score both. Do not collapse them. Do not invent OpenAI product authority.
 | Academy C.L.E.A.R. (Stage 5) | Complete · Logical · Evidence · Audience · Relevant |
 | Delivery CLEAR (product gate) | Cost · Latency · Efficacy · Assurance · Reliability |
 
-Latest composite (2026-09-13 post Sprint A/B/C re-eval): **87%** — skills/sprints admitted; production love HOLD.
+Latest composite (2026-09-13 classroom + journal beat): **84%** — skills/sprints still admitted; production love HOLD. Prior A/B/C receipt was 87%.
 
 | Delivery letter | Ask |
 |---|---|
@@ -111,10 +111,11 @@ Learning artifacts are not automatic Schematics canon.
 
 ```text
 /game → persona → companion (API or local receipt)
-→ Governance Hall → Memory District
-→ amber Signal Breach → choice
+→ Governance Hall (chosen companion token follows)
+→ Memory District → amber Signal Breach → choice
 → /game/consequences (local continuity reveal)
 → reload /game → Continue
+→ Telemetry Tower door → Towers classroom (optional; autoMount HOLD)
 ```
 
 Combat, store, crypto, True One runtime, multiplayer: **HOLD** until hosted playtest retention exists.

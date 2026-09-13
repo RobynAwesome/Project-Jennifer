@@ -6,31 +6,31 @@
   },
   "humanDualMembrane": {
     "academy": {
-      "Complete": 82,
-      "Logical": 92,
-      "Evidence": 88,
-      "Audience": 74,
+      "Complete": 80,
+      "Logical": 90,
+      "Evidence": 78,
+      "Audience": 72,
       "Relevant": 92,
-      "mean": 86
+      "mean": 82
     },
     "delivery": {
-      "Cost": 92,
+      "Cost": 90,
       "Latency": 80,
-      "Efficacy": 90,
-      "Assurance": 90,
+      "Efficacy": 82,
+      "Assurance": 86,
       "Reliability": 88,
-      "mean": 88
+      "mean": 85
     },
-    "onRouteComposite": 87
+    "onRouteComposite": 84
   },
   "ceepProductGate": {
     "evaluator": "DualMembraneCLEAR-KPGS",
     "validation": "PASS",
-    "pocScore": 0.87,
+    "pocScore": 0.84,
     "ccpDecision": "Refine",
     "canonical": false,
-    "evaluationReceiptId": "29491f10-cdfc-456f-b025-019b8f0c3cfb",
-    "frameworkEvolutionReceiptId": "0849f8f1-1489-4a41-b7ff-15fd38d5674b",
+    "evaluationReceiptId": "0c8ffa79-2983-47ec-b5ee-d3bebd886d5a",
+    "frameworkEvolutionReceiptId": "0b2f81c0-bd43-4fe2-b9ff-d473a1358ef5",
     "focRisks": [
       {
         "category": "FandomOfConcept",

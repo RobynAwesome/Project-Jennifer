@@ -1,10 +1,11 @@
 # Introduction-to-MCP Evolution Candidate — CLEAR × Love-Loop Product Gate
 
-**Status:** `LEARNING_CANDIDATE` — not Schematics canon · **refreshed 2026-09-13 post Sprint A/B/C**  
+**Status:** `LEARNING_CANDIDATE` — not Schematics canon · **refreshed 2026-09-13 classroom + journal beat**  
 **Origin repo:** `RobynAwesome/Project-Jennifer`  
 **Classroom bind:** `Schematics/24-RTC Learning` (HOLD When You Love It + Bowl FEP 03)  
 **Constraint:** `I_AM_STATELESS_RENTER_NOT_LANDLORD`  
-**Latest Jennifer gate:** **87%** on-route — `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md`
+**Latest Jennifer gate:** **84%** on-route — `docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md`  
+**Prior A/B/C:** **87%** — `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md`
 
 ---
 
@@ -21,8 +22,9 @@ Sprint evidence since first candidate:
 | A (local) | Continuity + env scaffolding smokes |
 | B | localStorage-first Continue; API-death honesty |
 | C | Real `EpistemicDivergenceEngine` companion≠rival dispositions |
+| C2 | Towers pavilion classroom in Phaser; Three.js `autoMount` HOLD; GSMB copy repaired |
 
-Hosted stranger love remains **HOLD**.
+Hosted stranger love remains **HOLD**. Do not write MAIN-BRAIN from this candidate.
 
 ## Proposed portable protocol (candidate)
 
@@ -47,6 +49,7 @@ Portable skill now exists in Project Jennifer:
 - `skills/jennifer-love-loop-reliability/SKILL.md`
 - `skills/jennifer-city-love-loop/SKILL.md`
 - `skills/jennifer-canonical-ops-sprints/SKILL.md`
+- `skills/jennifer-kpgs-three-classroom/SKILL.md`
 
 ### Suggested Schematics home (after Master recognition)
 
@@ -76,7 +79,7 @@ Schematics/18-PROTOCOLS/CLEAR_KPGS_PRODUCT_GATE.md
 ## Dual-plane promotion checklist
 
 - [x] Project Jennifer skills registered (`skills.md`, `AGENTS.md`)
-- [x] Learning candidate refreshed with 87% receipt
+- [x] Learning candidate refreshed with 84% classroom receipt
 - [ ] Master recognition  
 - [ ] Classroom Learning-Session file if Master opens  
 - [ ] Pointer from MAIN-BRAIN or protocols index  

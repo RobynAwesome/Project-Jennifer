@@ -25,6 +25,9 @@ Workflow: `.github/workflows/deploy.yml` → Actions → Deploy → `deploy_web=
 
 ### API host (Fly / Railway / Render / VM)
 
+**Fast path:** root [`render.yaml`](../../render.yaml) + [`SPRINT_A2_GSMB_ACTIVATION.md`](SPRINT_A2_GSMB_ACTIVATION.md)  
+**Verify:** `pnpm verify:hosted-membrane` with `JENNIFER_API_URL` + `WEB_ORIGIN`
+
 | Name | Purpose |
 |---|---|
 | `NODE_ENV=production` | Enables empty-CORS fail-closed + Origin required |

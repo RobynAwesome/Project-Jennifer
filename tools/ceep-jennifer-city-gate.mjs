@@ -20,17 +20,17 @@ import {
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const academy = {
-  Complete: 82,
-  Logical: 92,
-  Evidence: 88,
-  Audience: 74,
+  Complete: 80,
+  Logical: 90,
+  Evidence: 78,
+  Audience: 72,
   Relevant: 92,
 };
 const delivery = {
-  Cost: 92,
+  Cost: 90,
   Latency: 80,
-  Efficacy: 90,
-  Assurance: 90,
+  Efficacy: 82,
+  Assurance: 86,
   Reliability: 88,
 };
 const academyMean =
@@ -106,6 +106,7 @@ const framework = {
     "docs/audits/2026-09-13-clear-kpgs-rtc-love-loop-evaluation.md",
     "docs/audits/2026-09-13-clear-kpgs-sprint-b-reeval.md",
     "docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md",
+    "docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md",
     "docs/playtesting/RECEIPT_2026-09-13_SPRINT_A_CONTINUITY_SMOKE.md",
     "docs/playtesting/RECEIPT_2026-09-13_SPRINT_B_RELIABILITY.md",
     "docs/playtesting/RECEIPT_2026-09-13_SPRINT_C_EPISTEMIC.md",

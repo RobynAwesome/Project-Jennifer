@@ -107,7 +107,7 @@ Current code: `apps/api/src/zero-trust.ts`, `apps/api/src/routes/game-continuity
 
 Write `docs/audits/YYYY-MM-DD-clear-kpgs-*.md` with both tables, FOCs, zero-trust state, and next admissible sprint.
 
-Latest Jennifer receipt: `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md` (**87%** on-route).  
-Prior: `docs/audits/2026-09-13-clear-kpgs-sprint-b-reeval.md`, `docs/audits/2026-09-13-clear-kpgs-rtc-love-loop-evaluation.md`.
+Latest Jennifer receipt: `docs/audits/2026-09-13-clear-kpgs-classroom-love-loop.md` (**84%** on-route; classroom + journal beat).  
+Prior: `docs/audits/2026-09-13-clear-kpgs-post-sprint-abc-reevaluation.md` (**87%**), `docs/audits/2026-09-13-clear-kpgs-sprint-b-reeval.md`, `docs/audits/2026-09-13-clear-kpgs-rtc-love-loop-evaluation.md`.
 
 Alias name (same law): `clear-kpgs-product-gate`.

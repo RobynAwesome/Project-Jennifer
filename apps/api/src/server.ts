@@ -22,7 +22,8 @@ import { createGameContinuityRouter } from "./routes/game-continuity.js";
 import { createThirdSignalEpisodeRouter } from "./routes/third-signal-episode.js";
 import { runtimeRouter } from "./routes/runtime.js";
 
-const PORT = process.env.PORT ?? 3001;
+const PORT = Number(process.env.PORT ?? 3001);
+const HOST = process.env.HOST ?? "0.0.0.0";
 
 type HelmetFactory = (options?: Record<string, unknown>) => RequestHandler;
 
@@ -131,8 +132,8 @@ app.use(errorHandler);
 
 // ─── Start / governed shutdown ────────────────────────────────────────────────
 
-const server = app.listen(PORT, () => {
-  console.log(`[Jennifer API] Listening on http://localhost:${PORT}`);
+const server = app.listen(PORT, HOST, () => {
+  console.log(`[Jennifer API] Listening on http://${HOST}:${PORT}`);
   console.log(`[Jennifer API] Environment: ${envMonitor.snapshot().platform}`);
   console.log(`[Jennifer API] Persistence: ${persistence.mode}`);
   console.log(`[Jennifer API] Projection: ${persistence.projectionMode}`);

@@ -72,9 +72,9 @@ export class MemoryBridge {
 
   /**
    * Session Third Signal stamp. Labelled local-experiment — not Memory Receipt
-   * admission and not GSMB canon.
+   * admission and not GSMB canon. `admit*` is a FOC name; use stamp.
    */
-  admitSessionEpisode(input: {
+  stampSessionEpisode(input: {
     choice: string;
     companionName: string;
   }): MemoryEntry {
