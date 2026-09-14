@@ -25,7 +25,21 @@ In Vercel → this project → **Settings → General**:
 
 A good Next deploy takes minutes, not ~30 seconds. Then open `/game`.
 
-`NEXT_PUBLIC_JENNIFER_API_URL` is optional for a first play — the love loop is localStorage-first. When the API is on Render, set that variable and add `https://project-jennifer-api.vercel.app` to `JENNIFER_CORS_ORIGINS`.
+**Build Command** must build workspace packages before Next (shared/governance/validation emit `dist/`):
+
+```text
+cd ../.. && pnpm turbo run build --filter=@jennifer/web
+```
+
+Install stays:
+
+```text
+cd ../.. && pnpm install --frozen-lockfile
+```
+
+A bare `pnpm --filter @jennifer/web build` fails with `Can't resolve '@jennifer/shared'` because those packages point at `dist/`, which does not exist until `^build` runs.
+
+`NEXT_PUBLIC_JENNIFER_API_URL` is optional for a first play — the love loop is localStorage-first. When the API is on Render, set that variable and add your exact Vercel origin to `JENNIFER_CORS_ORIGINS`.
 
 Set `NEXT_PUBLIC_JENNIFER_API_URL` on the web deploy to the public API origin (no trailing slash).
 
