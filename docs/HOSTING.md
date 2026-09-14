@@ -8,7 +8,38 @@
 | Service | Path | Notes |
 |---|---|---|
 | Web | `apps/web` (Next.js) | Player enters at `/game` |
-| API | `apps/api` (Express) | Continuity, companions, relationships, memory |
+| API | `apps/api` (Express) | Continuity, companions, relationships, memory. **Not** a Vercel serverless function. |
+
+### Vercel project (the playable URL)
+
+A repo-root `framework: nextjs` config will crash: there is no Next app at the repository root, so Vercel invokes an empty serverless function (`text/plain` 500, `FUNCTION_INVOCATION_FAILED`). The current repo-root `vercel.json` is **static only** (the how-to page under `apps/api/public`) so a wrong root stops crashing instead of inventing a Next function.
+
+The Git-connected project (even if named `project-jennifer-api`) must use **Root Directory `apps/web`**.
+
+In Vercel → this project → **Settings → General**:
+
+1. Root Directory → **Edit** → `apps/web` → Save
+2. Framework preset = **Next.js**
+3. Output Directory = **empty** (delete `.next` if set)
+4. Deployments → latest → **Redeploy** (uncheck Ignore Build Step if shown)
+
+A good Next deploy takes minutes, not ~30 seconds. Then open `/game`.
+
+**Build Command** must build workspace packages before Next (shared/governance/validation emit `dist/`):
+
+```text
+cd ../.. && pnpm turbo run build --filter=@jennifer/web
+```
+
+Install stays:
+
+```text
+cd ../.. && pnpm install --frozen-lockfile
+```
+
+A bare `pnpm --filter @jennifer/web build` fails with `Can't resolve '@jennifer/shared'` because those packages point at `dist/`, which does not exist until `^build` runs.
+
+`NEXT_PUBLIC_JENNIFER_API_URL` is optional for a first play — the love loop is localStorage-first. When the API is on Render, set that variable and add your exact Vercel origin to `JENNIFER_CORS_ORIGINS`.
 
 Set `NEXT_PUBLIC_JENNIFER_API_URL` on the web deploy to the public API origin (no trailing slash).
 
