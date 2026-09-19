@@ -12,32 +12,22 @@
 
 ### Vercel project (the playable URL)
 
-A repo-root `framework: nextjs` config will crash: there is no Next app at the repository root, so Vercel invokes an empty serverless function (`text/plain` 500, `FUNCTION_INVOCATION_FAILED`). The current repo-root `vercel.json` is **static only** (the how-to page under `apps/api/public`) so a wrong root stops crashing instead of inventing a Next function.
+Do **not** put a repo-root `vercel.json`. Root has no Next app — Vercel then infers **Node.js** (or a static/other runtime) while `apps/web` is Next. That dual inference is what made Import feel “harder than usual.”
 
-The Git-connected project (even if named `project-jennifer-api`) must use **Root Directory `apps/web`**.
+Canonical config lives only in [`apps/web/vercel.json`](../apps/web/vercel.json):
 
-In Vercel → this project → **Settings → General**:
+- `framework: nextjs`
+- monorepo `installCommand` / turbo `buildCommand`
+- **no** `outputDirectory` — never set `.next` (that wraps the Next build as a broken Node function)
 
-1. Root Directory → **Edit** → `apps/web` → Save
-2. Framework preset = **Next.js**
-3. Output Directory = **empty** (delete `.next` if set)
-4. Deployments → latest → **Redeploy** (uncheck Ignore Build Step if shown)
+New Vercel project checklist:
 
-A good Next deploy takes minutes, not ~30 seconds. Then open `/game`.
+1. Import `RobynAwesome/Project-Jennifer`
+2. Root Directory → **`apps/web`** (required once; Vercel cannot set this from git alone)
+3. Leave Framework / Build / Output alone if they match `apps/web/vercel.json`
+4. Deploy from **`main`** after the hosting fix is merged
 
-**Build Command** must build workspace packages before Next (shared/governance/validation emit `dist/`):
-
-```text
-cd ../.. && pnpm turbo run build --filter=@jennifer/web
-```
-
-Install stays:
-
-```text
-cd ../.. && pnpm install --frozen-lockfile
-```
-
-A bare `pnpm --filter @jennifer/web build` fails with `Can't resolve '@jennifer/shared'` because those packages point at `dist/`, which does not exist until `^build` runs.
+A bare `pnpm --filter @jennifer/web build` fails with `Can't resolve '@jennifer/shared'` because workspace packages emit `dist/` only when turbo runs `^build`.
 
 `NEXT_PUBLIC_JENNIFER_API_URL` is optional for a first play — the love loop is localStorage-first. When the API is on Render, set that variable and add your exact Vercel origin to `JENNIFER_CORS_ORIGINS`.
 
