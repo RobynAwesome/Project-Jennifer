@@ -281,7 +281,7 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
         | undefined,
     });
 
-    const decision = await relBridge.applyDecision({
+    await relBridge.applyDecision({
       relationshipId: bond.relationshipId,
       questInstanceId: bond.questInstanceId,
       sessionId,
