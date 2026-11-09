@@ -1,4 +1,4 @@
-import { generateId, now, type CompanionId, type CompanionRelationshipLane } from "@jennifer/shared";
+import { now, type CompanionId, type CompanionRelationshipLane } from "@jennifer/shared";
 import { readGameApiBaseUrl } from "./WorldBridge";
 
 export interface EpisodeRelationshipResult {
@@ -177,11 +177,20 @@ export class EpisodeRelationshipBridge {
         };
       }
 
+      if (!body.receipt?.id) {
+        return {
+          sourceMode: "local",
+          relationshipId: input.relationshipId,
+          questInstanceId: input.questInstanceId,
+          summary: "Decision endpoint returned no receipt; choice remains in local continuity.",
+        };
+      }
+
       return {
         sourceMode: "authoritative",
         relationshipId: input.relationshipId,
         questInstanceId: input.questInstanceId,
-        decisionReceiptId: body.receipt?.id ?? generateId(),
+        decisionReceiptId: body.receipt.id,
         summary: "Quest decision admitted under relationship authority.",
       };
     } catch {
@@ -189,7 +198,6 @@ export class EpisodeRelationshipBridge {
         sourceMode: "unreachable",
         relationshipId: input.relationshipId,
         questInstanceId: input.questInstanceId,
-        decisionReceiptId: generateId(),
         summary: "API unreachable; decision kept in local continuity.",
       };
     }
