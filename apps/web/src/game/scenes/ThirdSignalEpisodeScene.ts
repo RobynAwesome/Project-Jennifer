@@ -281,7 +281,7 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
         | undefined,
     });
 
-    const decision = await relBridge.applyDecision({
+    await relBridge.applyDecision({
       relationshipId: bond.relationshipId,
       questInstanceId: bond.questInstanceId,
       sessionId,
@@ -300,8 +300,6 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
       companionId,
       companionName,
       choice,
-      memoryReceiptId:
-        decision.decisionReceiptId ?? `continuity-memory:${sessionId}:${choice}`,
       epistemic: epistemic.companion,
     });
 

@@ -36,6 +36,17 @@ const startMenu = readRepo("apps/web/src/game/scenes/StartMenuScene.ts");
 const bridge = readRepo("apps/web/src/game/bridge/ContinuityBridge.ts");
 const journal = readRepo("apps/web/src/app/game/consequences/page.tsx");
 const resolver = readRepo("apps/web/src/game/continuity/resolve-continuity.ts");
+const episode = readRepo("apps/web/src/game/scenes/ThirdSignalEpisodeScene.ts");
+const episodeBridge = readRepo("apps/web/src/game/bridge/EpisodeRelationshipBridge.ts");
+
+record(
+  "episode.no-fabricated-memory-admission",
+  !episode.includes("continuity-memory:") &&
+    !episode.includes("memoryReceiptId:") &&
+    !episodeBridge.includes("decisionReceiptId: generateId()") &&
+    !episodeBridge.includes("decisionReceiptId: body.receipt?.id ?? generateId()"),
+  "Only an actual Memory Receipt may populate runtimeAdmission; local continuity and relationship decision ids are not Memory Receipts",
+);
 
 record(
   "continue.local-first",
