@@ -300,8 +300,6 @@ export class ThirdSignalEpisodeScene extends Phaser.Scene {
       companionId,
       companionName,
       choice,
-      memoryReceiptId:
-        decision.decisionReceiptId ?? `continuity-memory:${sessionId}:${choice}`,
       epistemic: epistemic.companion,
     });
 
